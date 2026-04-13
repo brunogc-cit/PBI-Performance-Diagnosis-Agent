@@ -1,0 +1,2100 @@
+{
+  "modelName": "ADE - Loyalty",
+  "modelPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/asos-data-ade-powerbi/powerbi/models/customer/ADE - Loyalty",
+  "statistics": {
+    "totalTables": 26,
+    "directQueryTables": 2,
+    "dualTables": 11,
+    "importTables": 13,
+    "totalColumns": 167,
+    "totalMeasures": 27,
+    "totalRelationships": 17,
+    "bidirectionalRelationships": 0,
+    "manyToManyRelationships": 0,
+    "inactiveRelationships": 2
+  },
+  "bpaConfig": {
+    "externalRuleFiles": "[\"..\\\\..\\\\..\\\\bestpracticeanalyser\\\\BPARules.json\"]",
+    "ignoredRules": [
+      "ISAVAILABLEINMDX_FALSE_NONATTRIBUTE_COLUMNS"
+    ]
+  },
+  "expressions": [
+    {
+      "name": "_BuildNumber",
+      "kind": "m",
+      "expression": "\"0\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_DbxEndpoint",
+      "kind": "m",
+      "expression": "\"/sql/1.0/warehouses/32078f0909f6e1ac\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_DbxEnvironmentSuffix",
+      "kind": "m",
+      "expression": "\"_dev\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_DbxServer",
+      "kind": "m",
+      "expression": "\"adb-1450006829160224.4.azuredatabricks.net\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_Environment",
+      "kind": "m",
+      "expression": "\"Development\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_fn_ConvertCatalog",
+      "kind": "m",
+      "expression": "let \n    Source = (catalog as any) => let \n    Source = catalog, \n    ConvertToTable = #table(1, {{Source}}), \n    Split = Table.SplitColumn(ConvertToTable, \"Column1\", Splitter.SplitTextByEachDelimiter({\"_\"}, QuoteStyle.Csv, true), {\"Catalog\"}), \n    AddEnv = Table.ReplaceValue(Split, each [Catalog], each [Catalog] & _DbxEnvironmentSuffix,Replacer.ReplaceText,{\"Catalog\"}), \n    ConvertToValue = List.Max(AddEnv[Catalog]) \nin \n    ConvertToValue \nin \nSource"
+    },
+    {
+      "name": "_fn_GetDataFromDBX",
+      "kind": "m",
+      "expression": "let \n    func = (_DbxCatalog as text, _DbxDatabase as text, _DbxTable as text) => let \n        Source = Databricks.Catalogs(_DbxServer, _DbxEndpoint, []), \n        catalog_Database = Source{[Name=_fn_ConvertCatalog(_DbxCatalog),Kind=\"Database\"]}[Data], \n        default_Schema = catalog_Database{[Name=_DbxDatabase,Kind=\"Schema\"]}[Data], \n        Table = default_Schema{[Name=_DbxTable,Kind=\"Table\"]}[Data] \n    in \n        Table \nin \n    func"
+    }
+  ],
+  "tables": [
+    {
+      "name": "@Dataset Metadata",
+      "storageMode": "import",
+      "columnCount": 3,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": true,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [
+        "let\n Refresh = Table.TransformColumnTypes(Table.FromList(List.DateTimes(DateTime.From(DateTimeZone.UtcNow()), 1, #duration(0, 0, 0, 0)), Splitter.SplitByNothing(), {\"Last Data Refresh (UTC)\"}, null, ExtraValues.Error), {{\"Last Data Refresh (UTC)\", type datetime}}),\n#\"Added Environment\" = Table.AddColumn(Refresh, \"Environment\", each _Environment),\n#\"Added BuildNumber\" = Table.AddColumn(#\"Added Environment\", \"Build Number\", each _BuildNumber)\n\n in\n#\"Added BuildNumber\""
+      ],
+      "columns": [
+        {
+          "name": "Build Number",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Environment",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Last Data Refresh (UTC)",
+          "dataType": "dateTime",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "metadata"
+    },
+    {
+      "name": "@Measures",
+      "storageMode": "import",
+      "columnCount": 0,
+      "measureCount": 19,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [
+        "let\n Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText(\"i44FAA==\", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t])\n\n in\nSource"
+      ],
+      "columns": [],
+      "measures": [
+        {
+          "name": "Count of Customer Accounts Opted In (As Today)",
+          "expression": "VAR LatestDate = \n    CALCULATE(\n        MAX('Customer Loyalty'[Dim Date Sk]), \n        ALLSELECTED('Customer Loyalty')  \n    )\n\nRETURN \nCALCULATE(\n    DISTINCTCOUNT('Customer Loyalty'[Customer Account Sk]),\n    'Customer Loyalty'[Dim Customer Loyalty Status Sk] = \"OptedIn\",\n    'Customer Loyalty'[Dim Date Sk] = LatestDate, \n    REMOVEFILTERS('Customer Loyalty'[Dim Date Sk]) \n)\n",
+          "formatString": "#,##0;[Red]-#,##0",
+          "displayFolder": "All Customer Accounts\\As of Today",
+          "isHidden": false
+        },
+        {
+          "name": "Count of Customer Accounts Opted In LTD",
+          "expression": "VAR MinDate =\n    CALCULATE (\n        MIN ( 'Date'[Calendar Date] ),\n        'Date'[Dim Date Sk] = MIN ( 'Customer Loyalty'[Dim Date Sk] )\n    )\nVAR MaxDate =\n    CALCULATE (\n        MAX ( 'Date'[Calendar Date] ),\n        'Date'[Dim Date Sk] = MAX ( 'Customer Loyalty'[Dim Date Sk] )\n    )\nVAR LaunchToDate =\n    CALCULATE (\n        DISTINCTCOUNT ( 'Customer Loyalty'[Customer Account Sk] ),\n        'Customer Loyalty'[Loyalty Opted In Count] = 1,\n        FILTER (\n            ALL ( 'Date' ),\n            'Date'[Calendar Date] >= MinDate\n                && 'Date'[Calendar Date] <= MaxDate\n        )\n    )\nVAR IfStatement =\n    IF ( LaunchToDate = BLANK (), 0, LaunchToDate )\nRETURN\n    IfStatement",
+          "formatString": "#,##0;[Red]-#,##0",
+          "displayFolder": "All Customer Accounts\\Launch To Date",
+          "isHidden": false
+        },
+        {
+          "name": "Count of Customer Accounts Opted Out (As Today)",
+          "expression": "VAR LatestDate = \n    CALCULATE(\n        MAX('Customer Loyalty'[Dim Date Sk]), \n        ALLSELECTED('Customer Loyalty')  \n    )\n\nRETURN \nCALCULATE(\n    DISTINCTCOUNT('Customer Loyalty'[Customer Account Sk]),\n    'Customer Loyalty'[Dim Customer Loyalty Status Sk] = \"OptedOut\",\n    'Customer Loyalty'[Dim Date Sk] = LatestDate, \n    REMOVEFILTERS('Customer Loyalty'[Dim Date Sk]) \n)\n",
+          "formatString": "#,##0;[Red]-#,##0",
+          "displayFolder": "All Customer Accounts\\As of Today",
+          "isHidden": false
+        },
+        {
+          "name": "Count of Customer Accounts Opted Out LTD",
+          "expression": "VAR MinDate =\n    CALCULATE (\n        MIN ( 'Date'[Calendar Date] ),\n        'Date'[Dim Date Sk] = MIN ( 'Customer Loyalty'[Dim Date Sk] )\n    )\nVAR MaxDate =\n    CALCULATE (\n        MAX ( 'Date'[Calendar Date] ),\n        'Date'[Dim Date Sk] = MAX ( 'Customer Loyalty'[Dim Date Sk] )\n    )\nVAR LaunchToDate =\n    CALCULATE (\n        DISTINCTCOUNT ( 'Customer Loyalty'[Customer Account Sk] ),\n        'Customer Loyalty'[Loyalty Opted Out Count]= 1,\n        FILTER (\n            ALL ( 'Date' ),\n            'Date'[Calendar Date] >= MinDate\n                && 'Date'[Calendar Date] <= MaxDate\n        )\n    )\nVAR IfStatement =\n    IF ( LaunchToDate = BLANK (), 0, LaunchToDate )\nRETURN\n    IfStatement",
+          "formatString": "#,##0;[Red]-#,##0",
+          "displayFolder": "All Customer Accounts\\Launch To Date",
+          "isHidden": false
+        },
+        {
+          "name": "Count of Customer Accounts opted In",
+          "expression": "CALCULATE(\n    DISTINCTCOUNT('Customer Loyalty'[Customer Account Sk]), \n    'Customer Loyalty'[Loyalty Opted In Count] = 1)\n    ",
+          "formatString": "#,##0;[Red]-#,##0",
+          "displayFolder": "All Customer Accounts\\Daily Snapshot",
+          "isHidden": false
+        },
+        {
+          "name": "Count of Customers Downgraded (As Today)",
+          "expression": "VAR LatestWeek =\n    MAX ( 'Customer Loyalty'[Dim Financial Week Start Date Sk] )\nVAR OptedInCustomers =\n    FILTER (\n        'Customer Loyalty',\n        'Customer Loyalty'[Dim Financial Week Start Date Sk] = LatestWeek\n            && 'Customer Loyalty'[Dim Customer Loyalty Status Sk] = \"OptedIn\"\n    )\nVAR CustomerByTier =\n    DISTINCT (\n        SELECTCOLUMNS (\n            OptedInCustomers,\n            \"Customer\", 'Customer Loyalty'[Customer Account Sk],\n            \"Current Tier Number\",\n                LOOKUPVALUE (\n                    'Customer Loyalty Tier'[Loyalty Tier Id],\n                    'Customer Loyalty Tier'[Dim Customer Loyalty Tier Sk], 'Customer Loyalty'[Dim Customer Loyalty Tier Sk]\n                ),\n            \"Previous Tier Number\",\n                LOOKUPVALUE (\n                    'Customer Loyalty Tier'[Loyalty Tier Id],\n                    'Customer Loyalty Tier'[Dim Customer Loyalty Tier Sk], 'Customer Loyalty'[Dim Customer Loyalty Previous Tier Sk]\n                )\n        )\n    )\nVAR DowngradedCustomers =\n    FILTER ( CustomerByTier, [Current Tier Number] < [Previous Tier Number] )\nRETURN\n    COUNTROWS ( DowngradedCustomers )",
+          "formatString": "#,##0;[Red]-#,##0",
+          "displayFolder": "Primary Account Measures\\As of Today",
+          "isHidden": false
+        },
+        {
+          "name": "Count of Customers Downgraded LTD",
+          "expression": "VAR LatestWeek =\n    MAX ( 'Customer Loyalty'[Dim Financial Week Start Date Sk] )\nVAR OptedInCustomers =\n    FILTER (\n        'Customer Loyalty',\n        'Customer Loyalty'[Dim Financial Week Start Date Sk] = LatestWeek\n            && 'Customer Loyalty'[Dim Customer Loyalty Status Sk] = \"OptedIn\"\n    )\nVAR CustomerByTier =\n    DISTINCT (\n        SELECTCOLUMNS (\n            OptedInCustomers,\n            \"Customer\", 'Customer Loyalty'[Customer Account Sk],\n            \"Current Tier Number\",\n                LOOKUPVALUE (\n                    'Customer Loyalty Tier'[Loyalty Tier Id],\n                    'Customer Loyalty Tier'[Dim Customer Loyalty Tier Sk], 'Customer Loyalty'[Dim Customer Loyalty Tier Sk]\n                ),\n            \"Previous Tier Number\",\n                LOOKUPVALUE (\n                    'Customer Loyalty Tier'[Loyalty Tier Id],\n                    'Customer Loyalty Tier'[Dim Customer Loyalty Tier Sk], 'Customer Loyalty'[Dim Customer Loyalty Previous Tier Opt In Sk]\n                )\n        )\n    )\nVAR DowngradedCustomers =\n    FILTER ( CustomerByTier, [Current Tier Number] < [Previous Tier Number] )\nRETURN\n    COUNTROWS ( DowngradedCustomers )",
+          "formatString": "#,##0;[Red]-#,##0",
+          "displayFolder": "Primary Account Measures\\Launch To Date",
+          "isHidden": false
+        },
+        {
+          "name": "Count of Customers Upgraded (As Today)",
+          "expression": "VAR LatestWeek =\n    MAX ( 'Customer Loyalty'[Dim Financial Week Start Date Sk] )\nVAR OptedInCustomers =\n    FILTER (\n        'Customer Loyalty',\n        'Customer Loyalty'[Dim Financial Week Start Date Sk] = LatestWeek\n            && 'Customer Loyalty'[Dim Customer Loyalty Status Sk] = \"OptedIn\"\n    )\nVAR CustomerByTier =\n    DISTINCT (\n        SELECTCOLUMNS (\n            OptedInCustomers,\n            \"Customer\", 'Customer Loyalty'[Customer Account Sk],\n            \"Current Tier Number\",\n                LOOKUPVALUE (\n                    'Customer Loyalty Tier'[Loyalty Tier Id],\n                    'Customer Loyalty Tier'[Dim Customer Loyalty Tier Sk], 'Customer Loyalty'[Dim Customer Loyalty Tier Sk]\n                ),\n            \"Previous Tier Number\",\n                LOOKUPVALUE (\n                    'Customer Loyalty Tier'[Loyalty Tier Id],\n                    'Customer Loyalty Tier'[Dim Customer Loyalty Tier Sk], 'Customer Loyalty'[Dim Customer Loyalty Previous Tier Sk]\n                )\n        )\n    )\nVAR UpgradedCustomers =\n    FILTER ( CustomerByTier, [Current Tier Number] > [Previous Tier Number] )\nRETURN\n    COUNTROWS ( UpgradedCustomers )",
+          "formatString": "#,##0;[Red]-#,##0",
+          "displayFolder": "Primary Account Measures\\As of Today",
+          "isHidden": false
+        },
+        {
+          "name": "Count of Customers Upgraded LTD",
+          "expression": "VAR LatestWeek =\n    MAX ( 'Customer Loyalty'[Dim Financial Week Start Date Sk] )\nVAR OptedInCustomers =\n    FILTER (\n        'Customer Loyalty',\n        'Customer Loyalty'[Dim Financial Week Start Date Sk] = LatestWeek\n            && 'Customer Loyalty'[Dim Customer Loyalty Status Sk] = \"OptedIn\"\n    )\nVAR CustomerByTier =\n    DISTINCT (\n        SELECTCOLUMNS (\n            OptedInCustomers,\n            \"Customer\", 'Customer Loyalty'[Customer Account Sk],\n            \"Current Tier Number\",\n                LOOKUPVALUE (\n                    'Customer Loyalty Tier'[Loyalty Tier Id],\n                    'Customer Loyalty Tier'[Dim Customer Loyalty Tier Sk], 'Customer Loyalty'[Dim Customer Loyalty Tier Sk]\n                ),\n            \"Previous Tier Number\",\n                LOOKUPVALUE (\n                    'Customer Loyalty Tier'[Loyalty Tier Id],\n                    'Customer Loyalty Tier'[Dim Customer Loyalty Tier Sk], 'Customer Loyalty'[Dim Customer Loyalty Previous Tier Opt In Sk]\n                )\n        )\n    )\nVAR UpgradedCustomers =\n    FILTER ( CustomerByTier, [Current Tier Number] > [Previous Tier Number] )\nRETURN\n    COUNTROWS ( UpgradedCustomers )",
+          "formatString": "#,##0;[Red]-#,##0",
+          "displayFolder": "Primary Account Measures\\Launch To Date",
+          "isHidden": false
+        },
+        {
+          "name": "Count of Invites Sent for All Tiers",
+          "expression": "[Total Requests Sent Tier 1 Count]+[Total Requests Sent Tier 2 Count]+ [Total Requests Sent Tier 3 Count]+[Total Requests Sent Tier 4 Count]",
+          "formatString": "#,##0;[Red]-#,##0",
+          "displayFolder": "Total",
+          "isHidden": false
+        },
+        {
+          "name": "Count of Unique Customers Enrolled",
+          "expression": "CALCULATE(\n    DISTINCTCOUNT('Customer Loyalty'[Customer Account Sk]), \n    'Customer Loyalty'[Loyalty Opted In Count] = 1)\n",
+          "formatString": "#,##0;[Red]-#,##0",
+          "displayFolder": "Primary Account Measures\\Weekly Snapshot",
+          "isHidden": false
+        },
+        {
+          "name": "Tier 1 Adoption Rate %",
+          "expression": "VAR Numerator =\n    CALCULATE(\n        DISTINCTCOUNT('Customer Loyalty'[Customer Account Sk]),\n        'Customer Loyalty'[Loyalty Opted In Count] = 1,\n        'Customer Loyalty'[Dim Customer Loyalty Tier Sk] = \"GB_LOYT_1\"\n        \n    )\nVAR Denominator =\n    [Total Requests Sent Tier 1 Count]\nRETURN\n    DIVIDE(Numerator, Denominator)*100\n    ",
+          "formatString": "0.0\\%;[Red]-0.0\\%",
+          "displayFolder": "Total",
+          "isHidden": false
+        },
+        {
+          "name": "Tier 1 KPI Colour",
+          "expression": "SWITCH (\n    [Count of Customer Accounts opted In] < [Tier 1 Target Count],\n    TRUE (), \"#FF385C\",\n    FALSE (), \"#26E066\"\n)",
+          "formatString": "KPI Colours",
+          "displayFolder": "KPI Tier Target Colours",
+          "isHidden": true
+        },
+        {
+          "name": "Tier 2 Adoption Rate %",
+          "expression": "VAR Numerator =\n    CALCULATE(\n        DISTINCTCOUNT('Customer Loyalty'[Customer Account Sk]),\n        'Customer Loyalty'[Loyalty Opted In Count] = 1,\n        'Customer Loyalty'[Dim Customer Loyalty Tier Sk] = \"GB_LOYT_2\"\n    )\nVAR Denominator =\n    [Total Requests Sent Tier 2 Count]\nRETURN\n    DIVIDE(Numerator, Denominator)*100",
+          "formatString": "0.0\\%;[Red]-0.0\\%",
+          "displayFolder": "Total",
+          "isHidden": false
+        },
+        {
+          "name": "Tier 2 KPI Colour",
+          "expression": "SWITCH (\n    [Count of Customer Accounts opted In] < [Tier 2 Target Count],\n    TRUE (), \"#FF385C\",\n    FALSE (), \"#26E066\"\n)",
+          "formatString": "",
+          "displayFolder": "KPI Tier Target Colours",
+          "isHidden": true
+        },
+        {
+          "name": "Tier 3 Adoption Rate %",
+          "expression": "VAR Numerator =\n    CALCULATE(\n        DISTINCTCOUNT('Customer Loyalty'[Customer Account Sk]),\n        'Customer Loyalty'[Loyalty Opted In Count] = 1,\n        'Customer Loyalty'[Dim Customer Loyalty Tier Sk] = \"GB_LOYT_3\"\n    )\nVAR Denominator =\n     [Total Requests Sent Tier 3 Count]\nRETURN\n    DIVIDE(Numerator, Denominator)*100",
+          "formatString": "0.0\\%;[Red]-0.0\\%",
+          "displayFolder": "Total",
+          "isHidden": false
+        },
+        {
+          "name": "Tier 3 KPI Colour",
+          "expression": "SWITCH (\n    [Count of Customer Accounts opted In] < [Tier 3 Target Count],\n    TRUE (), \"#FF385C\",\n    FALSE (), \"#26E066\"\n)",
+          "formatString": "",
+          "displayFolder": "KPI Tier Target Colours",
+          "isHidden": true
+        },
+        {
+          "name": "Tier 4 Adoption Rate %",
+          "expression": "VAR Numerator =\n    CALCULATE(\n        DISTINCTCOUNT('Customer Loyalty'[Customer Account Sk]),\n        'Customer Loyalty'[Loyalty Opted In Count] = 1,\n        'Customer Loyalty'[Dim Customer Loyalty Tier Sk] = \"GB_LOYT_4\"\n    )\nVAR Denominator =\n    [Total Requests Sent Tier 4 Count]\nRETURN\n    DIVIDE(Numerator, Denominator)*100",
+          "formatString": "0.0\\%;[Red]-0.0\\%",
+          "displayFolder": "Total",
+          "isHidden": false
+        },
+        {
+          "name": "Tier 4 KPI Colour",
+          "expression": "SWITCH (\n    [Count of Customer Accounts opted In] < [Tier 4 Target Count],\n    TRUE (), \"#FF385C\",\n    FALSE (), \"#26E066\"\n)",
+          "formatString": "",
+          "displayFolder": "KPI Tier Target Colours",
+          "isHidden": true
+        }
+      ],
+      "classification": "metadata"
+    },
+    {
+      "name": "Country",
+      "storageMode": "dual",
+      "columnCount": 19,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_country_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"dim_country_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Asos Continent",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Continent Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Continent",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Country Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Country Top 16 Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Country Top 4 Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Country Top 6 Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Country Top 60 Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Country",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Country Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Global Territory Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Deleted Flag",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Is Eu",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Europe",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Top 11 Country",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Iso2d3166 Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Iso3d3166 Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Nominal Store Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Sub Continent",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Country Top Eleven Group",
+      "storageMode": "dual",
+      "columnCount": 3,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_country_top_eleven_group_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"dim_country_top_eleven_group_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Country Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Country Top Eleven Group Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Country",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Customer Activity Status",
+      "storageMode": "dual",
+      "columnCount": 5,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "customer_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_customer_activity_status_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"customer_dev\", \"serve\", \"dim_customer_activity_status_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Customer Activity Status Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Customer Activity Status Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Customer Activity Status",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Activity Status Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Is Deleted Flag",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Customer Age",
+      "storageMode": "dual",
+      "columnCount": 7,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "customer_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_customer_age_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"customer_dev\", \"serve\", \"dim_customer_age_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Age Band",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Age Bucket",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Age Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Age",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Age Group Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Customer Age Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Is Deleted Flag",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Customer Age Group",
+      "storageMode": "dual",
+      "columnCount": 3,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": true,
+      "sourceCatalog": "customer_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_customer_age_group_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"customer_dev\", \"serve\", \"dim_customer_age_group_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Customer Age Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Age Group Sk",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Deleted Flag",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Customer Billing Address",
+      "storageMode": "directQuery",
+      "columnCount": 8,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "customer_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_customer_billing_address_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"customer_dev\", \"serve\", \"dim_customer_billing_address_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Billing Address Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "City",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Country",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Postcode Hash",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Updated Date",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "dim_country_sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "dim_customer_account_sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "dim_customer_billing_address_sk",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Customer Delivery Address",
+      "storageMode": "directQuery",
+      "columnCount": 8,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "customer_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_customer_delivery_address_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"customer_dev\", \"serve\", \"dim_customer_delivery_address_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "City",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Country",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Delivery Address Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Postcode Hash",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Updated Date",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "dim_country_sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "dim_customer_account_sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "dim_customer_delivery_address_sk",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Customer Loyalty",
+      "storageMode": "import",
+      "columnCount": 20,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "customer_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "fact_customer_loyalty_asos_world_v2",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"customer_dev\", \"serve\", \"fact_customer_loyalty_asos_world_v2\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Customer Account Sk",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Account Primary Sk",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Activity Status Sk",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Age Group Sk",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Age Sk",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Country Top Eleven Group Sk",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Home Country Sk",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Loyalty Previous Tier Opt In Sk",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Loyalty Previous Tier Sk",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Loyalty Status Sk",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Loyalty Tenure Sk",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Loyalty Tier Sk",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Sex Sk",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Tenure Sk",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Date Sk",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Financial Week Start Date Sk",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Loyalty Opted In Count",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Loyalty Opted Out Count",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Loyalty Tier Down Count",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Loyalty Tier Up Count",
+          "dataType": "int64",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "fact"
+    },
+    {
+      "name": "Customer Loyalty Status",
+      "storageMode": "dual",
+      "columnCount": 5,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "customer_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_customer_loyalty_status_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"customer_dev\", \"serve\", \"dim_customer_loyalty_status_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Dim Customer Loyalty Status Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Is Deleted Flag",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Loyalty Status Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Loyalty Status Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Loyalty Status",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Customer Loyalty Tenure",
+      "storageMode": "dual",
+      "columnCount": 6,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "customer_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_customer_loyalty_tenure_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"customer_dev\", \"serve\", \"dim_customer_loyalty_tenure_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Dim Customer Loyalty Tenure Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Is Deleted Flag",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Loyalty Tenure Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Loyalty Tenure Month From",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Loyalty Tenure Month To",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Loyalty Tenure",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Customer Loyalty Tier",
+      "storageMode": "dual",
+      "columnCount": 7,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "customer_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_customer_loyalty_tier_v2",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"customer_dev\", \"serve\", \"dim_customer_loyalty_tier_v2\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Dim Customer Loyalty Tier Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Is Deleted Flag",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Loyalty Tier Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Loyalty Tier Country Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Loyalty Tier Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Loyalty Tier Points To Unlock",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Loyalty Tier",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Customer Sex",
+      "storageMode": "dual",
+      "columnCount": 4,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "customer_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_customer_sex_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"customer_dev\", \"serve\", \"dim_customer_sex_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Customer Sex Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Customer Sex",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Sex Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Is Deleted Flag",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Customer Tenure",
+      "storageMode": "dual",
+      "columnCount": 6,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "customer_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_customer_tenure_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"customer_dev\", \"serve\", \"dim_customer_tenure_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Customer Tenure Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Customer Tenure Month From",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Customer Tenure Month To",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Customer Tenure",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Tenure Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Is Deleted Flag",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Date",
+      "storageMode": "dual",
+      "columnCount": 47,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_date_v2",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"dim_date_v2\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Calendar Date Full",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Date Short",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Day Of Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Day Of Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Day Of Week Short",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Day Of Week",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Day Of Year Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Month Days Quantity",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Month Full",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Month Short",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Week Start Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Year Days Quantity",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Year Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Year Month Full",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Year Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Year Month",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Year Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Date Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Date Sk",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Day Of Year Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Half",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Full",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Period Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Period",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Short",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Year Calendar Range Long",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Year Calendar Range Short",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Quarter Full",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Quarter Short",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Calendar Range",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Days Quantity",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year First Week Start Date Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Half Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Half",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Number Of Days Past Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Quarter Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Quarter",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Is A Leap Year",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Deleted Flag",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Tier 1 Target",
+      "storageMode": "import",
+      "columnCount": 1,
+      "measureCount": 1,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [
+        "GENERATESERIES(173111, 174111, 1)"
+      ],
+      "columns": [
+        {
+          "name": "Tier 1 Target",
+          "dataType": "int64",
+          "isHidden": true
+        }
+      ],
+      "measures": [
+        {
+          "name": "Tier 1 Target Count",
+          "expression": "SELECTEDVALUE('Tier 1 Target'[Tier 1 Target], 173111)",
+          "formatString": "####",
+          "displayFolder": "",
+          "isHidden": false
+        }
+      ],
+      "classification": "metadata"
+    },
+    {
+      "name": "Tier 2 Target",
+      "storageMode": "import",
+      "columnCount": 1,
+      "measureCount": 1,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [
+        "GENERATESERIES(207141, 208141, 1)"
+      ],
+      "columns": [
+        {
+          "name": "Tier 2 Target",
+          "dataType": "int64",
+          "isHidden": true
+        }
+      ],
+      "measures": [
+        {
+          "name": "Tier 2 Target Count",
+          "expression": "SELECTEDVALUE('Tier 2 Target'[Tier 2 Target], 207141)",
+          "formatString": "####",
+          "displayFolder": "",
+          "isHidden": false
+        }
+      ],
+      "classification": "metadata"
+    },
+    {
+      "name": "Tier 3 Target",
+      "storageMode": "import",
+      "columnCount": 1,
+      "measureCount": 1,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [
+        "GENERATESERIES(163698, 164698,1)"
+      ],
+      "columns": [
+        {
+          "name": "Tier 3 Target",
+          "dataType": "int64",
+          "isHidden": true
+        }
+      ],
+      "measures": [
+        {
+          "name": "Tier 3 Target Count",
+          "expression": "SELECTEDVALUE('Tier 3 Target'[Tier 3 Target], 163698)",
+          "formatString": "####",
+          "displayFolder": "",
+          "isHidden": false
+        }
+      ],
+      "classification": "metadata"
+    },
+    {
+      "name": "Tier 4 Target",
+      "storageMode": "import",
+      "columnCount": 1,
+      "measureCount": 1,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [
+        "GENERATESERIES(185839, 186839, 1)"
+      ],
+      "columns": [
+        {
+          "name": "Tier 4 Target",
+          "dataType": "int64",
+          "isHidden": true
+        }
+      ],
+      "measures": [
+        {
+          "name": "Tier 4 Target Count",
+          "expression": "SELECTEDVALUE('Tier 4 Target'[Tier 4 Target], 185839)",
+          "formatString": "####",
+          "displayFolder": "",
+          "isHidden": false
+        }
+      ],
+      "classification": "metadata"
+    },
+    {
+      "name": "Tier Movement Launch To Date",
+      "storageMode": "import",
+      "columnCount": 4,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": true,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [
+        "VAR LatestWeek =\n    MAX ( 'Customer Loyalty'[Dim Financial Week Start Date Sk] )\nVAR OptedInCustomers =\n    FILTER (\n        'Customer Loyalty',\n        'Customer Loyalty'[Dim Financial Week Start Date Sk] = LatestWeek\n            && 'Customer Loyalty'[Dim Customer Loyalty Status Sk] = \"OptedIn\"\n    )\nVAR CustomersByPreviousTier =\n    DISTINCT (\n        SELECTCOLUMNS (\n            OptedInCustomers,\n            \"Customer\", 'Customer Loyalty'[Customer Account Sk],\n            \"Previous Tier\",\n                CONCATENATE(\n                LOOKUPVALUE (\n                    'Customer Loyalty Tier'[Dim Customer Loyalty Tier Sk],\n                    'Customer Loyalty Tier'[Dim Customer Loyalty Tier Sk], 'Customer Loyalty'[Dim Customer Loyalty Previous Tier Opt In Sk]\n                ),  \" \"),\n               \"Previous Tier Number\", \n                LOOKUPVALUE (\n                    'Customer Loyalty Tier'[Loyalty Tier Id],\n                    'Customer Loyalty Tier'[Dim Customer Loyalty Tier Sk], 'Customer Loyalty'[Dim Customer Loyalty Previous Tier Opt In Sk]\n                ),\n               \"Previous Tier Number text\",\n                LOOKUPVALUE (\n                    'Customer Loyalty Tier'[Loyalty Tier Id],\n                    'Customer Loyalty Tier'[Dim Customer Loyalty Tier Sk], 'Customer Loyalty'[Dim Customer Loyalty Previous Tier Opt In Sk]\n                ) & UNICHAR(8203)))\n                \nVAR CustomersByCurrentTier=  DISTINCT (\n        SELECTCOLUMNS (\n            OptedInCustomers,\n            \"Customer\", 'Customer Loyalty'[Customer Account Sk],\n            \"Current Tier\",\n                LOOKUPVALUE (\n                    'Customer Loyalty Tier'[Dim Customer Loyalty Tier Sk],\n                    'Customer Loyalty Tier'[Dim Customer Loyalty Tier Sk], 'Customer Loyalty'[Dim Customer Loyalty Tier Sk]\n                ),\n                 \"Current Tier Number\",  LOOKUPVALUE (\n                    'Customer Loyalty Tier'[Loyalty Tier Id],\n                    'Customer Loyalty Tier'[Dim Customer Loyalty Tier Sk], 'Customer Loyalty'[Dim Customer Loyalty Tier Sk]\n                ),\n                 \"Loyalty Tier Country Code\",\n                    RELATED('Customer Loyalty Tier'[Loyalty Tier Country Code])\n            \n        ))\n    \n\nVAR CustomersLaunchToDate =\n    ADDCOLUMNS (\n        NATURALINNERJOIN ( CustomersByPreviousTier, CustomersByCurrentTier ),\n        \"Remained\", IF ( [Current Tier Number] = [Previous Tier Number], 1, 0 )\n    )\nRETURN\n    CustomersLaunchToDate "
+      ],
+      "columns": [
+        {
+          "name": "Current Tier Number",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Current Tier",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Previous Tier Number",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Previous Tier",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "metadata"
+    },
+    {
+      "name": "Tier Movement as of Today",
+      "storageMode": "import",
+      "columnCount": 4,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": true,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [
+        "VAR LatestWeek =\n    MAX ( 'Customer Loyalty'[Dim Financial Week Start Date Sk] )\nVAR OptedInCustomers =\n    FILTER (\n        'Customer Loyalty',\n        'Customer Loyalty'[Dim Financial Week Start Date Sk] = LatestWeek\n            && 'Customer Loyalty'[Dim Customer Loyalty Status Sk] = \"OptedIn\"\n    )\nVAR CustomersByPreviousTier =\n    DISTINCT (\n        SELECTCOLUMNS (\n            OptedInCustomers,\n            \"Customer\", 'Customer Loyalty'[Customer Account Sk],\n            \"Previous Tier\",\n                CONCATENATE(\n                LOOKUPVALUE (\n                    'Customer Loyalty Tier'[Dim Customer Loyalty Tier Sk],\n                    'Customer Loyalty Tier'[Dim Customer Loyalty Tier Sk], 'Customer Loyalty'[Dim Customer Loyalty Previous Tier Sk]\n                ),  \" \"),\n               \"Previous Tier Number\",  \n                 LOOKUPVALUE (\n                    'Customer Loyalty Tier'[Loyalty Tier Id],\n                    'Customer Loyalty Tier'[Dim Customer Loyalty Tier Sk], 'Customer Loyalty'[Dim Customer Loyalty Previous Tier Sk]\n                ),\n               \"Previous Tier Number text\",\n                LOOKUPVALUE (\n                    'Customer Loyalty Tier'[Loyalty Tier Id],\n                    'Customer Loyalty Tier'[Dim Customer Loyalty Tier Sk], 'Customer Loyalty'[Dim Customer Loyalty Previous Tier Sk]\n                ) & UNICHAR(8203)))\n                \nVAR CustomersByCurrentTier=  DISTINCT (\n        SELECTCOLUMNS (\n            OptedInCustomers,\n            \"Customer\", 'Customer Loyalty'[Customer Account Sk],\n            \"Current Tier\",\n                LOOKUPVALUE (\n                    'Customer Loyalty Tier'[Dim Customer Loyalty Tier Sk],\n                    'Customer Loyalty Tier'[Dim Customer Loyalty Tier Sk], 'Customer Loyalty'[Dim Customer Loyalty Tier Sk]\n                ),\n                 \"Current Tier Number\",  LOOKUPVALUE (\n                    'Customer Loyalty Tier'[Loyalty Tier Id],\n                    'Customer Loyalty Tier'[Dim Customer Loyalty Tier Sk], 'Customer Loyalty'[Dim Customer Loyalty Tier Sk]\n                ),\n                 \"Loyalty Tier Country Code\",\n                    RELATED('Customer Loyalty Tier'[Loyalty Tier Country Code])\n                \n        ))\n    \n\nVAR CustomersLaunchToDate =\n    ADDCOLUMNS (\n        NATURALINNERJOIN ( CustomersByPreviousTier, CustomersByCurrentTier ),\n        \"Remained\", IF ( [Current Tier Number] = [Previous Tier Number], 1, 0 )\n    )\nRETURN\n    CustomersLaunchToDate "
+      ],
+      "columns": [
+        {
+          "name": "Current Tier Number",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Current Tier",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Previous Tier Number",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Previous Tier",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "metadata"
+    },
+    {
+      "name": "Total Invites Sent for Tier 1",
+      "storageMode": "import",
+      "columnCount": 1,
+      "measureCount": 1,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [
+        "GENERATESERIES(3462222, 3463222, 1)"
+      ],
+      "columns": [
+        {
+          "name": "Total Invites Sent for Tier 1",
+          "dataType": "int64",
+          "isHidden": true
+        }
+      ],
+      "measures": [
+        {
+          "name": "Total Requests Sent Tier 1 Count",
+          "expression": "SELECTEDVALUE('Total Invites Sent for Tier 1'[Total Invites Sent for Tier 1],3462222)",
+          "formatString": "####",
+          "displayFolder": "",
+          "isHidden": false
+        }
+      ],
+      "classification": "metadata"
+    },
+    {
+      "name": "Total Invites Sent for Tier 2",
+      "storageMode": "import",
+      "columnCount": 1,
+      "measureCount": 1,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [
+        "GENERATESERIES(2071407, 2072407, 1)"
+      ],
+      "columns": [
+        {
+          "name": "Total Invites Sent for Tier 2",
+          "dataType": "int64",
+          "isHidden": true
+        }
+      ],
+      "measures": [
+        {
+          "name": "Total Requests Sent Tier 2 Count",
+          "expression": "SELECTEDVALUE('Total Invites Sent for Tier 2'[Total Invites Sent for Tier 2],2071407)",
+          "formatString": "####",
+          "displayFolder": "",
+          "isHidden": false
+        }
+      ],
+      "classification": "metadata"
+    },
+    {
+      "name": "Total Invites Sent for Tier 3",
+      "storageMode": "import",
+      "columnCount": 1,
+      "measureCount": 1,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [
+        "GENERATESERIES(654790, 655790, 1)"
+      ],
+      "columns": [
+        {
+          "name": "Total Invites Sent for Tier 3",
+          "dataType": "int64",
+          "isHidden": true
+        }
+      ],
+      "measures": [
+        {
+          "name": "Total Requests Sent Tier 3 Count",
+          "expression": "SELECTEDVALUE('Total Invites Sent for Tier 3'[Total Invites Sent for Tier 3], 654790)",
+          "formatString": "####",
+          "displayFolder": "",
+          "isHidden": false
+        }
+      ],
+      "classification": "metadata"
+    },
+    {
+      "name": "Total Invites Sent for Tier 4",
+      "storageMode": "import",
+      "columnCount": 1,
+      "measureCount": 1,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [
+        "GENERATESERIES(371677, 372677, 1)"
+      ],
+      "columns": [
+        {
+          "name": "Total Invites Sent for Tier 4",
+          "dataType": "int64",
+          "isHidden": true
+        }
+      ],
+      "measures": [
+        {
+          "name": "Total Requests Sent Tier 4 Count",
+          "expression": "SELECTEDVALUE('Total Invites Sent for Tier 4'[Total Invites Sent for Tier 4], 371677)",
+          "formatString": "####",
+          "displayFolder": "",
+          "isHidden": false
+        }
+      ],
+      "classification": "metadata"
+    }
+  ],
+  "relationships": [
+    {
+      "name": "0bdf4505-b111-494a-a380-8390b8bc3b4c",
+      "fromTable": "Customer Loyalty",
+      "fromColumn": "Dim Date Sk",
+      "toTable": "Date",
+      "toColumn": "Dim Date Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "15fce992-3934-429d-98ed-5f3445951388",
+      "fromTable": "Tier Movement as of Today",
+      "fromColumn": "Current Tier",
+      "toTable": "Customer Loyalty Tier",
+      "toColumn": "Dim Customer Loyalty Tier Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "1906a73c-e075-42f4-ba56-6edafe74a5f9",
+      "fromTable": "Tier Movement Launch To Date",
+      "fromColumn": "Current Tier",
+      "toTable": "Customer Loyalty Tier",
+      "toColumn": "Dim Customer Loyalty Tier Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "4cdac30b-2740-49d5-9cfa-c1004ec53a3f",
+      "fromTable": "Customer Loyalty",
+      "fromColumn": "Dim Customer Age Sk",
+      "toTable": "Customer Age",
+      "toColumn": "Dim Customer Age Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "532ab0b8-8ca9-46ef-ae30-633b92866b50",
+      "fromTable": "Customer Loyalty",
+      "fromColumn": "Dim Customer Home Country Sk",
+      "toTable": "Country",
+      "toColumn": "Dim Country Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "5e014875-1478-4dfb-95a4-4283d75a8a63",
+      "fromTable": "Customer Loyalty",
+      "fromColumn": "Dim Customer Loyalty Tier Sk",
+      "toTable": "Customer Loyalty Tier",
+      "toColumn": "Dim Customer Loyalty Tier Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "604104a9-f2f6-4f08-a0d5-4f10f21f7862",
+      "fromTable": "Customer Loyalty",
+      "fromColumn": "Dim Customer Country Top Eleven Group Sk",
+      "toTable": "Country Top Eleven Group",
+      "toColumn": "Dim Country Top Eleven Group Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "65ed7739-9585-4b6d-8d30-554eeb9be3fd",
+      "fromTable": "Customer Loyalty",
+      "fromColumn": "Dim Financial Week Start Date Sk",
+      "toTable": "Date",
+      "toColumn": "Dim Date Sk",
+      "isActive": false,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "7212ff2a-e973-49bc-9f1c-bfa6caa33e43",
+      "fromTable": "Customer Loyalty",
+      "fromColumn": "Dim Customer Activity Status Sk",
+      "toTable": "Customer Activity Status",
+      "toColumn": "Dim Customer Activity Status Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "893dbfed-dafe-44bf-ad2a-36286c337f53",
+      "fromTable": "Customer Loyalty",
+      "fromColumn": "Dim Customer Sex Sk",
+      "toTable": "Customer Sex",
+      "toColumn": "Dim Customer Sex Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "90c36626-fbbd-4f30-9957-db44d470bf97",
+      "fromTable": "Customer Loyalty",
+      "fromColumn": "Dim Customer Tenure Sk",
+      "toTable": "Customer Tenure",
+      "toColumn": "Dim Customer Tenure Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f",
+      "fromTable": "Customer Loyalty",
+      "fromColumn": "Customer Account Sk",
+      "toTable": "Customer Delivery Address",
+      "toColumn": "dim_customer_account_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "d2e3f4a5-b6c7-4d8e-9f0a-1b2c3d4e5f6a",
+      "fromTable": "Customer Loyalty",
+      "fromColumn": "Customer Account Sk",
+      "toTable": "Customer Billing Address",
+      "toColumn": "dim_customer_account_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "d94d8a61-15e5-4e50-ab87-05fb64a36116",
+      "fromTable": "Customer Loyalty",
+      "fromColumn": "Dim Customer Country Top Eleven Group Sk",
+      "toTable": "Country",
+      "toColumn": "Dim Country Sk",
+      "isActive": false,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "e14b9dc6-a0cb-49ee-8942-7e82822c3ed3",
+      "fromTable": "Customer Loyalty",
+      "fromColumn": "Dim Customer Loyalty Tenure Sk",
+      "toTable": "Customer Loyalty Tenure",
+      "toColumn": "Dim Customer Loyalty Tenure Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "e4495207-3937-4712-9fdd-acf9d07eb4f3",
+      "fromTable": "Customer Loyalty",
+      "fromColumn": "Dim Customer Loyalty Status Sk",
+      "toTable": "Customer Loyalty Status",
+      "toColumn": "Dim Customer Loyalty Status Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "e91916f1-1293-4d25-8bdc-b2244465fbd3",
+      "fromTable": "Customer Loyalty",
+      "fromColumn": "Dim Customer Age Group Sk",
+      "toTable": "Customer Age Group",
+      "toColumn": "Dim Customer Age Group Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    }
+  ],
+  "sourceMapping": [
+    {
+      "pbiTable": "Country",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_country_v1"
+    },
+    {
+      "pbiTable": "Country Top Eleven Group",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_country_top_eleven_group_v1"
+    },
+    {
+      "pbiTable": "Customer Activity Status",
+      "storageMode": "dual",
+      "databricksCatalog": "customer_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_customer_activity_status_v1"
+    },
+    {
+      "pbiTable": "Customer Age",
+      "storageMode": "dual",
+      "databricksCatalog": "customer_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_customer_age_v1"
+    },
+    {
+      "pbiTable": "Customer Age Group",
+      "storageMode": "dual",
+      "databricksCatalog": "customer_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_customer_age_group_v1"
+    },
+    {
+      "pbiTable": "Customer Billing Address",
+      "storageMode": "directQuery",
+      "databricksCatalog": "customer_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_customer_billing_address_v1"
+    },
+    {
+      "pbiTable": "Customer Delivery Address",
+      "storageMode": "directQuery",
+      "databricksCatalog": "customer_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_customer_delivery_address_v1"
+    },
+    {
+      "pbiTable": "Customer Loyalty",
+      "storageMode": "import",
+      "databricksCatalog": "customer_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "fact_customer_loyalty_asos_world_v2"
+    },
+    {
+      "pbiTable": "Customer Loyalty Status",
+      "storageMode": "dual",
+      "databricksCatalog": "customer_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_customer_loyalty_status_v1"
+    },
+    {
+      "pbiTable": "Customer Loyalty Tenure",
+      "storageMode": "dual",
+      "databricksCatalog": "customer_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_customer_loyalty_tenure_v1"
+    },
+    {
+      "pbiTable": "Customer Loyalty Tier",
+      "storageMode": "dual",
+      "databricksCatalog": "customer_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_customer_loyalty_tier_v2"
+    },
+    {
+      "pbiTable": "Customer Sex",
+      "storageMode": "dual",
+      "databricksCatalog": "customer_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_customer_sex_v1"
+    },
+    {
+      "pbiTable": "Customer Tenure",
+      "storageMode": "dual",
+      "databricksCatalog": "customer_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_customer_tenure_v1"
+    },
+    {
+      "pbiTable": "Date",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_date_v2"
+    }
+  ],
+  "graphAnalysis": {
+    "maxSnowflakeDepth": 2,
+    "avgDegree": 1.3,
+    "hubTables": [
+      {
+        "name": "Customer Loyalty",
+        "degree": 15,
+        "classification": "fact",
+        "storageMode": "import",
+        "sizeGB": null,
+        "rowCount": null
+      }
+    ],
+    "tables": [
+      {
+        "name": "@Dataset Metadata",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      },
+      {
+        "name": "@Measures",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      },
+      {
+        "name": "Country",
+        "degree": 2,
+        "inDegree": 2,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Country Top Eleven Group",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Customer Activity Status",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Customer Age",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Customer Age Group",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Customer Billing Address",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "directQuery"
+      },
+      {
+        "name": "Customer Delivery Address",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "directQuery"
+      },
+      {
+        "name": "Customer Loyalty",
+        "degree": 15,
+        "inDegree": 0,
+        "outDegree": 15,
+        "isHub": true,
+        "classification": "fact",
+        "storageMode": "import"
+      },
+      {
+        "name": "Customer Loyalty Status",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Customer Loyalty Tenure",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Customer Loyalty Tier",
+        "degree": 3,
+        "inDegree": 3,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Customer Sex",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Customer Tenure",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Date",
+        "degree": 2,
+        "inDegree": 2,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Tier 1 Target",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      },
+      {
+        "name": "Tier 2 Target",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      },
+      {
+        "name": "Tier 3 Target",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      },
+      {
+        "name": "Tier 4 Target",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      },
+      {
+        "name": "Tier Movement Launch To Date",
+        "degree": 1,
+        "inDegree": 0,
+        "outDegree": 1,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      },
+      {
+        "name": "Tier Movement as of Today",
+        "degree": 1,
+        "inDegree": 0,
+        "outDegree": 1,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      },
+      {
+        "name": "Total Invites Sent for Tier 1",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      },
+      {
+        "name": "Total Invites Sent for Tier 2",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      },
+      {
+        "name": "Total Invites Sent for Tier 3",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      },
+      {
+        "name": "Total Invites Sent for Tier 4",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      }
+    ]
+  }
+}

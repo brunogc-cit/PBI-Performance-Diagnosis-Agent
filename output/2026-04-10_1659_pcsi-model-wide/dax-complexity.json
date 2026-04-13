@@ -1,0 +1,5958 @@
+{
+  "version": "2.0.0",
+  "analysedAt": "2026-04-10T16:59:30.662517+00:00",
+  "modelPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/asos-data-ade-powerbi/powerbi/models/Sourcing and Buying/ADE - Purchase, Commitment, Stock and Intake",
+  "measures": [
+    {
+      "name": "Commitment Buy Value Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 14,
+      "complexityLevel": "high",
+      "complexityFactors": [
+        "4 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 4,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 5,
+      "lineCount": 32,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Units",
+      "hostTable": "@Measures",
+      "complexityScore": 14,
+      "complexityLevel": "high",
+      "complexityFactors": [
+        "4 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 4,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 5,
+      "lineCount": 36,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Permanent Markdown Spend Value - Saleable LY",
+      "hostTable": "@Measures",
+      "complexityScore": 9,
+      "complexityLevel": "high",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 38,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Saleable Stock Buy Value LY",
+      "hostTable": "@Measures",
+      "complexityScore": 9,
+      "complexityLevel": "high",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 38,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Tradeable Stock Buy Value LW",
+      "hostTable": "@Measures",
+      "complexityScore": 9,
+      "complexityLevel": "high",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 38,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "ASN FC Booked Units",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "ASN FC Outstanding Units",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Buy Value Ex Tax Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Buy Value Ex Tax First Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Buy Value First Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Cost Value Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Cost Value First Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Duty Cost Value Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Duty Cost Value First Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Expense Cost Value Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Expense Cost Value First Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Extra Duty Off Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Extra Duty On Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Freight Cost Value Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Freight Cost Value First Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Handling Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Labelling Cost Value Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Labelling Cost Value First Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Landed Cost Value Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Landed Cost Value First Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Landed Prediscount Cost Value Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment PO Pre Discount Unit Cost Value Supplier Currency",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Prediscount Cost Value First Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Reprocessing Cost Value Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Reprocessing Cost Value First Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Terms Discount Value",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Transformation Cost Value Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Transformation Cost Value First Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Transportation Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Units_InScope",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 28,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": true
+    },
+    {
+      "name": "Commitment Upcharge Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "In Transit Allocation Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "In Transit Allocation Units",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "In Transit Buy Value Ex Tax Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "In Transit Buy Value Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "In Transit Landed Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Pending Allocation In Buy Value Ex Tax",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Pending Allocation In Buy Value",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Pending Allocation In Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Pending Allocation In Landed Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Pending Allocation In Units",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Pending Allocation Out Buy Value Ex Tax",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Pending Allocation Out Buy Value",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Pending Allocation Out Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Pending Allocation Out Landed Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Pending Allocation Out Units",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 14,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Prime Stock to Reduced Buy Value",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "3 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 3,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 11,
+      "referencedTables": [
+        "Inventory Daily Snapshot",
+        "Inventory Status",
+        "Product in Final Warehouse"
+      ],
+      "directQueryTables": [
+        "Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Inventory Status"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Average Line Buy Final Destination",
+      "hostTable": "@Measures",
+      "complexityScore": 5,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 7,
+      "referencedTables": [
+        "Product",
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Product",
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": true,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Saleable Stock Supplier Unit Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 5,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Inventory Daily Snapshot",
+        "Inventory Status"
+      ],
+      "directQueryTables": [
+        "Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Inventory Status"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Saleable Stock Units (In Transit)",
+      "hostTable": "@Measures",
+      "complexityScore": 5,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 5,
+      "referencedTables": [
+        "Inventory Daily Snapshot",
+        "Inventory Status"
+      ],
+      "directQueryTables": [
+        "Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Inventory Status"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total Intake Buy Value Final Warehouse by PO",
+      "hostTable": "@Measures",
+      "complexityScore": 5,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Purchase Order",
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [
+        "Purchase Order"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Total Intake Received Units Final Warehouse by PO",
+      "hostTable": "@Measures",
+      "complexityScore": 5,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Purchase Order",
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [
+        "Purchase Order"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total PO Value by PO",
+      "hostTable": "@Measures",
+      "complexityScore": 5,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Purchase Order",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Purchase Order"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Tradeable Stock Buy Value Ex Tax",
+      "hostTable": "@Measures",
+      "complexityScore": 5,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Inventory Daily Snapshot",
+        "Inventory Status"
+      ],
+      "directQueryTables": [
+        "Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Inventory Status"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Tradeable Stock Supplier Unit Cost Price",
+      "hostTable": "@Measures",
+      "complexityScore": 5,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Inventory Daily Snapshot",
+        "Inventory Status"
+      ],
+      "directQueryTables": [
+        "Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Inventory Status"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Tradeable Stock Supplier Unit Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 5,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Inventory Daily Snapshot",
+        "Inventory Status"
+      ],
+      "directQueryTables": [
+        "Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Inventory Status"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Go Live Option Count",
+      "hostTable": "Product",
+      "complexityScore": 5,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 5,
+      "referencedTables": [
+        "Date",
+        "Option"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date",
+        "Option"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Option Count (Commitment > 0)",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 23,
+      "referencedTables": [
+        "Date",
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Option Count (Stock > 0)",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 23,
+      "referencedTables": [
+        "Date",
+        "Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Permanent Markdown Spend Value",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "SKU Count",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Stock Buy Price",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Stock Buy Value Ex Tax",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Stock Buy Value",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Stock Clearance Value",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Stock Reprice Value",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Stock Retail Value",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Stock Unit Cost Price",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Stock Unit Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Stock Units",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Stock Unrealised Markdown Value",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Stock Weighted Average Unit Cost Price",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Stock Weighted Average Unit Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Average Cost",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "WMS Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "WMS Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Buy Price",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "WMS Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "WMS Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Buy Value Exc Vat",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "WMS Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "WMS Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Buy Value",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "WMS Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "WMS Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Clearance Price",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "WMS Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "WMS Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Clearance Value",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "WMS Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "WMS Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Number of Weeks On Site",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "WMS Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "WMS Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Permanent Markdown Spend Value",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "WMS Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "WMS Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Permanent Markdown Spend",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "WMS Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "WMS Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Quantity",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "WMS Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "WMS Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Retail Price",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "WMS Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "WMS Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Retail Value",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "WMS Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "WMS Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Unit Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "WMS Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "WMS Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Unit Cost",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "WMS Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "WMS Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Unit Reprice Value",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "WMS Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "WMS Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Unit Reprice",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "WMS Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "WMS Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Units",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "WMS Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "WMS Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Unrealised Markdown Value",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "WMS Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "WMS Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Unrealised Markdown",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "WMS Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "WMS Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Weighted Average Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "WMS Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "WMS Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Weighted Average Cost",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 25,
+      "referencedTables": [
+        "Date",
+        "WMS Inventory Daily Snapshot"
+      ],
+      "directQueryTables": [
+        "WMS Inventory Daily Snapshot"
+      ],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Go Live Option Count LY",
+      "hostTable": "Product",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 20,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Average Days Factory to Handover",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "iterators: AVERAGEX"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 12,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Average Days Factory to Intake",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "iterators: AVERAGEX"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 12,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Average Days Handover Start to Shipment",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "iterators: AVERAGEX"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 12,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Average Days Handover Window",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "iterators: AVERAGEX"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 12,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Average Days Planned Intake Deviation",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "iterators: AVERAGEX"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 12,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Average Days Planned Shipment Deviation",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "iterators: AVERAGEX"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 12,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Average Days Shipment to Intake",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "iterators: AVERAGEX"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 12,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Earliest Go Live Date Final FC (Selected Period)",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "iterators: MINX"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 7,
+      "referencedTables": [
+        "Product Option In Final Warehouse"
+      ],
+      "directQueryTables": [
+        "Product Option In Final Warehouse"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Unit Cost Value (Supplier Currency) First Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "iterators: SUMX"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Units On Time % (Final Warehouse)",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "iterators: SUMX"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 13,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Units On Time % (First Warehouse)",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "iterators: SUMX"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 13,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Value On Time % (Final Warehouse)",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "iterators: SUMX"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 13,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Value On Time % (First Warehouse)",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "iterators: SUMX"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 13,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "On-Time Arrivals %",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "iterators: SUMX"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 14,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Option Count (Intake > 0)",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 3,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Permanent Markdown Spend Value - Saleable",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Inventory Status"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Inventory Status"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Saleable SKU Count",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 2,
+      "referencedTables": [
+        "Inventory Status"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Inventory Status"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Saleable Stock Buy Value Ex Tax",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 2,
+      "referencedTables": [
+        "Inventory Status"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Inventory Status"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Saleable Stock Buy Value",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 2,
+      "referencedTables": [
+        "Inventory Status"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Inventory Status"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Saleable Stock Opening Buy Value",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Saleable Stock Retail Value",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 2,
+      "referencedTables": [
+        "Inventory Status"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Inventory Status"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Saleable Stock Units",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 2,
+      "referencedTables": [
+        "Inventory Status"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Inventory Status"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Saleable Stock WAC Value",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 2,
+      "referencedTables": [
+        "Inventory Status"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Inventory Status"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Shipments Delayed %",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "iterators: SUMX"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 13,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Tradeable Stock Buy Value",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 2,
+      "referencedTables": [
+        "Inventory Status"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Inventory Status"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Tradeable Stock Retail Value",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 2,
+      "referencedTables": [
+        "Inventory Status"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Inventory Status"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Tradeable Stock Units",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 2,
+      "referencedTables": [
+        "Inventory Status"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Inventory Status"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Tradeable Stock WAC Value",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 2,
+      "referencedTables": [
+        "Inventory Status"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Inventory Status"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Saleable Average Cost",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "WMS Stock Status Item"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "WMS Stock Status Item"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Saleable Buy Value",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "WMS Stock Status Item"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "WMS Stock Status Item"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Saleable Retail Value",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "WMS Stock Status Item"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "WMS Stock Status Item"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Saleable Units",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "WMS Stock Status Item"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "WMS Stock Status Item"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Saleable Weighted Average Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "WMS Stock Status Item"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "WMS Stock Status Item"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Tradeable Average Cost",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "WMS Stock Status Item"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "WMS Stock Status Item"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Tradeable Buy Value",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "WMS Stock Status Item"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "WMS Stock Status Item"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Tradeable Retail Value",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "WMS Stock Status Item"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "WMS Stock Status Item"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Tradeable Units",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "WMS Stock Status Item"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "WMS Stock Status Item"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "WMS Tradeable Weighted Average Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "WMS Stock Status Item"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "WMS Stock Status Item"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Average Days Intake Delay (Delayed Deliveries Only)",
+      "hostTable": "@Measures",
+      "complexityScore": 2,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "iterators: SUMX"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 23,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Average Days Intake Delay",
+      "hostTable": "@Measures",
+      "complexityScore": 2,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "iterators: SUMX"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 21,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Latest Data Available Commitment",
+      "hostTable": "@Measures",
+      "complexityScore": 2,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 7,
+      "referencedTables": [
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "yyyy-MM-dd",
+      "isHidden": false
+    },
+    {
+      "name": "Latest Data Available Intake",
+      "hostTable": "@Measures",
+      "complexityScore": 2,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 7,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "yyyy-MM-dd",
+      "isHidden": false
+    },
+    {
+      "name": "Allocation In Buy Value Ex Tax",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Allocation In Buy Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Allocation In Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Allocation In Estimated Landed Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Allocation In Weighted Average Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Allocation Out Buy Value Ex Tax",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Allocation Out Buy Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Allocation Out Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Allocation Out Estimated Landed Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Allocation Out Weighted Average Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment ASP Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Buy ELC Margin % Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Buy ELC Margin Value Final Destination",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment ELC Price Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Unit Cost Price Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Commitment Unit Margin % Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 7,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Estimated Landed Cost Value Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Estimated Landed Cost Value First Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Estimated Landed Pre Discount Cost Value Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Estimated Landed Pre Discount Cost Value First Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Buy ELC Margin % Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Buy Value ELC Margin Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Buy Value Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Buy Value First Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Buy Value Ex Tax Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Buy Value Ex Tax First Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Cost Value Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Cost Value First Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Duty Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake ELC Price Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Expense Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Extra Duty Off Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Extra Duty On Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Freight Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Handling Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Labelling Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake PO Pre Discount Unit Cost Value Supplier Currency",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Pre Discount Cost Value Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Pre Discount Cost Value First Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Received Units Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Received Units First Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Reprocessing Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Terms Discount Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Transformation Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Transportation Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Unit Cost Price Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Unit Cost Price First Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Unit Margin % Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 7,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Unit Margin % First Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 7,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Unit Margin Value Final Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Unit Margin Value First Warehouse",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Intake Upcharge Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "PO Count(Commitment)",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Commitment"
+      ],
+      "directQueryTables": [
+        "Purchase Order Commitment"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "PO Unit Cost Value Supplier Currency",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Purchase Order Intake"
+      ],
+      "directQueryTables": [
+        "Purchase Order Intake"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Saleable Stock Buy Value vs LY %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Stock Adjustment Buy Value Exc Tax",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Adjustments"
+      ],
+      "directQueryTables": [
+        "Stock Adjustments"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Stock Adjustment Buy Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Adjustments"
+      ],
+      "directQueryTables": [
+        "Stock Adjustments"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Stock Adjustment Estimated Landed Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Adjustments"
+      ],
+      "directQueryTables": [
+        "Stock Adjustments"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Stock Adjustment Number of weeks On Site",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Adjustments"
+      ],
+      "directQueryTables": [
+        "Stock Adjustments"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Stock Adjustment Quantity",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Adjustments"
+      ],
+      "directQueryTables": [
+        "Stock Adjustments"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Stock Adjustment Retail Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Adjustments"
+      ],
+      "directQueryTables": [
+        "Stock Adjustments"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Stock Adjustment Unit Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Adjustments"
+      ],
+      "directQueryTables": [
+        "Stock Adjustments"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Stock Adjustment Unit Cost",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Adjustments"
+      ],
+      "directQueryTables": [
+        "Stock Adjustments"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Stock Adjustment Weighted Average Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Adjustments"
+      ],
+      "directQueryTables": [
+        "Stock Adjustments"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Stock Adjustment Weighted Average Cost",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Adjustments"
+      ],
+      "directQueryTables": [
+        "Stock Adjustments"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Receipt Count",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Transfers Receipted"
+      ],
+      "directQueryTables": [
+        "Stock Transfers Receipted"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Receipted Buy Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Transfers Receipted"
+      ],
+      "directQueryTables": [
+        "Stock Transfers Receipted"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Receipted Quantity",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Transfers Receipted"
+      ],
+      "directQueryTables": [
+        "Stock Transfers Receipted"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Receipted Retail Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Transfers Receipted"
+      ],
+      "directQueryTables": [
+        "Stock Transfers Receipted"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Receipted Unit Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Transfers Receipted"
+      ],
+      "directQueryTables": [
+        "Stock Transfers Receipted"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Receipted Units %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Receipted Units Extra Duty Off Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Transfers Receipted"
+      ],
+      "directQueryTables": [
+        "Stock Transfers Receipted"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Receipted Units Extra Duty On Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Transfers Receipted"
+      ],
+      "directQueryTables": [
+        "Stock Transfers Receipted"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Receipted Units Handling Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Transfers Receipted"
+      ],
+      "directQueryTables": [
+        "Stock Transfers Receipted"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Receipted Units Transportation Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Transfers Receipted"
+      ],
+      "directQueryTables": [
+        "Stock Transfers Receipted"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Receipted Weighted Average Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Transfers Receipted"
+      ],
+      "directQueryTables": [
+        "Stock Transfers Receipted"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Requested Buy Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Transfers Requested"
+      ],
+      "directQueryTables": [
+        "Stock Transfers Requested"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Requested Quantity",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Transfers Requested"
+      ],
+      "directQueryTables": [
+        "Stock Transfers Requested"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Requested Retail Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Transfers Requested"
+      ],
+      "directQueryTables": [
+        "Stock Transfers Requested"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Requested Unit Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Transfers Requested"
+      ],
+      "directQueryTables": [
+        "Stock Transfers Requested"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Requested Units Not Shipped",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Transfers Requested"
+      ],
+      "directQueryTables": [
+        "Stock Transfers Requested"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Requested Units Unreceipted",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Transfers Requested"
+      ],
+      "directQueryTables": [
+        "Stock Transfers Requested"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Requested Weighted Average Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Transfers Requested"
+      ],
+      "directQueryTables": [
+        "Stock Transfers Requested"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Shipment Count",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Transfers Shipped"
+      ],
+      "directQueryTables": [
+        "Stock Transfers Shipped"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Shipped Buy Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Transfers Shipped"
+      ],
+      "directQueryTables": [
+        "Stock Transfers Shipped"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Shipped Quantity In Transit",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Transfers Shipped"
+      ],
+      "directQueryTables": [
+        "Stock Transfers Shipped"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Shipped Quantity",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Transfers Shipped"
+      ],
+      "directQueryTables": [
+        "Stock Transfers Shipped"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Shipped Retail Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Transfers Shipped"
+      ],
+      "directQueryTables": [
+        "Stock Transfers Shipped"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Shipped Unit Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Transfers Shipped"
+      ],
+      "directQueryTables": [
+        "Stock Transfers Shipped"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Shipped Units %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Transfer Shipped Weighted Average Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Stock Transfers Shipped"
+      ],
+      "directQueryTables": [
+        "Stock Transfers Shipped"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Weeks Since Earliest Go Live Date Final FC",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 11,
+      "referencedTables": [
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "",
+      "isHidden": false
+    },
+    {
+      "name": "Go Live Option Count vs LY %",
+      "hostTable": "Product",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    }
+  ],
+  "hotTables": [
+    {
+      "table": "Date",
+      "referenceCount": 92,
+      "storageMode": "dual",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 25,
+      "optimizationPriority": "medium",
+      "reason": "Dual mode with 92 measure references"
+    },
+    {
+      "table": "Purchase Order Intake",
+      "referenceCount": 59,
+      "storageMode": "directQuery",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 39,
+      "optimizationPriority": "high",
+      "reason": "DirectQuery with 0M rows, 59 measure references"
+    },
+    {
+      "table": "Purchase Order Commitment",
+      "referenceCount": 52,
+      "storageMode": "directQuery",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 42,
+      "optimizationPriority": "high",
+      "reason": "DirectQuery with 0M rows, 52 measure references"
+    },
+    {
+      "table": "Inventory Daily Snapshot",
+      "referenceCount": 21,
+      "storageMode": "directQuery",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 15,
+      "optimizationPriority": "high",
+      "reason": "DirectQuery with 0M rows, 21 measure references"
+    },
+    {
+      "table": "WMS Inventory Daily Snapshot",
+      "referenceCount": 21,
+      "storageMode": "directQuery",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 17,
+      "optimizationPriority": "high",
+      "reason": "DirectQuery with 0M rows, 21 measure references"
+    },
+    {
+      "table": "Inventory Status",
+      "referenceCount": 17,
+      "storageMode": "dual",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 1,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Stock Adjustments",
+      "referenceCount": 10,
+      "storageMode": "directQuery",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 18,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Stock Transfers Receipted",
+      "referenceCount": 10,
+      "storageMode": "directQuery",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 30,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "WMS Stock Status Item",
+      "referenceCount": 10,
+      "storageMode": "dual",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 1,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Stock Transfers Requested",
+      "referenceCount": 7,
+      "storageMode": "directQuery",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 30,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Stock Transfers Shipped",
+      "referenceCount": 7,
+      "storageMode": "directQuery",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 30,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Daily Financial Transform",
+      "referenceCount": 4,
+      "storageMode": "dual",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 0,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Purchase Order",
+      "referenceCount": 3,
+      "storageMode": "dual",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 2,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Product",
+      "referenceCount": 1,
+      "storageMode": "directQuery",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 9,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Product Option In Final Warehouse",
+      "referenceCount": 1,
+      "storageMode": "directQuery",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 7,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Product in Final Warehouse",
+      "referenceCount": 1,
+      "storageMode": "unknown",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 0,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Option",
+      "referenceCount": 1,
+      "storageMode": "dual",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 15,
+      "optimizationPriority": "low"
+    }
+  ],
+  "statistics": {
+    "totalMeasures": 235,
+    "byComplexity": {
+      "low": 135,
+      "medium": 95,
+      "high": 5,
+      "critical": 0
+    },
+    "crossMultipleDQ": 1,
+    "avgComplexityScore": 3.2,
+    "avgContextTransitions": 0.8,
+    "avgRelationshipHops": 1.3,
+    "measuresWithFilterAll": 3,
+    "measuresWithHighSubqueries": 2
+  }
+}

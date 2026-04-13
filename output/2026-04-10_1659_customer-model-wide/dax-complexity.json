@@ -1,0 +1,2356 @@
+{
+  "version": "2.0.0",
+  "analysedAt": "2026-04-10T16:59:32.456914+00:00",
+  "modelPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/asos-data-ade-powerbi/powerbi/models/customer/ADE - Customer",
+  "measures": [
+    {
+      "name": "Average Basket Size LM",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Average Basket Size LY",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 12,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Average Customer Value LM",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Average Customer Value LY",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 12,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Average Order Frequency LM",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Average Order Frequency LY",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 12,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Average Selling Price LM",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Average Selling Price LY",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 12,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Churned MAC LM",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Churned MAC LY",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 12,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Churned YAC LM",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Churned YAC LY",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 12,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Existing MAC LM",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Existing MAC LY",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 12,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Existing YAC LM",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Existing YAC LY",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 12,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "First YAC LM",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "First YAC LY",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 12,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "New MAC LM",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "New MAC LY",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 12,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "New YAC LM",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "New YAC LY",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 12,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Quick Ratio MAC LM %",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Quick Ratio YAC LM %",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Reactivated MAC LM",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Reactivated MAC LY",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 12,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Reactivated YAC LM",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Reactivated YAC LY",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 12,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Quantity LM",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Quantity LY",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 12,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Value LY",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 12,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Value LM",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Total Customers LM",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total Customers LY",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 12,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total MAC LM",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total MAC LY",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 12,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total Orders LM",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total Orders LY",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 12,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total YAC LM",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total YAC LY",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 12,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Has Data",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 10,
+      "referencedTables": [
+        "Customer Monthly Agg",
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "",
+      "isHidden": true
+    },
+    {
+      "name": "Total Customers Dynamic",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Axis",
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": true
+    },
+    {
+      "name": "Total MAC Dynamic",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Axis",
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": true
+    },
+    {
+      "name": "Total MAC LY Dynamic",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Axis",
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": true
+    },
+    {
+      "name": "Total YAC Dynamic",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Axis",
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": true
+    },
+    {
+      "name": "Total YAC LY Dynamic",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 7,
+      "referencedTables": [
+        "Financial Month Axis",
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": true
+    },
+    {
+      "name": "Churned MAC",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Customer Activity Status Monthly"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Customer Activity Status Monthly"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Churned YAC",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Customer Activity Status Yearly"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Customer Activity Status Yearly"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Existing MAC",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Customer Activity Status Monthly"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Customer Activity Status Monthly"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Existing YAC",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Customer Activity Status Yearly"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Customer Activity Status Yearly"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "First YAC",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Customer Activity Status Yearly"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Customer Activity Status Yearly"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "New MAC",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Customer Activity Status Monthly"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Customer Activity Status Monthly"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "New YAC",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Customer Activity Status Yearly"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Customer Activity Status Yearly"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Reactivated MAC",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Customer Activity Status Monthly"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Customer Activity Status Monthly"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Reactivated YAC",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Customer Activity Status Yearly"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Customer Activity Status Yearly"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total MAC",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 7,
+      "referencedTables": [
+        "Customer Activity Status Monthly"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Customer Activity Status Monthly"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total YAC",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 6,
+      "referencedTables": [
+        "Customer Activity Status Yearly"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Customer Activity Status Yearly"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Is In Last 12 Months",
+      "hostTable": "@Measures",
+      "complexityScore": 2,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 16,
+      "referencedTables": [
+        "Financial Month Axis"
+      ],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "",
+      "isHidden": true
+    },
+    {
+      "name": "Average Basket Size YOY %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Average Basket Size",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Average Customer Value YOY %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Average Customer Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Average Order Frequency YOY %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Average Order Frequency",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Average Selling Price YOY %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Average Selling Price",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Churned MAC %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Churned MAC YOY %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Churned YAC %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Churned YAC YOY %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Existing MAC %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Existing MAC YOY %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Existing YAC %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Existing YAC YOY %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "First YAC YOY %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "New MAC %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "New MAC YOY %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "New YAC %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "New YAC YOY %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Quick Ratio MAC %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Quick Ratio MAC LY %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Quick Ratio MAC vs LY %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Quick Ratio YAC %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Quick Ratio YAC LY %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Quick Ratio YAC vs LY %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Reactivated MAC %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Reactivated MAC YOY %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Reactivated YAC %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Reactivated YAC YOY %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Quantity YOY %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Quantity",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Customer Activity Monthly"
+      ],
+      "directQueryTables": [
+        "Customer Activity Monthly"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Value YOY %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Customer Activity Monthly"
+      ],
+      "directQueryTables": [
+        "Customer Activity Monthly"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Selected FY Month",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Financial Month Year"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Financial Month Year"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "",
+      "isHidden": true
+    },
+    {
+      "name": "Total Customers Agg",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Customer Monthly Agg"
+      ],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": true
+    },
+    {
+      "name": "Total Customers Fact",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Customer Activity Monthly"
+      ],
+      "directQueryTables": [
+        "Customer Activity Monthly"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": true
+    },
+    {
+      "name": "Total Customers Forced Fact",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 6,
+      "referencedTables": [
+        "Customer Activity Monthly"
+      ],
+      "directQueryTables": [
+        "Customer Activity Monthly"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": true
+    },
+    {
+      "name": "Total Customers YOY %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Total Customers",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total MAC YOY %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Total Orders YOY %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Total Orders",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Customer Activity Monthly"
+      ],
+      "directQueryTables": [
+        "Customer Activity Monthly"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total YAC YOY %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    }
+  ],
+  "hotTables": [
+    {
+      "table": "Financial Month Year",
+      "referenceCount": 47,
+      "storageMode": "dual",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 2,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Customer Activity Status Yearly",
+      "referenceCount": 6,
+      "storageMode": "dual",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 2,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Financial Month Axis",
+      "referenceCount": 6,
+      "storageMode": "import",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 0,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Customer Activity Status Monthly",
+      "referenceCount": 5,
+      "storageMode": "dual",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 2,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Customer Activity Monthly",
+      "referenceCount": 5,
+      "storageMode": "directQuery",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 7,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Customer Monthly Agg",
+      "referenceCount": 2,
+      "storageMode": "import",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 7,
+      "optimizationPriority": "low"
+    }
+  ],
+  "statistics": {
+    "totalMeasures": 103,
+    "byComplexity": {
+      "low": 57,
+      "medium": 46,
+      "high": 0,
+      "critical": 0
+    },
+    "crossMultipleDQ": 0,
+    "avgComplexityScore": 3.3,
+    "avgContextTransitions": 0.6,
+    "avgRelationshipHops": 0.7,
+    "measuresWithFilterAll": 40,
+    "measuresWithHighSubqueries": 0
+  }
+}

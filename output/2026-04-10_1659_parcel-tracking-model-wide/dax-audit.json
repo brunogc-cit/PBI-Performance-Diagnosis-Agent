@@ -1,0 +1,241 @@
+{
+  "version": "1.0.0",
+  "analysedAt": "2026-04-10T16:59:28.679064+00:00",
+  "modelPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/asos-data-ade-powerbi/powerbi/models/Sourcing and Buying/ADE - Parcel Tracking",
+  "modelName": "ADE - Parcel Tracking",
+  "format": "json",
+  "totalMeasures": 17,
+  "measuresWithIssues": 0,
+  "measures": [
+    {
+      "name": "Shipped Number Of Weeks On Site",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 55,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Shipped Sale Buy Value Exc Tax",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 54,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Shipped Sale Buy Value Tax Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 56,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Shipped Sale Buy Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 46,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Shipped Sale Checkout Tax Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 55,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Shipped Sale Pricing Store Full Price Value Exc Tax",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 75,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Shipped Sale Pricing Store Full Price Value Tax Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 77,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Shipped Sale Pricing Store Full Price Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 67,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Shipped Sale Quantity",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 45,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Shipped Sale Tax Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 46,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Shipped Sale Unit Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 56,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Shipped Sale Value Exc Tax",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 50,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Shipped Sale Value Inc Tax",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 50,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Shipped Sale Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 42,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Shipped Sale Website Full Price Value Exc Tax",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 69,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Shipped Sale Website Full Price Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 61,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Shipped Sale Weighted Average Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 64,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    }
+  ],
+  "antiPatternSummary": [
+    {
+      "rule": "FILTER_ALL",
+      "severity": "High",
+      "count": 0
+    },
+    {
+      "rule": "IFERROR_ISERROR",
+      "severity": "High",
+      "count": 0
+    },
+    {
+      "rule": "NESTED_CALCULATE",
+      "severity": "High",
+      "count": 0
+    },
+    {
+      "rule": "REPEATED_SUBEXPRESSION",
+      "severity": "Medium",
+      "count": 0
+    },
+    {
+      "rule": "BARE_DIVISION",
+      "severity": "Medium",
+      "count": 0
+    },
+    {
+      "rule": "COUNT_VS_COUNTROWS",
+      "severity": "Medium",
+      "count": 0
+    },
+    {
+      "rule": "MISSING_FORMAT_STRING",
+      "severity": "Medium",
+      "count": 0
+    },
+    {
+      "rule": "UNQUALIFIED_COLUMNS",
+      "severity": "Low",
+      "count": 0
+    },
+    {
+      "rule": "NO_VARIABLES",
+      "severity": "Low",
+      "count": 0
+    },
+    {
+      "rule": "HARDCODED_VALUES",
+      "severity": "Low",
+      "count": 0
+    }
+  ],
+  "summary": {
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "totalIssues": 0,
+    "rulesChecked": 10,
+    "cleanMeasures": 17
+  }
+}

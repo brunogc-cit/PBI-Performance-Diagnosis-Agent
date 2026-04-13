@@ -1,0 +1,5995 @@
+{
+  "version": "2.0.0",
+  "analysedAt": "2026-04-10T16:59:40.105342+00:00",
+  "modelPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/asos-data-ade-powerbi/powerbi/models/sales/ADE - Sales",
+  "measures": [
+    {
+      "name": "Billed Sales Quantity LY",
+      "hostTable": "@Measures",
+      "complexityScore": 54,
+      "complexityLevel": "critical",
+      "complexityFactors": [
+        "7 CALCULATE",
+        "iterators: SUMX",
+        "2 table hops",
+        "7 FILTER(ALL)"
+      ],
+      "contextTransitions": 8,
+      "relationshipHops": 2,
+      "filterAllCount": 7,
+      "estimatedSQLSubqueries": 16,
+      "lineCount": 92,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Value LY",
+      "hostTable": "@Measures",
+      "complexityScore": 54,
+      "complexityLevel": "critical",
+      "complexityFactors": [
+        "7 CALCULATE",
+        "iterators: SUMX",
+        "2 table hops",
+        "7 FILTER(ALL)"
+      ],
+      "contextTransitions": 8,
+      "relationshipHops": 2,
+      "filterAllCount": 7,
+      "estimatedSQLSubqueries": 16,
+      "lineCount": 93,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Buy Value LY",
+      "hostTable": "@Measures",
+      "complexityScore": 54,
+      "complexityLevel": "critical",
+      "complexityFactors": [
+        "7 CALCULATE",
+        "iterators: SUMX",
+        "2 table hops",
+        "7 FILTER(ALL)"
+      ],
+      "contextTransitions": 8,
+      "relationshipHops": 2,
+      "filterAllCount": 7,
+      "estimatedSQLSubqueries": 16,
+      "lineCount": 92,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Quantity LY",
+      "hostTable": "@Measures",
+      "complexityScore": 54,
+      "complexityLevel": "critical",
+      "complexityFactors": [
+        "7 CALCULATE",
+        "iterators: SUMX",
+        "2 table hops",
+        "7 FILTER(ALL)"
+      ],
+      "contextTransitions": 8,
+      "relationshipHops": 2,
+      "filterAllCount": 7,
+      "estimatedSQLSubqueries": 16,
+      "lineCount": 91,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Total Realised Markdown LY",
+      "hostTable": "@Measures",
+      "complexityScore": 54,
+      "complexityLevel": "critical",
+      "complexityFactors": [
+        "7 CALCULATE",
+        "iterators: SUMX",
+        "2 table hops",
+        "7 FILTER(ALL)"
+      ],
+      "contextTransitions": 8,
+      "relationshipHops": 2,
+      "filterAllCount": 7,
+      "estimatedSQLSubqueries": 16,
+      "lineCount": 92,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Value LY",
+      "hostTable": "@Measures",
+      "complexityScore": 54,
+      "complexityLevel": "critical",
+      "complexityFactors": [
+        "7 CALCULATE",
+        "iterators: SUMX",
+        "2 table hops",
+        "7 FILTER(ALL)"
+      ],
+      "contextTransitions": 8,
+      "relationshipHops": 2,
+      "filterAllCount": 7,
+      "estimatedSQLSubqueries": 16,
+      "lineCount": 92,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Return Quantity LY",
+      "hostTable": "@Measures",
+      "complexityScore": 54,
+      "complexityLevel": "critical",
+      "complexityFactors": [
+        "7 CALCULATE",
+        "iterators: SUMX",
+        "2 table hops",
+        "7 FILTER(ALL)"
+      ],
+      "contextTransitions": 8,
+      "relationshipHops": 2,
+      "filterAllCount": 7,
+      "estimatedSQLSubqueries": 16,
+      "lineCount": 91,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Return Value LY",
+      "hostTable": "@Measures",
+      "complexityScore": 54,
+      "complexityLevel": "critical",
+      "complexityFactors": [
+        "7 CALCULATE",
+        "iterators: SUMX",
+        "2 table hops",
+        "7 FILTER(ALL)"
+      ],
+      "contextTransitions": 8,
+      "relationshipHops": 2,
+      "filterAllCount": 7,
+      "estimatedSQLSubqueries": 16,
+      "lineCount": 93,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Quantity LM",
+      "hostTable": "@Measures",
+      "complexityScore": 45,
+      "complexityLevel": "critical",
+      "complexityFactors": [
+        "6 CALCULATE",
+        "iterators: SUMX",
+        "6 FILTER(ALL)"
+      ],
+      "contextTransitions": 7,
+      "relationshipHops": 1,
+      "filterAllCount": 6,
+      "estimatedSQLSubqueries": 14,
+      "lineCount": 78,
+      "referencedTables": [
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Value LM",
+      "hostTable": "@Measures",
+      "complexityScore": 45,
+      "complexityLevel": "critical",
+      "complexityFactors": [
+        "6 CALCULATE",
+        "iterators: SUMX",
+        "6 FILTER(ALL)"
+      ],
+      "contextTransitions": 7,
+      "relationshipHops": 1,
+      "filterAllCount": 6,
+      "estimatedSQLSubqueries": 14,
+      "lineCount": 78,
+      "referencedTables": [
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Quantity LM",
+      "hostTable": "@Measures",
+      "complexityScore": 45,
+      "complexityLevel": "critical",
+      "complexityFactors": [
+        "6 CALCULATE",
+        "iterators: SUMX",
+        "6 FILTER(ALL)"
+      ],
+      "contextTransitions": 7,
+      "relationshipHops": 1,
+      "filterAllCount": 6,
+      "estimatedSQLSubqueries": 14,
+      "lineCount": 78,
+      "referencedTables": [
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Value LM",
+      "hostTable": "@Measures",
+      "complexityScore": 45,
+      "complexityLevel": "critical",
+      "complexityFactors": [
+        "6 CALCULATE",
+        "iterators: SUMX",
+        "6 FILTER(ALL)"
+      ],
+      "contextTransitions": 7,
+      "relationshipHops": 1,
+      "filterAllCount": 6,
+      "estimatedSQLSubqueries": 14,
+      "lineCount": 78,
+      "referencedTables": [
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Return Quantity LM",
+      "hostTable": "@Measures",
+      "complexityScore": 45,
+      "complexityLevel": "critical",
+      "complexityFactors": [
+        "6 CALCULATE",
+        "iterators: SUMX",
+        "6 FILTER(ALL)"
+      ],
+      "contextTransitions": 7,
+      "relationshipHops": 1,
+      "filterAllCount": 6,
+      "estimatedSQLSubqueries": 14,
+      "lineCount": 78,
+      "referencedTables": [
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Return Value LM",
+      "hostTable": "@Measures",
+      "complexityScore": 45,
+      "complexityLevel": "critical",
+      "complexityFactors": [
+        "6 CALCULATE",
+        "iterators: SUMX",
+        "6 FILTER(ALL)"
+      ],
+      "contextTransitions": 7,
+      "relationshipHops": 1,
+      "filterAllCount": 6,
+      "estimatedSQLSubqueries": 14,
+      "lineCount": 78,
+      "referencedTables": [
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Total Customers LM",
+      "hostTable": "@Measures",
+      "complexityScore": 45,
+      "complexityLevel": "critical",
+      "complexityFactors": [
+        "6 CALCULATE",
+        "iterators: SUMX",
+        "6 FILTER(ALL)"
+      ],
+      "contextTransitions": 7,
+      "relationshipHops": 1,
+      "filterAllCount": 6,
+      "estimatedSQLSubqueries": 14,
+      "lineCount": 78,
+      "referencedTables": [
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Buy Value WTD",
+      "hostTable": "@Measures",
+      "complexityScore": 44,
+      "complexityLevel": "critical",
+      "complexityFactors": [
+        "7 CALCULATE",
+        "iterators: SUMX",
+        "5 FILTER(ALL)"
+      ],
+      "contextTransitions": 8,
+      "relationshipHops": 1,
+      "filterAllCount": 5,
+      "estimatedSQLSubqueries": 14,
+      "lineCount": 72,
+      "referencedTables": [
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Quantity WTD",
+      "hostTable": "@Measures",
+      "complexityScore": 44,
+      "complexityLevel": "critical",
+      "complexityFactors": [
+        "7 CALCULATE",
+        "iterators: SUMX",
+        "5 FILTER(ALL)"
+      ],
+      "contextTransitions": 8,
+      "relationshipHops": 1,
+      "filterAllCount": 5,
+      "estimatedSQLSubqueries": 14,
+      "lineCount": 72,
+      "referencedTables": [
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Value WTD",
+      "hostTable": "@Measures",
+      "complexityScore": 44,
+      "complexityLevel": "critical",
+      "complexityFactors": [
+        "7 CALCULATE",
+        "iterators: SUMX",
+        "5 FILTER(ALL)"
+      ],
+      "contextTransitions": 8,
+      "relationshipHops": 1,
+      "filterAllCount": 5,
+      "estimatedSQLSubqueries": 14,
+      "lineCount": 72,
+      "referencedTables": [
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Quantity O/U Index Parent %",
+      "hostTable": "@Measures",
+      "complexityScore": 39,
+      "complexityLevel": "critical",
+      "complexityFactors": [
+        "13 CALCULATE"
+      ],
+      "contextTransitions": 13,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 14,
+      "lineCount": 123,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": true
+    },
+    {
+      "name": "Return Quantity O/U Index Parent %",
+      "hostTable": "@Measures",
+      "complexityScore": 39,
+      "complexityLevel": "critical",
+      "complexityFactors": [
+        "13 CALCULATE"
+      ],
+      "contextTransitions": 13,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 14,
+      "lineCount": 124,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": true
+    },
+    {
+      "name": "Return Rate Quantity Parent %",
+      "hostTable": "@Measures",
+      "complexityScore": 39,
+      "complexityLevel": "critical",
+      "complexityFactors": [
+        "13 CALCULATE"
+      ],
+      "contextTransitions": 13,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 14,
+      "lineCount": 107,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": true
+    },
+    {
+      "name": "Return Spike Latest Week %",
+      "hostTable": "@Measures",
+      "complexityScore": 12,
+      "complexityLevel": "high",
+      "complexityFactors": [
+        "3 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 3,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 5,
+      "lineCount": 28,
+      "referencedTables": [
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": true
+    },
+    {
+      "name": "Retail Sales Quantity YD-1",
+      "hostTable": "@Measures",
+      "complexityScore": 9,
+      "complexityLevel": "high",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "iterators: MAXX",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 4,
+      "lineCount": 17,
+      "referencedTables": [
+        "Time Period"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Time Period"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Value YD-1",
+      "hostTable": "@Measures",
+      "complexityScore": 9,
+      "complexityLevel": "high",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "iterators: MAXX",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 4,
+      "lineCount": 17,
+      "referencedTables": [
+        "Time Period"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Time Period"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Return Spike %",
+      "hostTable": "@Measures",
+      "complexityScore": 9,
+      "complexityLevel": "high",
+      "complexityFactors": [
+        "3 CALCULATE"
+      ],
+      "contextTransitions": 3,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 4,
+      "lineCount": 54,
+      "referencedTables": [
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": true
+    },
+    {
+      "name": "Total Customers YD-1",
+      "hostTable": "@Measures",
+      "complexityScore": 9,
+      "complexityLevel": "high",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "iterators: MAXX",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 4,
+      "lineCount": 17,
+      "referencedTables": [
+        "Time Period"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Time Period"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Total Orders LM",
+      "hostTable": "@Measures",
+      "complexityScore": 9,
+      "complexityLevel": "high",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "iterators: SUMX",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 4,
+      "lineCount": 17,
+      "referencedTables": [
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total Orders YD-1",
+      "hostTable": "@Measures",
+      "complexityScore": 9,
+      "complexityLevel": "high",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "iterators: MAXX",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 4,
+      "lineCount": 17,
+      "referencedTables": [
+        "Time Period"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Time Period"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Quantity LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 27,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Value LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 27,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Value LY-1",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 22,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Buy Value HTD",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 24,
+      "referencedTables": [
+        "Daily Financial Half to Date",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Half to Date",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Buy Value LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 27,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Buy Value LY",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 21,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Buy Value YTD",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 24,
+      "referencedTables": [
+        "Daily Financial Year to Date",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Quantity HTD",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 24,
+      "referencedTables": [
+        "Daily Financial Half to Date",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Half to Date",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Quantity LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 27,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Quantity LY",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 21,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Quantity YTD",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 24,
+      "referencedTables": [
+        "Daily Financial Year to Date",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Total Realised Markdown LY",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 21,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Value HTD",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 24,
+      "referencedTables": [
+        "Daily Financial Half to Date",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Half to Date",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Value LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 27,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Value LY",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 21,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Value YTD",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 24,
+      "referencedTables": [
+        "Daily Financial Year to Date",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Return Quantity LY",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 21,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Order Count LY",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 21,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Quantity HTD",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 24,
+      "referencedTables": [
+        "Daily Financial Half to Date",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Half to Date",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Quantity LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 27,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Reduced Value LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 26,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Reduced Value LY-1",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 22,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Reduced Value LY",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 27,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Value LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 27,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Value LY-1",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 22,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Return Quantity HTD",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 24,
+      "referencedTables": [
+        "Daily Financial Half to Date",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Half to Date",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Return Quantity LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 27,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Return Reduced Value LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 27,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Return Reduced Value LY-1",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 22,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Return Reduced Value LY",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 21,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Return Value LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 27,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Return Value LY-1",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 22,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Total Customers LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 27,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total Orders LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 27,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total Realised Markdown % (of Buy Value) LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 27,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Total Realised Markdown % (of Buy Value) LY",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 21,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Total Realised Markdown % (of Retail Sales Value) LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 27,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Total Realised Markdown % (of Retail Sales Value) LY",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 21,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Quantity Last Year",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 7,
+      "referencedTables": [
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": true
+    },
+    {
+      "name": "Retail Sales Value Last Year",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 7,
+      "referencedTables": [
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": true
+    },
+    {
+      "name": "Total Customers Last Year",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 7,
+      "referencedTables": [
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": true
+    },
+    {
+      "name": "Total Orders Last Year",
+      "hostTable": "@Measures",
+      "complexityScore": 7,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 7,
+      "referencedTables": [
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": true
+    },
+    {
+      "name": "Option Count (Returns Physical>0)",
+      "hostTable": "@Measures",
+      "complexityScore": 5,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 3,
+      "referencedTables": [
+        "Option",
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [
+        "Option"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Option Count (Returns>0)",
+      "hostTable": "@Measures",
+      "complexityScore": 5,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 3,
+      "referencedTables": [
+        "Option",
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [
+        "Option"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Option Count (Sales>0)",
+      "hostTable": "@Measures",
+      "complexityScore": 5,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 3,
+      "referencedTables": [
+        "Billed Sale",
+        "Option"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [
+        "Option"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Total Customers LY",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 16,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total Orders LY",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 16,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Order Count",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Quantity Today",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Time Period"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Time Period"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Quantity Yesterday",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Time Period"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Time Period"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Value Today",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Time Period"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Time Period"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Value Yesterday",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Time Period"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Time Period"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Return Order Count",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Sales Mix %",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Total Customers Today",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Time Period"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Time Period"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Total Customers Yesterday",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Time Period"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Time Period"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Total Orders Today",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Time Period"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Time Period"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Total Orders Yesterday",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Time Period"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Time Period"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Date Available Upto",
+      "hostTable": "@Dataset Metadata",
+      "complexityScore": 2,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 7,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Return Rate Quantity %",
+      "hostTable": "@Measures",
+      "complexityScore": 2,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "2 table hops"
+      ],
+      "contextTransitions": 0,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [
+        "Billed Sale",
+        "Return"
+      ],
+      "directQueryTables": [
+        "Billed Sale",
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": true,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Return Rate Value %",
+      "hostTable": "@Measures",
+      "complexityScore": 2,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "2 table hops"
+      ],
+      "contextTransitions": 0,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [
+        "Billed Sale",
+        "Return"
+      ],
+      "directQueryTables": [
+        "Billed Sale",
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": true,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Weeks Since Go Live Date by FC",
+      "hostTable": "@Measures",
+      "complexityScore": 2,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 11,
+      "referencedTables": [
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "",
+      "isHidden": false
+    },
+    {
+      "name": "Accepted Quantity",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Online Return"
+      ],
+      "directQueryTables": [
+        "Online Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": true
+    },
+    {
+      "name": "Average Basket Size (ABS) LM",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Average Basket Size (ABS) LW",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Average Basket Size (ABS) LY",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Average Basket Size (ABS) WOW%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Average Basket Size (ABS) YOY%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Average Basket Size (ABS)",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Average Basket Value (ABV) LM",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Average Basket Value (ABV) LW",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Average Basket Value (ABV) LY",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Average Basket Value (ABV) WOW%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Average Basket Value (ABV) YOY%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Average Basket Value (ABV)",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Average Customer Value (ACV) LM",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Average Customer Value (ACV) LW",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Average Customer Value (ACV) LY",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Average Customer Value (ACV) WOW%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Average Customer Value (ACV) YOY%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Average Customer Value (ACV)",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Average Order Frequency (AOF) LM",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Average Order Frequency (AOF) LW",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Average Order Frequency (AOF) LY",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Average Order Frequency (AOF) WOW%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Average Order Frequency (AOF) YOY%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Average Order Frequency (AOF)",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Average Selling Price (ASP) LM",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Average Selling Price (ASP) LW",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Average Selling Price (ASP) LY",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Average Selling Price (ASP) WOW%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Average Selling Price (ASP) YOY%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 4,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Average Selling Price (ASP)",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Buy Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Checkout Tax Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Clearance Tax Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Clearance Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Discount Tax Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Discount Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Pricing Store Full Price Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Promotion Tax Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Promotion Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Quantity WOW%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Quantity YOY%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Quantity",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Reduced Tax Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Reduced Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Tax Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Value WOW%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Value YOY%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Value vs LY-1%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Billed Sales Weighted Average Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Cancelled Quantity",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Online Return"
+      ],
+      "directQueryTables": [
+        "Online Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": true
+    },
+    {
+      "name": "Days between Drop off Booked and Cancellation",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Online Return"
+      ],
+      "directQueryTables": [
+        "Online Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0;-#,##0.0",
+      "isHidden": true
+    },
+    {
+      "name": "Days between Drop off Booked and Scan",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Online Return"
+      ],
+      "directQueryTables": [
+        "Online Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0;-#,##0.0",
+      "isHidden": true
+    },
+    {
+      "name": "Days between Order Date and Return Accepted",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Online Return"
+      ],
+      "directQueryTables": [
+        "Online Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0;-#,##0.0",
+      "isHidden": true
+    },
+    {
+      "name": "Days between Return Accepted and Cancellation",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Online Return"
+      ],
+      "directQueryTables": [
+        "Online Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0;-#,##0.0",
+      "isHidden": true
+    },
+    {
+      "name": "Days between Return Accepted and Drop off Booked",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Online Return"
+      ],
+      "directQueryTables": [
+        "Online Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0;-#,##0.0",
+      "isHidden": true
+    },
+    {
+      "name": "Days between Return Accepted and Scan",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Online Return"
+      ],
+      "directQueryTables": [
+        "Online Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0;-#,##0.0",
+      "isHidden": true
+    },
+    {
+      "name": "Days between Scan and Cancellation",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Online Return"
+      ],
+      "directQueryTables": [
+        "Online Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0;-#,##0.0",
+      "isHidden": true
+    },
+    {
+      "name": "Net Retail Sales Quantity (Physical Returns)",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Net Retail Sales Value (Physical Returns)",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Number of Weeks On Site (Billed Fact)",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Number of Weeks On Site Since Return",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Quantity O/U Index %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Buy Quantity WOW%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Buy Value LY%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Buy Value WOW%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Buy Value YOY%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Buy Value vs LW",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Buy Value vs LY",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Buy Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Quantity LY%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Quantity YOY%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Quantity vs LW",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Quantity vs LY",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Quantity",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Reduced Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Total Realised Markdown %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Total Realised Markdown LY%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Total Realised Markdown",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Value LY%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Value WOW%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Value YOY%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Value vs LW",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Value vs LY",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Return Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Physical Returns Sales Value %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Retention Quantity",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Retention Rate Quantity %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Retention Rate Value %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Retention Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Return Buy Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Return Quantity",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Return Rate Quantity LY%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Return Reduced Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Return Total Realised Markdown %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Return Total Realised Markdown",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Return Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sale Margin %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sale Total Realised Markdown %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sale Total Realised Markdown LY%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Buy Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Margin",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Quantity WOW%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Quantity YOY%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Quantity vs YD %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Quantity vs YD-1 %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Quantity vs YD-1",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Quantity vs YD",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Quantity",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Reduced Value WOW%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Reduced Value YOY%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Reduced Value vs LY-1%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Reduced Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Total Realised Markdown",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Value WOW%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Value YOY%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Value vs LY-1%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Value vs YD %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Value vs YD-1 %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Value vs YD-1",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Value vs YD",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retail Sales Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Retention Quantity",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Retention Rate Quantity %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retention Rate Value %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Retention Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Return Buy Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Return Checkout Tax Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Return Clearance Tax Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Return Clearance Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Return Discount Tax Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Return Discount Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Return Physical Quantity",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Return Pricing Store Full Price Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Return Promotion Tax Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Return Promotion Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Return Quantity % HTD",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Return Quantity",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;(#,##0)",
+      "isHidden": false
+    },
+    {
+      "name": "Return Rate Quantity %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Return Rate Quantity O/U index %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Return Rate Value %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Return Reduced Tax Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Return Reduced Value WOW%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Return Reduced Value YOY%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Return Reduced Value vs LY-1%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Return Reduced Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Return Spike Flag Latest Week",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "",
+      "isHidden": true
+    },
+    {
+      "name": "Return Spike Flag",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "",
+      "isHidden": true
+    },
+    {
+      "name": "Return Tax Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Return Value LW%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Return Value LY%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Return Value LY-1%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Return Value vs LY-1%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Return Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Return"
+      ],
+      "directQueryTables": [
+        "Return"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£ #,##0.00;-£ #,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Total Customers WOW%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Total Customers YOY%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Total Customers vs YD %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Total Customers vs YD-1 %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Total Customers vs YD-1",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Total Customers vs YD",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Total Customers",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total Orders WOW%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Total Orders YOY%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Total Orders vs YD %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Total Orders vs YD-1 %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Total Orders vs YD-1",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Total Orders vs YD",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.00;-#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Total Orders",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Billed Sale"
+      ],
+      "directQueryTables": [
+        "Billed Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total Products",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Product"
+      ],
+      "directQueryTables": [
+        "Product"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total Realised Markdown % (of Buy Value) WOW%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Total Realised Markdown % (of Buy Value) YOY%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Total Realised Markdown % (of Buy Value) vs LW",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Total Realised Markdown % (of Buy Value) vs LY",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Total Realised Markdown % (of Buy Value)",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Total Realised Markdown % (of Retail Sales Value) WOW%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Total Realised Markdown % (of Retail Sales Value) YOY%",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Total Realised Markdown % (of Retail Sales Value) vs LW",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Total Realised Markdown % (of Retail Sales Value) vs LY",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    },
+    {
+      "name": "Total Realised Markdown % (of Retail Sales Value)",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0 %;-#,##0.0 %",
+      "isHidden": false
+    }
+  ],
+  "hotTables": [
+    {
+      "table": "Date",
+      "referenceCount": 66,
+      "storageMode": "dual",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 14,
+      "optimizationPriority": "medium",
+      "reason": "Dual mode with 66 measure references"
+    },
+    {
+      "table": "Daily Financial Transform",
+      "referenceCount": 40,
+      "storageMode": "dual",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 1,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Billed Sale",
+      "referenceCount": 31,
+      "storageMode": "directQuery",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 24,
+      "optimizationPriority": "high",
+      "reason": "DirectQuery with 0M rows, 31 measure references"
+    },
+    {
+      "table": "Return",
+      "referenceCount": 31,
+      "storageMode": "directQuery",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 24,
+      "optimizationPriority": "high",
+      "reason": "DirectQuery with 0M rows, 31 measure references"
+    },
+    {
+      "table": "Time Period",
+      "referenceCount": 12,
+      "storageMode": "dual",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 1,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Online Return",
+      "referenceCount": 9,
+      "storageMode": "directQuery",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 14,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Daily Financial Half to Date",
+      "referenceCount": 5,
+      "storageMode": "dual",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 1,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Option",
+      "referenceCount": 3,
+      "storageMode": "dual",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 9,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Daily Financial Year to Date",
+      "referenceCount": 3,
+      "storageMode": "unknown",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 0,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Product",
+      "referenceCount": 1,
+      "storageMode": "directQuery",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 5,
+      "optimizationPriority": "low"
+    }
+  ],
+  "statistics": {
+    "totalMeasures": 270,
+    "byComplexity": {
+      "low": 195,
+      "medium": 47,
+      "high": 7,
+      "critical": 21
+    },
+    "crossMultipleDQ": 2,
+    "avgComplexityScore": 5.4,
+    "avgContextTransitions": 0.9,
+    "avgRelationshipHops": 0.7,
+    "measuresWithFilterAll": 66,
+    "measuresWithHighSubqueries": 22
+  }
+}

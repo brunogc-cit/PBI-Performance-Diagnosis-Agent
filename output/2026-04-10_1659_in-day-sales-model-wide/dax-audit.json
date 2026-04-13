@@ -1,0 +1,5475 @@
+{
+  "version": "1.0.0",
+  "analysedAt": "2026-04-10T16:59:35.194277+00:00",
+  "modelPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/asos-data-ade-powerbi/powerbi/models/sales/ADE - In Day Sales",
+  "modelName": "ADE - In Day Sales",
+  "format": "json",
+  "totalMeasures": 283,
+  "measuresWithIssues": 215,
+  "measures": [
+    {
+      "name": "Cutoff Hour Title",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": false,
+      "expressionLength": 467,
+      "lineCount": 16,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Metric Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 7
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Today\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 8
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "AFS Sales Selected Period LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 670,
+      "lineCount": 15,
+      "issues": [
+        {
+          "rule": "NESTED_CALCULATE",
+          "severity": "High",
+          "message": "Contains 5 CALCULATE calls -- likely deeply nested, harming readability and performance",
+          "fix": "Extract inner calculations into VAR variables or separate measures to reduce nesting",
+          "line": 9
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [AFS Sales] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 9
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday LY\", = \"WTD LY\", = \"MTD LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 9
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Cutoff Hour",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 447,
+      "lineCount": 16,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Metric Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 7
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Today\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 8
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Existing Customers LW IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 229,
+      "lineCount": 5,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Demand Sale Current Day'[dim_' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 5 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Last Week\", = \"Active\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Existing Customers Today IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 225,
+      "lineCount": 5,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Demand Sale Current Day'[dim_' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 5 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Today\", = \"Active\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Existing Customers Yesterday IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 229,
+      "lineCount": 5,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Demand Sale Current Day'[dim_' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 5 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday\", = \"Active\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Existing Customers Yesterday LY IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 239,
+      "lineCount": 5,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Demand Sale Current Day'[dim_' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 5 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday Last Year\", = \"Active\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Existing Customers",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 166,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Demand Sale Current Day'[dim_' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Active\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Forecast Sales Value Inc Tax (To Cutoff Hour)",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 531,
+      "lineCount": 19,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Cutoff Hour], [_Is Forecast Dimension Filtered] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 4
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"SALES\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 10
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Metric Value Compare (To Cutoff Hour)",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": false,
+      "expressionLength": 289,
+      "lineCount": 10,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Cutoff Hour], [Metric Value Compare] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "New Customers LW IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 226,
+      "lineCount": 5,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Demand Sale Current Day'[dim_' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 5 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Last Week\", = \"New\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "New Customers LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 226,
+      "lineCount": 5,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Demand Sale Current Day'[dim_' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 5 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Last Year\", = \"New\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "New Customers Today IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 222,
+      "lineCount": 5,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Demand Sale Current Day'[dim_' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 5 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Today\", = \"New\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "New Customers Yesterday IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 226,
+      "lineCount": 5,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Demand Sale Current Day'[dim_' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 5 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday\", = \"New\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "New Customers Yesterday LY IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 236,
+      "lineCount": 5,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Demand Sale Current Day'[dim_' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 5 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday Last Year\", = \"New\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "New Customers",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 163,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Demand Sale Current Day'[dim_' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"New\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Sales Comparison Period",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": false,
+      "expressionLength": 1229,
+      "lineCount": 45,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Cutoff Hour], [Sales LW], [Sales Today], [Sales Yesterday] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 6
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "TRM % LW IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 195,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Sales Value Inc Tax LW IDS] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 6
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Last Week\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 4
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "TRM % Today IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 194,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Sales Value Inc Tax Today IDS] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 6
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Today\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 4
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "TRM % Yesterday IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 202,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Sales Value Inc Tax Yesterday IDS] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 6
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 4
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "TRM % Yesterday LY IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 215,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Sales Value Inc Tax Yesterday LY IDS] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 6
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday Last Year\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 4
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Total Realized Markdown (TRM) LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 107,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Realised Markdown] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Last Week\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Total Realized Markdown (TRM) LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 107,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Realised Markdown] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Last Year\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Total Realized Markdown (TRM) Today",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 103,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Realised Markdown] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Today\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Total Realized Markdown (TRM) Yesterday LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 117,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Realised Markdown] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday Last Year\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Total Realized Markdown (TRM) Yesterday",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 107,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Realised Markdown] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "AFS Sales HTD LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 79,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [AFS Sales] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"HTD LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "AFS Sales HTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 76,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [AFS Sales] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"HTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "AFS Sales LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 85,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [AFS Sales] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "AFS Sales MTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 76,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [AFS Sales] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"MTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "AFS Sales WTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 76,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [AFS Sales] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"WTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "AFS Sales YTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 76,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [AFS Sales] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"YTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "AFS Sales Yesterday",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 82,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [AFS Sales] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Average Basket Size (ABS) Selected Period LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 750,
+      "lineCount": 15,
+      "issues": [
+        {
+          "rule": "NESTED_CALCULATE",
+          "severity": "High",
+          "message": "Contains 5 CALCULATE calls -- likely deeply nested, harming readability and performance",
+          "fix": "Extract inner calculations into VAR variables or separate measures to reduce nesting",
+          "line": 9
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday LY\", = \"WTD LY\", = \"MTD LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 9
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Average Basket Size (ABS)",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 75,
+      "lineCount": 5,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Orders Order Line], [Units Sold Order Line] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 5 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Average Basket Value (ABV) Order Line Selected Period LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 810,
+      "lineCount": 15,
+      "issues": [
+        {
+          "rule": "NESTED_CALCULATE",
+          "severity": "High",
+          "message": "Contains 5 CALCULATE calls -- likely deeply nested, harming readability and performance",
+          "fix": "Extract inner calculations into VAR variables or separate measures to reduce nesting",
+          "line": 9
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday LY\", = \"WTD LY\", = \"MTD LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 9
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Average Basket Value (ABV) Order Line",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 89,
+      "lineCount": 5,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Orders Order Line] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 3
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 5 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Average Selling Price (ASP) Order Line Selected Period LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 815,
+      "lineCount": 15,
+      "issues": [
+        {
+          "rule": "NESTED_CALCULATE",
+          "severity": "High",
+          "message": "Contains 5 CALCULATE calls -- likely deeply nested, harming readability and performance",
+          "fix": "Extract inner calculations into VAR variables or separate measures to reduce nesting",
+          "line": 9
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday LY\", = \"WTD LY\", = \"MTD LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 9
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Average Selling Price (ASP) Order Line",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 93,
+      "lineCount": 5,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Units Sold Order Line] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 3
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 5 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Average Selling Price (ASP) Selected Period",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 368,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Sales Selected Period], [Units Selected Period] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 8
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Card Title Period",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": false,
+      "expressionLength": 30,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Selected Period Name] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Card Title Today",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": false,
+      "expressionLength": 33,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Selected Metric Name] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Chart Line Title",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": false,
+      "expressionLength": 348,
+      "lineCount": 8,
+      "issues": [
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Selected Metric Name], [Selected Period Name], [_Is Forecast Dimension Filtered] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 4
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Chart Line Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": false,
+      "expressionLength": 471,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Forecast Sales Value Inc Tax], [Metric Value], [Metric Value Compare] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 10
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Date Title",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": false,
+      "expressionLength": 109,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Cutoff Hour Title] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Gross Merchandise Value (GMV) Sales Selected Period LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 800,
+      "lineCount": 15,
+      "issues": [
+        {
+          "rule": "NESTED_CALCULATE",
+          "severity": "High",
+          "message": "Contains 5 CALCULATE calls -- likely deeply nested, harming readability and performance",
+          "fix": "Extract inner calculations into VAR variables or separate measures to reduce nesting",
+          "line": 9
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday LY\", = \"WTD LY\", = \"MTD LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 9
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Gross Sales RSV Margin % Selected Period LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 745,
+      "lineCount": 15,
+      "issues": [
+        {
+          "rule": "NESTED_CALCULATE",
+          "severity": "High",
+          "message": "Contains 5 CALCULATE calls -- likely deeply nested, harming readability and performance",
+          "fix": "Extract inner calculations into VAR variables or separate measures to reduce nesting",
+          "line": 9
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday LY\", = \"WTD LY\", = \"MTD LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 9
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Gross Sales RSV Margin %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 101,
+      "lineCount": 5,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Retail Sale Unit Margin], [Retail Selling Channel Sale Value Exc Tax] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 5 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Metric Value Compare",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": false,
+      "expressionLength": 1442,
+      "lineCount": 52,
+      "issues": [
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Orders LW], [Orders LY], [Orders Yesterday], [Orders Yesterday LY], [Sales LW] ... (+3 more) -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 14
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Metric Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": false,
+      "expressionLength": 306,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Orders Today], [Sales Today] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 9
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Orders LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 138,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Last Week\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Orders LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 138,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Last Year\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Orders Today",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 134,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Today\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Orders Yesterday LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 148,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday Last Year\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Orders Yesterday",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 138,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Partner Fulfills (PF) Sales Selected Period LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 760,
+      "lineCount": 15,
+      "issues": [
+        {
+          "rule": "NESTED_CALCULATE",
+          "severity": "High",
+          "message": "Contains 5 CALCULATE calls -- likely deeply nested, harming readability and performance",
+          "fix": "Extract inner calculations into VAR variables or separate measures to reduce nesting",
+          "line": 9
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday LY\", = \"WTD LY\", = \"MTD LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 9
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Retail Sales Quantity Mix %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 121,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Units Sold Order Line] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Retail Sales Value (RSV) Selected Period LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 745,
+      "lineCount": 15,
+      "issues": [
+        {
+          "rule": "NESTED_CALCULATE",
+          "severity": "High",
+          "message": "Contains 5 CALCULATE calls -- likely deeply nested, harming readability and performance",
+          "fix": "Extract inner calculations into VAR variables or separate measures to reduce nesting",
+          "line": 9
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday LY\", = \"WTD LY\", = \"MTD LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 9
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Sales Exc Tax LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 132,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Last Week\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Sales Exc Tax LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 132,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Last Year\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Sales Exc Tax Today",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 129,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Today\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Sales Exc Tax Yesterday LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 142,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday Last Year\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Sales Exc Tax Yesterday",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 132,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Sales LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 132,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Last Week\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Sales LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 132,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Last Year\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Sales Title",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": false,
+      "expressionLength": 39,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Selected Period Name Today] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Sales Today",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 128,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Today\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Sales Unit Margin LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 130,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Last Week\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Sales Unit Margin LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 130,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Last Year\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Sales Unit Margin Today",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 126,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Today\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Sales Unit Margin Yesterday LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 140,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday Last Year\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Sales Unit Margin Yesterday",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 130,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Sales Value Inc Tax LW IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 131,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Last Week\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Sales Value Inc Tax LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 131,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Last Year\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Sales Value Inc Tax Today IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 127,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Today\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Sales Value Inc Tax Yesterday IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 131,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Sales Value Inc Tax Yesterday LY IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 141,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday Last Year\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Sales Yesterday LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 142,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday Last Year\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Sales Yesterday",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 132,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Selected Metric Name",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": false,
+      "expressionLength": 59,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Selected Period Name Today",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": false,
+      "expressionLength": 79,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Selected Period Name",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": false,
+      "expressionLength": 76,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Total Realized Markdown (TRM) % RSV Selected Period LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 800,
+      "lineCount": 15,
+      "issues": [
+        {
+          "rule": "NESTED_CALCULATE",
+          "severity": "High",
+          "message": "Contains 5 CALCULATE calls -- likely deeply nested, harming readability and performance",
+          "fix": "Extract inner calculations into VAR variables or separate measures to reduce nesting",
+          "line": 9
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday LY\", = \"WTD LY\", = \"MTD LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 9
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Total Realized Markdown (TRM) % RSV",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 89,
+      "lineCount": 5,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Realised Markdown Order Line] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 5 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Total Realized Markdown (TRM) % Selected Period",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 648,
+      "lineCount": 26,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Realised Markdown] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 9
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Unit Cost Value LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 127,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Last Week\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Unit Cost Value LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 127,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Last Year\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Unit Cost Value Today",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 123,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Today\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Unit Cost Value Yesterday LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 137,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday Last Year\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Unit Cost Value Yesterday",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 127,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Units LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 127,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Last Week\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Units LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 127,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Last Year\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Units Today",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 123,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Today\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Units Yesterday LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 137,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday Last Year\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Units Yesterday",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 127,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Date Available Upto",
+      "table": "@Dataset Metadata",
+      "isHidden": false,
+      "hasFormatString": false,
+      "expressionLength": 202,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "ABV vs Period % IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 73,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [ABV Selected Period IDS] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "ABV",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 39,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Orders], [Sales Value Inc Tax] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "AFS Sales Compare Label",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 494,
+      "lineCount": 27,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [AFS Sales Selected Period], [AFS Sales Selected Period LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "AFS Sales Compare",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 142,
+      "lineCount": 8,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [AFS Sales Selected Period], [AFS Sales Selected Period LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "AFS Sales Selected Period",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 315,
+      "lineCount": 15,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [AFS Sales HTD], [AFS Sales MTD], [AFS Sales WTD], [AFS Sales YTD], [AFS Sales Yesterday] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 9
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "AFS Sales vs LY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 111,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [AFS Sales LY], [AFS Sales Yesterday] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "AFS Sales vs LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 87,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [AFS Sales LY], [AFS Sales Yesterday] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Basket Size (ABS) HTD LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 95,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"HTD LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Basket Size (ABS) HTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 92,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"HTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Basket Size (ABS) LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 101,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Basket Size (ABS) MTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 92,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"MTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Basket Size (ABS) WTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 92,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"WTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Basket Size (ABS) YTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 92,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"YTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Basket Size (ABS) Yesterday",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 98,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Basket Value (ABV) LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 31,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Orders LW], [Sales LW] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Basket Value (ABV) LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 31,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Orders LY], [Sales LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Basket Value (ABV) Order Line HTD LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 107,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"HTD LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Basket Value (ABV) Order Line HTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 104,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"HTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Basket Value (ABV) Order Line LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 113,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Basket Value (ABV) Order Line MTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 104,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"MTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Basket Value (ABV) Order Line WTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 104,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"WTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Basket Value (ABV) Order Line YTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 104,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"YTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Basket Value (ABV) Order Line Yesterday",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 110,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Basket Value (ABV) Today",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 37,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Orders Today], [Sales Today] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Basket Value (ABV) Yesterday LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 51,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Orders Yesterday LY], [Sales Yesterday LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Basket Value (ABV) Yesterday",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 45,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Orders Yesterday], [Sales Yesterday] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Selling Price (ASP) LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 30,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Sales LW], [Units LW] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Selling Price (ASP) LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 30,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Sales LY], [Units LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Selling Price (ASP) Order Line HTD LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 108,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"HTD LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Selling Price (ASP) Order Line HTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 105,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"HTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Selling Price (ASP) Order Line LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 114,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Selling Price (ASP) Order Line MTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 105,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"MTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Selling Price (ASP) Order Line WTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 105,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"WTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Selling Price (ASP) Order Line YTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 105,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"YTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Selling Price (ASP) Order Line Yesterday",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 111,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Selling Price (ASP) Today",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 36,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Sales Today], [Units Today] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Selling Price (ASP) Yesterday LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 50,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Sales Yesterday LY], [Units Yesterday LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Average Selling Price (ASP) Yesterday",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 44,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Sales Yesterday], [Units Yesterday] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Buying Group",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": false,
+      "expressionLength": 56,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Card Title Forecast",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": false,
+      "expressionLength": 13,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Existing Customers Selected Period IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 314,
+      "lineCount": 10,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Existing Customers LW IDS], [Existing Customers Yesterday IDS], [Existing Customers Yesterday LY IDS] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 6
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Existing Customers vs Period % IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 84,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Existing Customers Selected Period IDS], [Existing Customers Today IDS] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Forecast Compare % (To Cutoff Hour)",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 419,
+      "lineCount": 17,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Sales Value Inc Tax Today IDS], [_Is Forecast Dimension Filtered] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 4
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Forecast Sales Value Inc Tax",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 306,
+      "lineCount": 11,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [_Is Forecast Dimension Filtered] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 4
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Gross Merchandise Value (GMV) Sales HTD LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 105,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"HTD LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Gross Merchandise Value (GMV) Sales HTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 102,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"HTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Gross Merchandise Value (GMV) Sales LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 111,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Gross Merchandise Value (GMV) Sales MTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 102,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"MTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Gross Merchandise Value (GMV) Sales WTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 102,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"WTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Gross Merchandise Value (GMV) Sales YTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 102,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"YTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Gross Merchandise Value (GMV) Sales Yesterday",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 108,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Gross Sales RSV Margin % HTD LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 94,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"HTD LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Gross Sales RSV Margin % HTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 91,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"HTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Gross Sales RSV Margin % LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 100,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Gross Sales RSV Margin % MTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 91,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"MTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Gross Sales RSV Margin % WTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 91,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"WTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Gross Sales RSV Margin % YTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 91,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"YTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Gross Sales RSV Margin % Yesterday",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 97,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Margin % LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 50,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Sales Exc Tax LW], [Sales Unit Margin LW] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Margin % LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 50,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Sales Exc Tax LY], [Sales Unit Margin LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Margin % Today",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 56,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Sales Exc Tax Today], [Sales Unit Margin Today] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Margin % Yesterday LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 70,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Sales Exc Tax Yesterday LY], [Sales Unit Margin Yesterday LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Margin % Yesterday",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 64,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Sales Exc Tax Yesterday], [Sales Unit Margin Yesterday] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Metric Compare % (To Cutoff Hour)",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 156,
+      "lineCount": 8,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Metric Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Metric Compare %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 139,
+      "lineCount": 8,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Metric Value], [Metric Value Compare] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "New Customers Selected Period IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 299,
+      "lineCount": 10,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [New Customers LW IDS], [New Customers Yesterday IDS], [New Customers Yesterday LY IDS] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 6
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "New Customers YTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 226,
+      "lineCount": 9,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [New Customers] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 5
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "New Customers vs Period % IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 74,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [New Customers Selected Period IDS], [New Customers Today IDS] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Number Of Weeks On Site Selected Period",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 370,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Number of Customers Selected Period",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 388,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Option description",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": false,
+      "expressionLength": 34,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Orders Selected Period IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 266,
+      "lineCount": 10,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Orders LW], [Orders Yesterday], [Orders Yesterday LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 6
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Orders YTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 219,
+      "lineCount": 9,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Orders] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 5
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Orders vs Period % IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 56,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Orders Selected Period IDS], [Orders Today] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Partner Fulfills (PF) Sales HTD LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 97,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"HTD LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Partner Fulfills (PF) Sales HTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 94,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"HTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Partner Fulfills (PF) Sales LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 103,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Partner Fulfills (PF) Sales MTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 94,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"MTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Partner Fulfills (PF) Sales WTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 94,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"WTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Partner Fulfills (PF) Sales YTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 94,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"YTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Partner Fulfills (PF) Sales Yesterday",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 100,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Product Image",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": false,
+      "expressionLength": 41,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Projected Sales Value Inc Tax",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 307,
+      "lineCount": 11,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [_Is Forecast Dimension Filtered] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 4
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Projected vs Forecast %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 410,
+      "lineCount": 17,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Forecast Sales Value Inc Tax], [Projected Sales Value Inc Tax], [_Is Forecast Dimension Filtered] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 4
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Projection Metric Compare %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 400,
+      "lineCount": 17,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Metric Value Compare], [Projected Sales Value Inc Tax], [_Is Forecast Dimension Filtered] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 4
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Retail Sales Value (RSV) HTD LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 94,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"HTD LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Retail Sales Value (RSV) HTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 91,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"HTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Retail Sales Value (RSV) LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 100,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Retail Sales Value (RSV) MTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 91,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"MTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Retail Sales Value (RSV) WTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 91,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"WTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Retail Sales Value (RSV) YTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 91,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"YTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Retail Sales Value (RSV) Yesterday",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 97,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Sales Comparison Period Label",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": false,
+      "expressionLength": 222,
+      "lineCount": 11,
+      "issues": [
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Sales Mix %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 127,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Sales Selected Period",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 366,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Sales Value Inc Tax Selected Period IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 317,
+      "lineCount": 10,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Sales Value Inc Tax LW IDS], [Sales Value Inc Tax Yesterday IDS], [Sales Value Inc Tax Yesterday LY IDS] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 6
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Sales Value Inc Tax YTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 232,
+      "lineCount": 9,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Sales Value Inc Tax] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 5
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Sales Value Inc Tax vs Period % IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 86,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Sales Value Inc Tax Selected Period IDS], [Sales Value Inc Tax Today IDS] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Selected Period Metrics Name",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": false,
+      "expressionLength": 142,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "TRM %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 116,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): 'SUM('Demand Sale Current Day'[' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total Customers LW IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 52,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Existing Customers LW IDS], [New Customers LW IDS] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total Customers Selected Period IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 305,
+      "lineCount": 10,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Customers LW IDS], [Total Customers Yesterday IDS], [Total Customers Yesterday LY IDS] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 6
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total Customers Today IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 58,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Existing Customers Today IDS], [New Customers Today IDS] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total Customers Yesterday IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 66,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Existing Customers Yesterday IDS], [New Customers Yesterday IDS] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total Customers Yesterday LY IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 72,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Existing Customers Yesterday LY IDS], [New Customers Yesterday LY IDS] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total Customers vs Period % IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 78,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Customers Selected Period IDS], [Total Customers Today IDS] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total Customers",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 38,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Existing Customers], [New Customers] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total Realized Markdown (TRM) % RSV HTD LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 105,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"HTD LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total Realized Markdown (TRM) % RSV HTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 102,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"HTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total Realized Markdown (TRM) % RSV LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 111,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday LY\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total Realized Markdown (TRM) % RSV MTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 102,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"MTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total Realized Markdown (TRM) % RSV WTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 102,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"WTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total Realized Markdown (TRM) % RSV YTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 102,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"YTD\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total Realized Markdown (TRM) % RSV Yesterday",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 108,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Yesterday\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Units Selected Period IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 263,
+      "lineCount": 10,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Units LW], [Units Yesterday], [Units Yesterday LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 6
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Units Selected Period",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 362,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Units YTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 218,
+      "lineCount": 9,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Units] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 5
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Units vs Period % IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 54,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Units Selected Period IDS], [Units Today] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "_Is Forecast Dimension Filtered",
+      "table": "@Measures",
+      "isHidden": true,
+      "hasFormatString": false,
+      "expressionLength": 296,
+      "lineCount": 8,
+      "issues": [
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "ABV Selected Period IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 326,
+      "lineCount": 10,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "AFS Sales",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 88,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Average Basket Size (ABS) Compare Label",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 526,
+      "lineCount": 27,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Average Basket Size (ABS) Compare",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 174,
+      "lineCount": 8,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Average Basket Size (ABS) Selected Period",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 395,
+      "lineCount": 15,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Average Basket Size (ABS) vs LY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 143,
+      "lineCount": 4,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Average Basket Size (ABS) vs LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 119,
+      "lineCount": 4,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Average Basket Value (ABV) Compare Label",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 550,
+      "lineCount": 27,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Average Basket Value (ABV) Compare",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 198,
+      "lineCount": 8,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Average Basket Value (ABV) Order Line Selected Period",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 455,
+      "lineCount": 15,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Average Basket Value (ABV) Order Line vs LY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 167,
+      "lineCount": 4,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Average Basket Value (ABV) Order Line vs LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 143,
+      "lineCount": 4,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Average Selling Price (ASP) Compare Label",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 552,
+      "lineCount": 27,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Average Selling Price (ASP) Compare",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 200,
+      "lineCount": 8,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Average Selling Price (ASP) Order Line Selected Period",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 460,
+      "lineCount": 15,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Average Selling Price (ASP) Order Line vs LY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 169,
+      "lineCount": 4,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Average Selling Price (ASP) Order Line vs LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 145,
+      "lineCount": 4,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Discount Value Inc Tax",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 54,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Forecast Compare % Label (To Cutoff hour)",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 399,
+      "lineCount": 21,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Gross Merchandise Value (GMV) Sales Compare Label",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 546,
+      "lineCount": 27,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Gross Merchandise Value (GMV) Sales Compare",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 194,
+      "lineCount": 8,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Gross Merchandise Value (GMV) Sales Selected Period",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 445,
+      "lineCount": 15,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Gross Merchandise Value (GMV) Sales vs LY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 163,
+      "lineCount": 4,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Gross Merchandise Value (GMV) Sales vs LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 139,
+      "lineCount": 4,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Gross Merchandise Value (GMV) Sales",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 61,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Gross Sales RSV Margin % Compare Label",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 565,
+      "lineCount": 30,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Gross Sales RSV Margin % Compare",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 161,
+      "lineCount": 8,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Gross Sales RSV Margin % Selected Period",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 390,
+      "lineCount": 15,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Gross Sales RSV Margin % vs LY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 141,
+      "lineCount": 4,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Gross Sales RSV Margin % vs LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 117,
+      "lineCount": 4,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Margin % Selected Period",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 237,
+      "lineCount": 13,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Metric Compare % Label (To Cutoff Hour)",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 398,
+      "lineCount": 21,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Metric Compare % Label",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 381,
+      "lineCount": 21,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Number Of Weeks On Site",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 55,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Option Id",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 51,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Orders Order Line",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 56,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Orders",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 57,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Partner Fulfills (PF) Sales Compare Label",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 530,
+      "lineCount": 27,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Partner Fulfills (PF) Sales Compare",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 178,
+      "lineCount": 8,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Partner Fulfills (PF) Sales Selected Period",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 405,
+      "lineCount": 15,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Partner Fulfills (PF) Sales vs LY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 147,
+      "lineCount": 4,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Partner Fulfills (PF) Sales vs LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 123,
+      "lineCount": 4,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Partner Fulfills (PF) Sales",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 80,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Projected vs Forecast % Label",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 387,
+      "lineCount": 21,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Projection Metric Compare % Label",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 391,
+      "lineCount": 21,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Realised Markdown Order Line",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 67,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Retail Sale Unit Margin",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 61,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Retail Sales Margin",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 56,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Retail Sales Value (RSV) Compare Label",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 524,
+      "lineCount": 27,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Retail Sales Value (RSV) Compare",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 172,
+      "lineCount": 8,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Retail Sales Value (RSV) Selected Period",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 390,
+      "lineCount": 15,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Retail Sales Value (RSV) vs LY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 141,
+      "lineCount": 4,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Retail Sales Value (RSV) vs LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 117,
+      "lineCount": 4,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Retail Sales Value (RSV)",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 71,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Retail Selling Channel Sale Value Exc Tax",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 79,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Sales Value Inc Tax",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 51,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "TRM % Selected Period IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 275,
+      "lineCount": 10,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "TRM % vs Period IDS",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 58,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Total Realised Markdown Before Discount",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 71,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Total Realised Markdown Exc Tax",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 63,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Total Realised Markdown",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 55,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Total Realized Markdown (TRM) % RSV Compare Label",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 587,
+      "lineCount": 30,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Total Realized Markdown (TRM) % RSV Compare",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 183,
+      "lineCount": 8,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Total Realized Markdown (TRM) % RSV Selected Period",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 445,
+      "lineCount": 15,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Total Realized Markdown (TRM) % RSV vs LY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 163,
+      "lineCount": 4,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Total Realized Markdown (TRM) % RSV vs LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 139,
+      "lineCount": 4,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Units Sold Order Line",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 64,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Units",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 47,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    }
+  ],
+  "antiPatternSummary": [
+    {
+      "rule": "FILTER_ALL",
+      "severity": "High",
+      "count": 11
+    },
+    {
+      "rule": "IFERROR_ISERROR",
+      "severity": "High",
+      "count": 0
+    },
+    {
+      "rule": "NESTED_CALCULATE",
+      "severity": "High",
+      "count": 9
+    },
+    {
+      "rule": "REPEATED_SUBEXPRESSION",
+      "severity": "Medium",
+      "count": 12
+    },
+    {
+      "rule": "BARE_DIVISION",
+      "severity": "Medium",
+      "count": 0
+    },
+    {
+      "rule": "COUNT_VS_COUNTROWS",
+      "severity": "Medium",
+      "count": 0
+    },
+    {
+      "rule": "MISSING_FORMAT_STRING",
+      "severity": "Medium",
+      "count": 22
+    },
+    {
+      "rule": "UNQUALIFIED_COLUMNS",
+      "severity": "Low",
+      "count": 88
+    },
+    {
+      "rule": "NO_VARIABLES",
+      "severity": "Low",
+      "count": 65
+    },
+    {
+      "rule": "HARDCODED_VALUES",
+      "severity": "Low",
+      "count": 130
+    }
+  ],
+  "summary": {
+    "high": 20,
+    "medium": 34,
+    "low": 283,
+    "totalIssues": 337,
+    "rulesChecked": 10,
+    "cleanMeasures": 68
+  }
+}

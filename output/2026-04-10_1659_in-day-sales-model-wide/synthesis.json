@@ -1,0 +1,167 @@
+{
+  "modelName": "ADE - In Day Sales",
+  "analysisMode": "model-wide",
+  "analysedAt": "2026-04-10T16:59:35.729119+00:00",
+  "healthScore": 0,
+  "executiveSummary": "The ADE - In Day Sales semantic model has a health score of 0/100 (Grade F). It contains 30 tables (1 DirectQuery, 0 Dual), 283 measures, and 20 relationships (0 bidirectional). BPA detected 559 findings (22 high, 34 medium). DAX analysis found 11 FILTER(ALL) anti-patterns and 11 measures generating 5+ SQL subqueries.",
+  "topFindings": [
+    {
+      "id": "F1",
+      "title": "11 FILTER(ALL) Anti-Patterns",
+      "severity": "medium",
+      "impact": "medium",
+      "effort": "high",
+      "quadrant": "strategic",
+      "layers": [
+        "Semantic Model"
+      ],
+      "scope": "model-wide",
+      "reportContext": null,
+      "description": "11 DAX measures use FILTER(ALL()) which forces full table scans in DirectQuery. Combined with large fact tables, each generates an unfiltered subquery.",
+      "recommendation": "Refactor to REMOVEFILTERS() or direct CALCULATE predicates. Prioritise measures on high-traffic pages.",
+      "estimatedImprovement": "20-40% latency reduction per refactored measure.",
+      "requiresDeepDive": true,
+      "suggestedAnalysisSteps": [
+        "Run top 10 FILTER(ALL) measures in DAX Studio with Server Timings",
+        "Compare SE vs FE time split"
+      ],
+      "tradeoffs": [
+        "Requires thorough testing for calculation equivalence"
+      ],
+      "options": []
+    },
+    {
+      "id": "F2",
+      "title": "11 Measures Generating 5+ SQL Subqueries",
+      "severity": "medium",
+      "impact": "medium",
+      "effort": "high",
+      "quadrant": "strategic",
+      "layers": [
+        "Semantic Model"
+      ],
+      "scope": "model-wide",
+      "reportContext": null,
+      "description": "11 measures have high context transition counts generating 5+ SQL subqueries each in DirectQuery mode.",
+      "recommendation": "Refactor using VAR, consolidate nested CALCULATE, reduce context transitions.",
+      "estimatedImprovement": "20-50% query time reduction for visuals using these measures.",
+      "requiresDeepDive": true,
+      "suggestedAnalysisSteps": [
+        "Export ranked by estimatedSQLSubqueries",
+        "Test refactored versions"
+      ],
+      "tradeoffs": [
+        "Complex business logic may limit simplification"
+      ],
+      "options": []
+    },
+    {
+      "id": "F3",
+      "title": "2 Wide Tables (>50 columns)",
+      "severity": "medium",
+      "impact": "medium",
+      "effort": "medium",
+      "quadrant": "quick-win",
+      "layers": [
+        "Semantic Model",
+        "Engineering"
+      ],
+      "scope": "model-wide",
+      "reportContext": null,
+      "description": "2 tables have >50 columns. In DirectQuery, all columns are included in generated SQL.",
+      "recommendation": "Audit unused columns and remove from model. Consider narrow serve views.",
+      "estimatedImprovement": "Proportional reduction in read_bytes per query.",
+      "tradeoffs": [
+        "Column removal requires coordination with report authors"
+      ],
+      "options": []
+    },
+    {
+      "id": "F4",
+      "title": "415 Unused Column Candidates",
+      "severity": "medium",
+      "impact": "low",
+      "effort": "medium",
+      "quadrant": "minor",
+      "layers": [
+        "Semantic Model"
+      ],
+      "scope": "model-wide",
+      "reportContext": null,
+      "description": "415 columns not referenced in any DAX measure. Candidates for removal to reduce DQ payload.",
+      "recommendation": "Audit columns, verify not used in visuals/slicers, remove confirmed unused.",
+      "estimatedImprovement": "Cost reduction — fewer bytes read per query.",
+      "tradeoffs": [
+        "Some may be used in visuals or bookmarks"
+      ],
+      "options": []
+    },
+    {
+      "id": "F5",
+      "title": "10 Pass-Through Serve Views (>50 cols, no filter)",
+      "severity": "medium",
+      "impact": "medium",
+      "effort": "low",
+      "quadrant": "quick-win",
+      "layers": [
+        "Engineering"
+      ],
+      "scope": "model-wide",
+      "reportContext": null,
+      "description": "10 dbt serve views are SELECT * pass-throughs with >50 columns and no WHERE filter.",
+      "recommendation": "Create narrow serve views selecting only columns used by PBI measures.",
+      "estimatedImprovement": "60-70% reduction in read_bytes for affected tables.",
+      "tradeoffs": [
+        "Must audit PBI column usage before narrowing"
+      ],
+      "options": []
+    }
+  ],
+  "implementationRoadmap": [
+    {
+      "phase": "Phase 1: Quick Wins",
+      "actions": [
+        {
+          "action": "2 Wide Tables (>50 columns)",
+          "where": "Semantic Model, Engineering",
+          "finding": "F3",
+          "impact": "Medium"
+        },
+        {
+          "action": "10 Pass-Through Serve Views (>50 cols, no filter)",
+          "where": "Engineering",
+          "finding": "F5",
+          "impact": "Medium"
+        }
+      ]
+    },
+    {
+      "phase": "Phase 2: Strategic Investments",
+      "actions": [
+        {
+          "action": "11 FILTER(ALL) Anti-Patterns",
+          "where": "Semantic Model",
+          "finding": "F1",
+          "impact": "Medium"
+        },
+        {
+          "action": "11 Measures Generating 5+ SQL Subqueries",
+          "where": "Semantic Model",
+          "finding": "F2",
+          "impact": "Medium"
+        }
+      ]
+    },
+    {
+      "phase": "Phase 3: Minor Improvements",
+      "actions": [
+        {
+          "action": "415 Unused Column Candidates",
+          "where": "Semantic Model",
+          "finding": "F4",
+          "impact": "Medium"
+        }
+      ]
+    }
+  ]
+}

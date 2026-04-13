@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Performance Diagnosis: ADE - Loyalty</title>
+  <style>
+    :root { --dark:#2d2d2d; --accent:#0770cf; --green:#1a8754; --amber:#d4a017; --red:#c0392b; --light-bg:#f8f9fa; --border:#dee2e6; --text:#333; --muted:#6c757d; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; color:var(--text); background:var(--light-bg); line-height:1.6; font-size:14px; }
+    .report-header { background:var(--dark); color:#fff; padding:32px 40px 24px; }
+    .report-header h1 { font-size:24px; font-weight:600; margin-bottom:8px; }
+    .report-header .metadata { font-size:13px; color:#adb5bd; display:flex; gap:24px; flex-wrap:wrap; }
+    .container { max-width:1200px; margin:0 auto; padding:32px 40px 60px; }
+    .section-title { font-size:18px; font-weight:600; color:var(--dark); margin:40px 0 20px; padding-bottom:10px; border-bottom:3px solid var(--accent); }
+    .section-title:first-child { margin-top:0; }
+    .metric-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+    .metric-card { background:#fff; border:1px solid var(--border); border-radius:8px; padding:20px; text-align:center; }
+    .metric-card .value { font-size:28px; font-weight:700; color:var(--dark); line-height:1.2; }
+    .metric-card .label { font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted); margin-top:6px; }
+    .metric-card .sub { font-size:12px; color:var(--muted); margin-top:4px; }
+    .metric-card.green .value { color:var(--green); }
+    .metric-card.amber .value { color:var(--amber); }
+    .metric-card.red .value { color:var(--red); }
+    .card { background:#fff; border:1px solid var(--border); border-radius:8px; padding:24px; margin-bottom:20px; box-shadow:0 1px 3px rgba(0,0,0,0.06); }
+    .card h3 { font-size:15px; font-weight:600; margin-bottom:12px; color:var(--dark); }
+    table { width:100%; border-collapse:collapse; font-size:13px; }
+    thead th { background:var(--light-bg); text-transform:uppercase; font-size:11px; font-weight:700; letter-spacing:0.5px; color:var(--muted); padding:10px 14px; text-align:left; border-bottom:2px solid var(--border); }
+    tbody td { padding:10px 14px; border-bottom:1px solid var(--border); }
+    tbody tr:nth-child(even) { background:var(--light-bg); }
+    tbody tr:hover { background:#e9ecef; }
+    .badge { display:inline-block; padding:3px 10px; border-radius:12px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.3px; }
+    .badge-high { background:rgba(192,57,43,0.12); color:var(--red); }
+    .badge-medium { background:rgba(212,160,23,0.15); color:var(--amber); }
+    .badge-low { background:rgba(26,135,84,0.12); color:var(--green); }
+    .badge-info { background:rgba(7,112,207,0.12); color:var(--accent); }
+    .note-box { background:#fff8e1; border-left:4px solid var(--amber); border-radius:0 6px 6px 0; padding:14px 18px; margin:16px 0; font-size:13px; }
+    .note-box strong { color:var(--amber); }
+    .recommendation-box { background:linear-gradient(135deg,rgba(7,112,207,0.08),rgba(7,112,207,0.03)); border:1px solid rgba(7,112,207,0.2); border-radius:8px; padding:20px 24px; margin:16px 0; }
+    .recommendation-box h4 { color:var(--accent); margin-bottom:8px; font-size:14px; }
+    .recommendation-box p { font-size:13px; margin-bottom:8px; }
+    .quadrant-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .quadrant-box { border-radius:8px; padding:20px; }
+    .quadrant-box h3 { margin-bottom:12px; font-size:14px; }
+    .quadrant-box ul { list-style:none; padding:0; }
+    .quadrant-box li { margin-bottom:8px; font-size:13px; }
+    details { margin-top:16px; }
+    details summary { cursor:pointer; font-weight:600; color:var(--accent); padding:8px 0; font-size:13px; }
+    details summary:hover { text-decoration:underline; }
+    .report-footer { margin-top:48px; padding-top:20px; border-top:1px solid var(--border); font-size:12px; color:var(--muted); text-align:center; }
+    @media (max-width:768px) { .metric-grid,.quadrant-grid { grid-template-columns:1fr; } .container { padding:16px 20px 40px; } }
+    @media print { body { background:#fff; font-size:12px; } .card { box-shadow:none; break-inside:avoid; } .section-title { break-after:avoid; } }
+</style>
+</head>
+<body>
+  <div class="report-header">
+    <h1>Performance Diagnosis: ADE - Loyalty</h1>
+    <div class="metadata">
+      <span>10 Apr 2026 16:59 UTC</span>
+      <span>PBI Performance Diagnosis Agent</span>
+      <span>Health: 74/100 (B)</span>
+      <span>Mode: Model Wide</span>
+    </div>
+  </div>
+  <div class="container">
+    
+    <h2 class="section-title">1. Executive Summary</h2>
+    <div class="metric-grid">
+      <div class="metric-card amber">
+        <div class="value">26</div>
+        <div class="label">Total Tables</div>
+        <div class="sub">2 DirectQuery, 11 Dual</div>
+      </div>
+      <div class="metric-card">
+        <div class="value">27</div>
+        <div class="label">Total Measures</div>
+        <div class="sub">0 critical, 0 high</div>
+      </div>
+      <div class="metric-card amber">
+        <div class="value">150</div>
+        <div class="label">BPA Findings</div>
+        <div class="sub">0 high, 2 medium</div>
+      </div>
+      <div class="metric-card green">
+        <div class="value">74/100</div>
+        <div class="label">Health Score</div>
+        <div class="sub">Grade B</div>
+      </div>
+    </div>
+    <div class='card'><p>The ADE - Loyalty semantic model has a health score of 74/100 (Grade B). It contains 26 tables (2 DirectQuery, 11 Dual), 27 measures, and 17 relationships (0 bidirectional). BPA detected 150 findings (0 high, 2 medium). DAX analysis found 2 FILTER(ALL) anti-patterns and 2 measures generating 5+ SQL subqueries.</p></div>
+    
+    <div class="card">
+      <h3>Key Findings &amp; Recommended Actions (3 total — 0 critical, 0 high)</h3>
+      
+          <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)">
+            <div style="min-width:36px;text-align:center">
+              <span style="font-weight:700;font-size:15px;color:var(--dark)">F1</span><br>
+              <span class="badge badge-medium">medium</span>
+            </div>
+            <div style="flex:1">
+              <div style="font-weight:600;font-size:13px;margin-bottom:4px">2 FILTER(ALL) Anti-Patterns</div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Refactor to REMOVEFILTERS() or direct CALCULATE predicates. Prioritise measures on high-traffic pages.</div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <span class="badge badge-medium">Semantic Model</span>
+                <span style='font-size:11px;color:var(--green);font-weight:600'>20-40% latency reduction per refactored measure.</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)">
+            <div style="min-width:36px;text-align:center">
+              <span style="font-weight:700;font-size:15px;color:var(--dark)">F2</span><br>
+              <span class="badge badge-medium">medium</span>
+            </div>
+            <div style="flex:1">
+              <div style="font-weight:600;font-size:13px;margin-bottom:4px">135 Unused Column Candidates</div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Audit columns, verify not used in visuals/slicers, remove confirmed unused.</div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <span class="badge badge-medium">Semantic Model</span>
+                <span style='font-size:11px;color:var(--green);font-weight:600'>Cost reduction — fewer bytes read per query.</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)">
+            <div style="min-width:36px;text-align:center">
+              <span style="font-weight:700;font-size:15px;color:var(--dark)">F3</span><br>
+              <span class="badge badge-medium">medium</span>
+            </div>
+            <div style="flex:1">
+              <div style="font-weight:600;font-size:13px;margin-bottom:4px">10 Pass-Through Serve Views (&gt;50 cols, no filter)</div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Create narrow serve views selecting only columns used by PBI measures.</div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <span class="badge badge-high">Engineering</span>
+                <span style='font-size:11px;color:var(--green);font-weight:600'>60-70% reduction in read_bytes for affected tables.</span>
+              </div>
+            </div>
+          </div>
+      
+    </div>
+    
+    
+    
+
+        <h2 class="section-title">2. Model Taxonomy</h2>
+        
+        <div class="card"><h3>Tables &amp; Storage Modes</h3>
+          <table><thead><tr><th>Table</th><th>Type</th><th>Storage Mode</th><th>Columns</th><th>Measures</th><th>Rows</th><th>Size</th><th>Databricks Source</th></tr></thead>
+            <tbody><tr>
+              <td>@Dataset Metadata</td>
+              <td><span class="badge badge-low">meta</span></td>
+              <td><span class="badge badge-low">import</span></td>
+              <td>3</td>
+              <td>0</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px"></td></tr><tr>
+              <td>@Measures</td>
+              <td><span class="badge badge-low">meta</span></td>
+              <td><span class="badge badge-low">import</span></td>
+              <td>0</td>
+              <td>19</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px"></td></tr><tr>
+              <td>Country</td>
+              <td><span class="badge badge-info">dim</span></td>
+              <td><span class="badge badge-medium">dual</span></td>
+              <td>19</td>
+              <td>0</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px">technology_dev.serve.dim_country_v1</td></tr><tr>
+              <td>Country Top Eleven Group</td>
+              <td><span class="badge badge-info">dim</span></td>
+              <td><span class="badge badge-medium">dual</span></td>
+              <td>3</td>
+              <td>0</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px">technology_dev.serve.dim_country_top_eleven_group_v1</td></tr><tr>
+              <td>Customer Activity Status</td>
+              <td><span class="badge badge-info">dim</span></td>
+              <td><span class="badge badge-medium">dual</span></td>
+              <td>5</td>
+              <td>0</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px">customer_dev.serve.dim_customer_activity_status_v1</td></tr><tr>
+              <td>Customer Age</td>
+              <td><span class="badge badge-info">dim</span></td>
+              <td><span class="badge badge-medium">dual</span></td>
+              <td>7</td>
+              <td>0</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px">customer_dev.serve.dim_customer_age_v1</td></tr><tr>
+              <td>Customer Age Group</td>
+              <td><span class="badge badge-info">dim</span></td>
+              <td><span class="badge badge-medium">dual</span></td>
+              <td>3</td>
+              <td>0</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px">customer_dev.serve.dim_customer_age_group_v1</td></tr><tr>
+              <td>Customer Billing Address</td>
+              <td><span class="badge badge-info">dim</span></td>
+              <td><span class="badge badge-high">directQuery</span></td>
+              <td>8</td>
+              <td>0</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px">customer_dev.serve.dim_customer_billing_address_v1</td></tr><tr>
+              <td>Customer Delivery Address</td>
+              <td><span class="badge badge-info">dim</span></td>
+              <td><span class="badge badge-high">directQuery</span></td>
+              <td>8</td>
+              <td>0</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px">customer_dev.serve.dim_customer_delivery_address_v1</td></tr><tr>
+              <td>Customer Loyalty</td>
+              <td><span class="badge badge-high">fact</span></td>
+              <td><span class="badge badge-low">import</span></td>
+              <td>20</td>
+              <td>0</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px">customer_dev.serve.fact_customer_loyalty_asos_world_v2</td></tr><tr>
+              <td>Customer Loyalty Status</td>
+              <td><span class="badge badge-info">dim</span></td>
+              <td><span class="badge badge-medium">dual</span></td>
+              <td>5</td>
+              <td>0</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px">customer_dev.serve.dim_customer_loyalty_status_v1</td></tr><tr>
+              <td>Customer Loyalty Tenure</td>
+              <td><span class="badge badge-info">dim</span></td>
+              <td><span class="badge badge-medium">dual</span></td>
+              <td>6</td>
+              <td>0</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px">customer_dev.serve.dim_customer_loyalty_tenure_v1</td></tr><tr>
+              <td>Customer Loyalty Tier</td>
+              <td><span class="badge badge-info">dim</span></td>
+              <td><span class="badge badge-medium">dual</span></td>
+              <td>7</td>
+              <td>0</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px">customer_dev.serve.dim_customer_loyalty_tier_v2</td></tr><tr>
+              <td>Customer Sex</td>
+              <td><span class="badge badge-info">dim</span></td>
+              <td><span class="badge badge-medium">dual</span></td>
+              <td>4</td>
+              <td>0</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px">customer_dev.serve.dim_customer_sex_v1</td></tr><tr>
+              <td>Customer Tenure</td>
+              <td><span class="badge badge-info">dim</span></td>
+              <td><span class="badge badge-medium">dual</span></td>
+              <td>6</td>
+              <td>0</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px">customer_dev.serve.dim_customer_tenure_v1</td></tr><tr>
+              <td>Date</td>
+              <td><span class="badge badge-info">dim</span></td>
+              <td><span class="badge badge-medium">dual</span></td>
+              <td>47</td>
+              <td>0</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px">technology_dev.serve.dim_date_v2</td></tr><tr>
+              <td>Tier 1 Target</td>
+              <td><span class="badge badge-low">meta</span></td>
+              <td><span class="badge badge-low">import</span></td>
+              <td>1</td>
+              <td>1</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px"></td></tr><tr>
+              <td>Tier 2 Target</td>
+              <td><span class="badge badge-low">meta</span></td>
+              <td><span class="badge badge-low">import</span></td>
+              <td>1</td>
+              <td>1</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px"></td></tr><tr>
+              <td>Tier 3 Target</td>
+              <td><span class="badge badge-low">meta</span></td>
+              <td><span class="badge badge-low">import</span></td>
+              <td>1</td>
+              <td>1</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px"></td></tr><tr>
+              <td>Tier 4 Target</td>
+              <td><span class="badge badge-low">meta</span></td>
+              <td><span class="badge badge-low">import</span></td>
+              <td>1</td>
+              <td>1</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px"></td></tr><tr>
+              <td>Tier Movement Launch To Date</td>
+              <td><span class="badge badge-low">meta</span></td>
+              <td><span class="badge badge-low">import</span></td>
+              <td>4</td>
+              <td>0</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px"></td></tr><tr>
+              <td>Tier Movement as of Today</td>
+              <td><span class="badge badge-low">meta</span></td>
+              <td><span class="badge badge-low">import</span></td>
+              <td>4</td>
+              <td>0</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px"></td></tr><tr>
+              <td>Total Invites Sent for Tier 1</td>
+              <td><span class="badge badge-low">meta</span></td>
+              <td><span class="badge badge-low">import</span></td>
+              <td>1</td>
+              <td>1</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px"></td></tr><tr>
+              <td>Total Invites Sent for Tier 2</td>
+              <td><span class="badge badge-low">meta</span></td>
+              <td><span class="badge badge-low">import</span></td>
+              <td>1</td>
+              <td>1</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px"></td></tr><tr>
+              <td>Total Invites Sent for Tier 3</td>
+              <td><span class="badge badge-low">meta</span></td>
+              <td><span class="badge badge-low">import</span></td>
+              <td>1</td>
+              <td>1</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px"></td></tr><tr>
+              <td>Total Invites Sent for Tier 4</td>
+              <td><span class="badge badge-low">meta</span></td>
+              <td><span class="badge badge-low">import</span></td>
+              <td>1</td>
+              <td>1</td>
+              <td>-</td>
+              <td>-</td>
+              <td style="font-size:11px"></td></tr></tbody></table></div>
+        <div class="card"><h3>Relationships (17 total — 0 bidirectional)</h3>
+          <table><thead><tr><th>From</th><th>To</th><th>Cardinality</th><th>Cross-Filter</th><th>Active</th></tr></thead>
+            <tbody><tr>
+              <td>Customer Loyalty[Dim Date Sk]</td>
+              <td>Date[Dim Date Sk]</td>
+              <td>many:one</td><td>oneDirection</td><td>Yes</td></tr><tr>
+              <td>Tier Movement as of Today[Current Tier]</td>
+              <td>Customer Loyalty Tier[Dim Customer Loyalty Tier Sk]</td>
+              <td>many:one</td><td>oneDirection</td><td>Yes</td></tr><tr>
+              <td>Tier Movement Launch To Date[Current Tier]</td>
+              <td>Customer Loyalty Tier[Dim Customer Loyalty Tier Sk]</td>
+              <td>many:one</td><td>oneDirection</td><td>Yes</td></tr><tr>
+              <td>Customer Loyalty[Dim Customer Age Sk]</td>
+              <td>Customer Age[Dim Customer Age Sk]</td>
+              <td>many:one</td><td>oneDirection</td><td>Yes</td></tr><tr>
+              <td>Customer Loyalty[Dim Customer Home Country Sk]</td>
+              <td>Country[Dim Country Sk]</td>
+              <td>many:one</td><td>oneDirection</td><td>Yes</td></tr><tr>
+              <td>Customer Loyalty[Dim Customer Loyalty Tier Sk]</td>
+              <td>Customer Loyalty Tier[Dim Customer Loyalty Tier Sk]</td>
+              <td>many:one</td><td>oneDirection</td><td>Yes</td></tr><tr>
+              <td>Customer Loyalty[Dim Customer Country Top Eleven Group Sk]</td>
+              <td>Country Top Eleven Group[Dim Country Top Eleven Group Sk]</td>
+              <td>many:one</td><td>oneDirection</td><td>Yes</td></tr><tr>
+              <td>Customer Loyalty[Dim Financial Week Start Date Sk]</td>
+              <td>Date[Dim Date Sk]</td>
+              <td>many:one</td><td>oneDirection</td><td>No</td></tr><tr>
+              <td>Customer Loyalty[Dim Customer Activity Status Sk]</td>
+              <td>Customer Activity Status[Dim Customer Activity Status Sk]</td>
+              <td>many:one</td><td>oneDirection</td><td>Yes</td></tr><tr>
+              <td>Customer Loyalty[Dim Customer Sex Sk]</td>
+              <td>Customer Sex[Dim Customer Sex Sk]</td>
+              <td>many:one</td><td>oneDirection</td><td>Yes</td></tr><tr>
+              <td>Customer Loyalty[Dim Customer Tenure Sk]</td>
+              <td>Customer Tenure[Dim Customer Tenure Sk]</td>
+              <td>many:one</td><td>oneDirection</td><td>Yes</td></tr><tr>
+              <td>Customer Loyalty[Customer Account Sk]</td>
+              <td>Customer Delivery Address[dim_customer_account_sk]</td>
+              <td>many:one</td><td>oneDirection</td><td>Yes</td></tr><tr>
+              <td>Customer Loyalty[Customer Account Sk]</td>
+              <td>Customer Billing Address[dim_customer_account_sk]</td>
+              <td>many:one</td><td>oneDirection</td><td>Yes</td></tr><tr>
+              <td>Customer Loyalty[Dim Customer Country Top Eleven Group Sk]</td>
+              <td>Country[Dim Country Sk]</td>
+              <td>many:one</td><td>oneDirection</td><td>No</td></tr><tr>
+              <td>Customer Loyalty[Dim Customer Loyalty Tenure Sk]</td>
+              <td>Customer Loyalty Tenure[Dim Customer Loyalty Tenure Sk]</td>
+              <td>many:one</td><td>oneDirection</td><td>Yes</td></tr><tr>
+              <td>Customer Loyalty[Dim Customer Loyalty Status Sk]</td>
+              <td>Customer Loyalty Status[Dim Customer Loyalty Status Sk]</td>
+              <td>many:one</td><td>oneDirection</td><td>Yes</td></tr><tr>
+              <td>Customer Loyalty[Dim Customer Age Group Sk]</td>
+              <td>Customer Age Group[Dim Customer Age Group Sk]</td>
+              <td>many:one</td><td>oneDirection</td><td>Yes</td></tr></tbody></table></div>
+        
+        <div class="card"><h3>Relationship Topology</h3>
+          <div class="metric-grid" style="margin-bottom:16px">
+            <div class="metric-card"><div class="value">2</div><div class="label">Max Snowflake Depth</div></div>
+            <div class="metric-card"><div class="value">1.3</div><div class="label">Avg Degree</div></div>
+            <div class="metric-card red"><div class="value">1</div><div class="label">Hub Tables (degree &ge; 5)</div></div>
+          </div>
+          <table><thead><tr><th>Hub Table</th><th>Degree</th><th>Type</th><th>Storage</th><th>Rows</th><th>Size</th></tr></thead>
+            <tbody><tr>
+                  <td><strong>Customer Loyalty</strong></td>
+                  <td>15</td>
+                  <td><span class="badge badge-high">fact</span></td>
+                  <td><span class="badge badge-low">import</span></td>
+                  <td>-</td>
+                  <td>-</td></tr></tbody></table>
+        </div>
+        
+
+        <h2 class="section-title">3. DAX Complexity Report</h2>
+        <div class="metric-grid" style="margin-bottom:16px">
+          <div class="metric-card amber">
+            <div class="value">2</div>
+            <div class="label">Measures with 5+ SQL Subqueries</div>
+          </div>
+          <div class="metric-card amber">
+            <div class="value">2</div>
+            <div class="label">Measures with FILTER(ALL)</div>
+          </div>
+          <div class="metric-card">
+            <div class="value">0.6</div>
+            <div class="label">Avg Context Transitions</div>
+          </div>
+          <div class="metric-card">
+            <div class="value">2.1</div>
+            <div class="label">Avg Complexity Score</div>
+          </div>
+        </div>
+        <div class="card"><h3>Top 20 Most Complex Measures</h3>
+          <table><thead><tr><th>Measure</th><th>Table</th><th>Score</th><th>Ctx Trans.</th><th>Hops</th><th>FILTER(ALL)</th><th>Est. SQL Subq.</th><th>Level</th><th>Cross-DQ</th></tr></thead>
+            <tbody><tr>
+              <td>Count of Customer Accounts Opted In LTD</td><td>@Measures</td>
+              <td>14</td>
+              <td>3</td><td>2</td><td>1</td><td>5</td>
+              <td><span class="badge badge-high">high</span></td>
+              <td></td></tr><tr>
+              <td>Count of Customer Accounts Opted Out LTD</td><td>@Measures</td>
+              <td>14</td>
+              <td>3</td><td>2</td><td>1</td><td>5</td>
+              <td><span class="badge badge-high">high</span></td>
+              <td></td></tr><tr>
+              <td>Count of Customer Accounts Opted In (As Today)</td><td>@Measures</td>
+              <td>5</td>
+              <td>2</td><td>1</td><td>0</td><td>3</td>
+              <td><span class="badge badge-medium">medium</span></td>
+              <td></td></tr><tr>
+              <td>Count of Customer Accounts Opted Out (As Today)</td><td>@Measures</td>
+              <td>5</td>
+              <td>2</td><td>1</td><td>0</td><td>3</td>
+              <td><span class="badge badge-medium">medium</span></td>
+              <td></td></tr><tr>
+              <td>Count of Customer Accounts opted In</td><td>@Measures</td>
+              <td>3</td>
+              <td>1</td><td>1</td><td>0</td><td>2</td>
+              <td><span class="badge badge-low">low</span></td>
+              <td></td></tr><tr>
+              <td>Count of Unique Customers Enrolled</td><td>@Measures</td>
+              <td>3</td>
+              <td>1</td><td>1</td><td>0</td><td>2</td>
+              <td><span class="badge badge-low">low</span></td>
+              <td></td></tr><tr>
+              <td>Tier 1 Adoption Rate %</td><td>@Measures</td>
+              <td>2</td>
+              <td>1</td><td>1</td><td>0</td><td>2</td>
+              <td><span class="badge badge-low">low</span></td>
+              <td></td></tr><tr>
+              <td>Tier 2 Adoption Rate %</td><td>@Measures</td>
+              <td>2</td>
+              <td>1</td><td>1</td><td>0</td><td>2</td>
+              <td><span class="badge badge-low">low</span></td>
+              <td></td></tr><tr>
+              <td>Tier 3 Adoption Rate %</td><td>@Measures</td>
+              <td>2</td>
+              <td>1</td><td>1</td><td>0</td><td>2</td>
+              <td><span class="badge badge-low">low</span></td>
+              <td></td></tr><tr>
+              <td>Tier 4 Adoption Rate %</td><td>@Measures</td>
+              <td>2</td>
+              <td>1</td><td>1</td><td>0</td><td>2</td>
+              <td><span class="badge badge-low">low</span></td>
+              <td></td></tr><tr>
+              <td>Count of Customers Downgraded (As Today)</td><td>@Measures</td>
+              <td>1</td>
+              <td>0</td><td>2</td><td>0</td><td>0</td>
+              <td><span class="badge badge-low">low</span></td>
+              <td></td></tr><tr>
+              <td>Count of Customers Downgraded LTD</td><td>@Measures</td>
+              <td>1</td>
+              <td>0</td><td>2</td><td>0</td><td>0</td>
+              <td><span class="badge badge-low">low</span></td>
+              <td></td></tr><tr>
+              <td>Count of Customers Upgraded (As Today)</td><td>@Measures</td>
+              <td>1</td>
+              <td>0</td><td>2</td><td>0</td><td>0</td>
+              <td><span class="badge badge-low">low</span></td>
+              <td></td></tr><tr>
+              <td>Count of Customers Upgraded LTD</td><td>@Measures</td>
+              <td>1</td>
+              <td>0</td><td>2</td><td>0</td><td>0</td>
+              <td><span class="badge badge-low">low</span></td>
+              <td></td></tr><tr>
+              <td>Count of Invites Sent for All Tiers</td><td>@Measures</td>
+              <td>0</td>
+              <td>0</td><td>0</td><td>0</td><td>0</td>
+              <td><span class="badge badge-low">low</span></td>
+              <td></td></tr><tr>
+              <td>Tier 1 KPI Colour</td><td>@Measures</td>
+              <td>0</td>
+              <td>0</td><td>0</td><td>0</td><td>0</td>
+              <td><span class="badge badge-low">low</span></td>
+              <td></td></tr><tr>
+              <td>Tier 2 KPI Colour</td><td>@Measures</td>
+              <td>0</td>
+              <td>0</td><td>0</td><td>0</td><td>0</td>
+              <td><span class="badge badge-low">low</span></td>
+              <td></td></tr><tr>
+              <td>Tier 3 KPI Colour</td><td>@Measures</td>
+              <td>0</td>
+              <td>0</td><td>0</td><td>0</td><td>0</td>
+              <td><span class="badge badge-low">low</span></td>
+              <td></td></tr><tr>
+              <td>Tier 4 KPI Colour</td><td>@Measures</td>
+              <td>0</td>
+              <td>0</td><td>0</td><td>0</td><td>0</td>
+              <td><span class="badge badge-low">low</span></td>
+              <td></td></tr><tr>
+              <td>Tier 1 Target Count</td><td>Tier 1 Target</td>
+              <td>0</td>
+              <td>0</td><td>1</td><td>0</td><td>0</td>
+              <td><span class="badge badge-low">low</span></td>
+              <td></td></tr></tbody></table></div>
+        <div class="card"><h3>Hot Tables — Optimisation Candidates</h3>
+          <table><thead><tr><th>Table</th><th>Storage</th><th>Refs</th><th>Rows</th><th>Size</th><th>Degree</th><th>Priority</th></tr></thead>
+            <tbody><tr>
+              <td>Customer Loyalty</td><td><span class="badge badge-low">import</span></td>
+              <td>14</td>
+              <td>-</td>
+              <td>-</td>
+              <td>15</td>
+              <td><span class="badge badge-low">low</span></td></tr><tr>
+              <td>Customer Loyalty Tier</td><td><span class="badge badge-medium">dual</span></td>
+              <td>4</td>
+              <td>-</td>
+              <td>-</td>
+              <td>3</td>
+              <td><span class="badge badge-low">low</span></td></tr><tr>
+              <td>Date</td><td><span class="badge badge-medium">dual</span></td>
+              <td>2</td>
+              <td>-</td>
+              <td>-</td>
+              <td>2</td>
+              <td><span class="badge badge-low">low</span></td></tr><tr>
+              <td>Tier 1 Target</td><td><span class="badge badge-low">import</span></td>
+              <td>1</td>
+              <td>-</td>
+              <td>-</td>
+              <td>0</td>
+              <td><span class="badge badge-low">low</span></td></tr><tr>
+              <td>Tier 2 Target</td><td><span class="badge badge-low">import</span></td>
+              <td>1</td>
+              <td>-</td>
+              <td>-</td>
+              <td>0</td>
+              <td><span class="badge badge-low">low</span></td></tr><tr>
+              <td>Tier 3 Target</td><td><span class="badge badge-low">import</span></td>
+              <td>1</td>
+              <td>-</td>
+              <td>-</td>
+              <td>0</td>
+              <td><span class="badge badge-low">low</span></td></tr><tr>
+              <td>Tier 4 Target</td><td><span class="badge badge-low">import</span></td>
+              <td>1</td>
+              <td>-</td>
+              <td>-</td>
+              <td>0</td>
+              <td><span class="badge badge-low">low</span></td></tr><tr>
+              <td>Total Invites Sent for Tier 1</td><td><span class="badge badge-low">import</span></td>
+              <td>1</td>
+              <td>-</td>
+              <td>-</td>
+              <td>0</td>
+              <td><span class="badge badge-low">low</span></td></tr><tr>
+              <td>Total Invites Sent for Tier 2</td><td><span class="badge badge-low">import</span></td>
+              <td>1</td>
+              <td>-</td>
+              <td>-</td>
+              <td>0</td>
+              <td><span class="badge badge-low">low</span></td></tr><tr>
+              <td>Total Invites Sent for Tier 3</td><td><span class="badge badge-low">import</span></td>
+              <td>1</td>
+              <td>-</td>
+              <td>-</td>
+              <td>0</td>
+              <td><span class="badge badge-low">low</span></td></tr></tbody></table></div>
+        
+
+        <h2 class="section-title">4. Best Practice Findings</h2>
+        <div class="card"><h3>Rule Violations</h3>
+          <table><thead><tr><th>Rule</th><th>Violations</th><th>Impact Type</th><th>Performance Impact</th></tr></thead>
+            <tbody><tr>
+              <td>FILTER_ALL_ANTIPATTERN</td>
+              <td>2</td>
+              <td><span class="badge badge-high">Latency</span></td>
+              <td style="font-size:12px;color:var(--muted)">Forces full table scan in DirectQuery mode. Each FILTER(ALL) adds an unfiltered subquery to the generated SQL.</td></tr><tr>
+              <td>DAX_COLUMNS_NOT_FULLY_QUALIFIED</td>
+              <td>13</td>
+              <td><span class="badge badge-info">Quality</span></td>
+              <td style="font-size:12px;color:var(--muted)">Readability and maintenance issue. No performance impact but increases risk of errors when columns are renamed.</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td>
+              <td>135</td>
+              <td><span class="badge badge-medium">Cost</span></td>
+              <td style="font-size:12px;color:var(--muted)">Hidden/unused columns are still included in DirectQuery SQL. Increases read bytes and cost per query.</td></tr></tbody></table>
+          <p style="font-size:13px;color:var(--green);margin-top:12px">&#10003; 9 of 12 rules passed (no violations): AVOID_FLOATING_POINT_DATA_TYPES, AVOID_BIDIRECTIONAL_RELATIONSHIPS, DUAL_MODE_TABLES, AVOID_IFERROR, WIDE_TABLES, MISSING_FORMAT_STRING, MANY_TO_MANY_RELATIONSHIPS, BARE_DIVISION, AUTO_DATE_TABLES</p>
+        </div>
+        <div class="card">
+          <h3>Detailed Findings (150 total — showing 2 critical/high/medium)</h3>
+          <table><thead><tr><th>Rule</th><th>Severity</th><th>Table</th><th>Object</th><th>Detail</th></tr></thead>
+            <tbody><tr>
+              <td>FILTER_ALL_ANTIPATTERN</td><td><span class="badge badge-medium">Medium</span></td>
+              <td>@Measures</td><td>Count of Customer Accounts Opted In LTD</td>
+              <td>Measure &#x27;Count of Customer Accounts Opted In LTD&#x27; uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.</td></tr><tr>
+              <td>FILTER_ALL_ANTIPATTERN</td><td><span class="badge badge-medium">Medium</span></td>
+              <td>@Measures</td><td>Count of Customer Accounts Opted Out LTD</td>
+              <td>Measure &#x27;Count of Customer Accounts Opted Out LTD&#x27; uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.</td></tr></tbody></table>
+          
+        <details>
+          <summary>Show 148 more findings (0 medium, 148 low)...</summary>
+          <table><thead><tr><th>Rule</th><th>Severity</th><th>Table</th><th>Object</th><th>Detail</th></tr></thead>
+            <tbody><tr>
+              <td>DAX_COLUMNS_NOT_FULLY_QUALIFIED</td><td><span class="badge badge-low">Low</span></td>
+              <td>@Measures</td><td>Count of Customers Downgraded (As Today)</td>
+              <td>Measure &#x27;Count of Customers Downgraded (As Today)&#x27; references columns without table qualifier: [Current Tier Number], [Previous Tier Number]. Fully qualify column references for clarity.</td></tr><tr>
+              <td>DAX_COLUMNS_NOT_FULLY_QUALIFIED</td><td><span class="badge badge-low">Low</span></td>
+              <td>@Measures</td><td>Count of Customers Downgraded LTD</td>
+              <td>Measure &#x27;Count of Customers Downgraded LTD&#x27; references columns without table qualifier: [Current Tier Number], [Previous Tier Number]. Fully qualify column references for clarity.</td></tr><tr>
+              <td>DAX_COLUMNS_NOT_FULLY_QUALIFIED</td><td><span class="badge badge-low">Low</span></td>
+              <td>@Measures</td><td>Count of Customers Upgraded (As Today)</td>
+              <td>Measure &#x27;Count of Customers Upgraded (As Today)&#x27; references columns without table qualifier: [Current Tier Number], [Previous Tier Number]. Fully qualify column references for clarity.</td></tr><tr>
+              <td>DAX_COLUMNS_NOT_FULLY_QUALIFIED</td><td><span class="badge badge-low">Low</span></td>
+              <td>@Measures</td><td>Count of Customers Upgraded LTD</td>
+              <td>Measure &#x27;Count of Customers Upgraded LTD&#x27; references columns without table qualifier: [Current Tier Number], [Previous Tier Number]. Fully qualify column references for clarity.</td></tr><tr>
+              <td>DAX_COLUMNS_NOT_FULLY_QUALIFIED</td><td><span class="badge badge-low">Low</span></td>
+              <td>@Measures</td><td>Count of Invites Sent for All Tiers</td>
+              <td>Measure &#x27;Count of Invites Sent for All Tiers&#x27; references columns without table qualifier: [Total Requests Sent Tier 1 Count], [Total Requests Sent Tier 2 Count], [Total Requests Sent Tier 3 Count], [Total Requests Sent Tier 4 Count]. Fully qualify column references for clarity.</td></tr><tr>
+              <td>DAX_COLUMNS_NOT_FULLY_QUALIFIED</td><td><span class="badge badge-low">Low</span></td>
+              <td>@Measures</td><td>Tier 1 Adoption Rate %</td>
+              <td>Measure &#x27;Tier 1 Adoption Rate %&#x27; references columns without table qualifier: [Total Requests Sent Tier 1 Count]. Fully qualify column references for clarity.</td></tr><tr>
+              <td>DAX_COLUMNS_NOT_FULLY_QUALIFIED</td><td><span class="badge badge-low">Low</span></td>
+              <td>@Measures</td><td>Tier 1 KPI Colour</td>
+              <td>Measure &#x27;Tier 1 KPI Colour&#x27; references columns without table qualifier: [Count of Customer Accounts opted In], [Tier 1 Target Count]. Fully qualify column references for clarity.</td></tr><tr>
+              <td>DAX_COLUMNS_NOT_FULLY_QUALIFIED</td><td><span class="badge badge-low">Low</span></td>
+              <td>@Measures</td><td>Tier 2 Adoption Rate %</td>
+              <td>Measure &#x27;Tier 2 Adoption Rate %&#x27; references columns without table qualifier: [Total Requests Sent Tier 2 Count]. Fully qualify column references for clarity.</td></tr><tr>
+              <td>DAX_COLUMNS_NOT_FULLY_QUALIFIED</td><td><span class="badge badge-low">Low</span></td>
+              <td>@Measures</td><td>Tier 2 KPI Colour</td>
+              <td>Measure &#x27;Tier 2 KPI Colour&#x27; references columns without table qualifier: [Count of Customer Accounts opted In], [Tier 2 Target Count]. Fully qualify column references for clarity.</td></tr><tr>
+              <td>DAX_COLUMNS_NOT_FULLY_QUALIFIED</td><td><span class="badge badge-low">Low</span></td>
+              <td>@Measures</td><td>Tier 3 Adoption Rate %</td>
+              <td>Measure &#x27;Tier 3 Adoption Rate %&#x27; references columns without table qualifier: [Total Requests Sent Tier 3 Count]. Fully qualify column references for clarity.</td></tr><tr>
+              <td>DAX_COLUMNS_NOT_FULLY_QUALIFIED</td><td><span class="badge badge-low">Low</span></td>
+              <td>@Measures</td><td>Tier 3 KPI Colour</td>
+              <td>Measure &#x27;Tier 3 KPI Colour&#x27; references columns without table qualifier: [Count of Customer Accounts opted In], [Tier 3 Target Count]. Fully qualify column references for clarity.</td></tr><tr>
+              <td>DAX_COLUMNS_NOT_FULLY_QUALIFIED</td><td><span class="badge badge-low">Low</span></td>
+              <td>@Measures</td><td>Tier 4 Adoption Rate %</td>
+              <td>Measure &#x27;Tier 4 Adoption Rate %&#x27; references columns without table qualifier: [Total Requests Sent Tier 4 Count]. Fully qualify column references for clarity.</td></tr><tr>
+              <td>DAX_COLUMNS_NOT_FULLY_QUALIFIED</td><td><span class="badge badge-low">Low</span></td>
+              <td>@Measures</td><td>Tier 4 KPI Colour</td>
+              <td>Measure &#x27;Tier 4 KPI Colour&#x27; references columns without table qualifier: [Count of Customer Accounts opted In], [Tier 4 Target Count]. Fully qualify column references for clarity.</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>@Dataset Metadata</td><td>Build Number</td>
+              <td>Column &#x27;Build Number&#x27; in table &#x27;@Dataset Metadata&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>@Dataset Metadata</td><td>Environment</td>
+              <td>Column &#x27;Environment&#x27; in table &#x27;@Dataset Metadata&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>@Dataset Metadata</td><td>Last Data Refresh (UTC)</td>
+              <td>Column &#x27;Last Data Refresh (UTC)&#x27; in table &#x27;@Dataset Metadata&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Country</td><td>Asos Continent</td>
+              <td>Column &#x27;Asos Continent&#x27; in table &#x27;Country&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Country</td><td>Continent Code</td>
+              <td>Column &#x27;Continent Code&#x27; in table &#x27;Country&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Country</td><td>Continent</td>
+              <td>Column &#x27;Continent&#x27; in table &#x27;Country&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Country</td><td>Country Group</td>
+              <td>Column &#x27;Country Group&#x27; in table &#x27;Country&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Country</td><td>Country Top 16 Group</td>
+              <td>Column &#x27;Country Top 16 Group&#x27; in table &#x27;Country&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Country</td><td>Country Top 4 Group</td>
+              <td>Column &#x27;Country Top 4 Group&#x27; in table &#x27;Country&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Country</td><td>Country Top 6 Group</td>
+              <td>Column &#x27;Country Top 6 Group&#x27; in table &#x27;Country&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Country</td><td>Country Top 60 Group</td>
+              <td>Column &#x27;Country Top 60 Group&#x27; in table &#x27;Country&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Country</td><td>Country</td>
+              <td>Column &#x27;Country&#x27; in table &#x27;Country&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Country</td><td>Dim Country Sk</td>
+              <td>Column &#x27;Dim Country Sk&#x27; in table &#x27;Country&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Country</td><td>Global Territory Group</td>
+              <td>Column &#x27;Global Territory Group&#x27; in table &#x27;Country&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Country</td><td>Is Deleted Flag</td>
+              <td>Column &#x27;Is Deleted Flag&#x27; in table &#x27;Country&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Country</td><td>Is Eu</td>
+              <td>Column &#x27;Is Eu&#x27; in table &#x27;Country&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Country</td><td>Is Europe</td>
+              <td>Column &#x27;Is Europe&#x27; in table &#x27;Country&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Country</td><td>Is Top 11 Country</td>
+              <td>Column &#x27;Is Top 11 Country&#x27; in table &#x27;Country&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Country</td><td>Iso2d3166 Code</td>
+              <td>Column &#x27;Iso2d3166 Code&#x27; in table &#x27;Country&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Country</td><td>Iso3d3166 Code</td>
+              <td>Column &#x27;Iso3d3166 Code&#x27; in table &#x27;Country&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Country</td><td>Nominal Store Id</td>
+              <td>Column &#x27;Nominal Store Id&#x27; in table &#x27;Country&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Country</td><td>Sub Continent</td>
+              <td>Column &#x27;Sub Continent&#x27; in table &#x27;Country&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Country Top Eleven Group</td><td>Country Code</td>
+              <td>Column &#x27;Country Code&#x27; in table &#x27;Country Top Eleven Group&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Country Top Eleven Group</td><td>Dim Country Top Eleven Group Sk</td>
+              <td>Column &#x27;Dim Country Top Eleven Group Sk&#x27; in table &#x27;Country Top Eleven Group&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Country Top Eleven Group</td><td>Country</td>
+              <td>Column &#x27;Country&#x27; in table &#x27;Country Top Eleven Group&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Activity Status</td><td>Customer Activity Status Code</td>
+              <td>Column &#x27;Customer Activity Status Code&#x27; in table &#x27;Customer Activity Status&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Activity Status</td><td>Customer Activity Status Description</td>
+              <td>Column &#x27;Customer Activity Status Description&#x27; in table &#x27;Customer Activity Status&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Activity Status</td><td>Customer Activity Status</td>
+              <td>Column &#x27;Customer Activity Status&#x27; in table &#x27;Customer Activity Status&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Activity Status</td><td>Dim Customer Activity Status Sk</td>
+              <td>Column &#x27;Dim Customer Activity Status Sk&#x27; in table &#x27;Customer Activity Status&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Activity Status</td><td>Is Deleted Flag</td>
+              <td>Column &#x27;Is Deleted Flag&#x27; in table &#x27;Customer Activity Status&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Age</td><td>Age Band</td>
+              <td>Column &#x27;Age Band&#x27; in table &#x27;Customer Age&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Age</td><td>Age Bucket</td>
+              <td>Column &#x27;Age Bucket&#x27; in table &#x27;Customer Age&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Age</td><td>Age Group</td>
+              <td>Column &#x27;Age Group&#x27; in table &#x27;Customer Age&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Age</td><td>Age</td>
+              <td>Column &#x27;Age&#x27; in table &#x27;Customer Age&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Age</td><td>Dim Customer Age Group Sk</td>
+              <td>Column &#x27;Dim Customer Age Group Sk&#x27; in table &#x27;Customer Age&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Age</td><td>Dim Customer Age Sk</td>
+              <td>Column &#x27;Dim Customer Age Sk&#x27; in table &#x27;Customer Age&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Age</td><td>Is Deleted Flag</td>
+              <td>Column &#x27;Is Deleted Flag&#x27; in table &#x27;Customer Age&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Age Group</td><td>Customer Age Group</td>
+              <td>Column &#x27;Customer Age Group&#x27; in table &#x27;Customer Age Group&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Age Group</td><td>Dim Customer Age Group Sk</td>
+              <td>Column &#x27;Dim Customer Age Group Sk&#x27; in table &#x27;Customer Age Group&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Age Group</td><td>Is Deleted Flag</td>
+              <td>Column &#x27;Is Deleted Flag&#x27; in table &#x27;Customer Age Group&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Billing Address</td><td>Billing Address Id</td>
+              <td>Column &#x27;Billing Address Id&#x27; in table &#x27;Customer Billing Address&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Billing Address</td><td>City</td>
+              <td>Column &#x27;City&#x27; in table &#x27;Customer Billing Address&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Billing Address</td><td>Country</td>
+              <td>Column &#x27;Country&#x27; in table &#x27;Customer Billing Address&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Billing Address</td><td>Postcode Hash</td>
+              <td>Column &#x27;Postcode Hash&#x27; in table &#x27;Customer Billing Address&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Billing Address</td><td>Updated Date</td>
+              <td>Column &#x27;Updated Date&#x27; in table &#x27;Customer Billing Address&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Billing Address</td><td>dim_country_sk</td>
+              <td>Column &#x27;dim_country_sk&#x27; in table &#x27;Customer Billing Address&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Billing Address</td><td>dim_customer_account_sk</td>
+              <td>Column &#x27;dim_customer_account_sk&#x27; in table &#x27;Customer Billing Address&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Billing Address</td><td>dim_customer_billing_address_sk</td>
+              <td>Column &#x27;dim_customer_billing_address_sk&#x27; in table &#x27;Customer Billing Address&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Delivery Address</td><td>City</td>
+              <td>Column &#x27;City&#x27; in table &#x27;Customer Delivery Address&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Delivery Address</td><td>Country</td>
+              <td>Column &#x27;Country&#x27; in table &#x27;Customer Delivery Address&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Delivery Address</td><td>Delivery Address Id</td>
+              <td>Column &#x27;Delivery Address Id&#x27; in table &#x27;Customer Delivery Address&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Delivery Address</td><td>Postcode Hash</td>
+              <td>Column &#x27;Postcode Hash&#x27; in table &#x27;Customer Delivery Address&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Delivery Address</td><td>Updated Date</td>
+              <td>Column &#x27;Updated Date&#x27; in table &#x27;Customer Delivery Address&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Delivery Address</td><td>dim_country_sk</td>
+              <td>Column &#x27;dim_country_sk&#x27; in table &#x27;Customer Delivery Address&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Delivery Address</td><td>dim_customer_account_sk</td>
+              <td>Column &#x27;dim_customer_account_sk&#x27; in table &#x27;Customer Delivery Address&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Delivery Address</td><td>dim_customer_delivery_address_sk</td>
+              <td>Column &#x27;dim_customer_delivery_address_sk&#x27; in table &#x27;Customer Delivery Address&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Loyalty</td><td>Dim Customer Account Primary Sk</td>
+              <td>Column &#x27;Dim Customer Account Primary Sk&#x27; in table &#x27;Customer Loyalty&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Loyalty</td><td>Dim Customer Activity Status Sk</td>
+              <td>Column &#x27;Dim Customer Activity Status Sk&#x27; in table &#x27;Customer Loyalty&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Loyalty</td><td>Dim Customer Age Group Sk</td>
+              <td>Column &#x27;Dim Customer Age Group Sk&#x27; in table &#x27;Customer Loyalty&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Loyalty</td><td>Dim Customer Age Sk</td>
+              <td>Column &#x27;Dim Customer Age Sk&#x27; in table &#x27;Customer Loyalty&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Loyalty</td><td>Dim Customer Country Top Eleven Group Sk</td>
+              <td>Column &#x27;Dim Customer Country Top Eleven Group Sk&#x27; in table &#x27;Customer Loyalty&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Loyalty</td><td>Dim Customer Home Country Sk</td>
+              <td>Column &#x27;Dim Customer Home Country Sk&#x27; in table &#x27;Customer Loyalty&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Loyalty</td><td>Dim Customer Loyalty Tenure Sk</td>
+              <td>Column &#x27;Dim Customer Loyalty Tenure Sk&#x27; in table &#x27;Customer Loyalty&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Loyalty</td><td>Dim Customer Sex Sk</td>
+              <td>Column &#x27;Dim Customer Sex Sk&#x27; in table &#x27;Customer Loyalty&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Loyalty</td><td>Dim Customer Tenure Sk</td>
+              <td>Column &#x27;Dim Customer Tenure Sk&#x27; in table &#x27;Customer Loyalty&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Loyalty</td><td>Loyalty Tier Down Count</td>
+              <td>Column &#x27;Loyalty Tier Down Count&#x27; in table &#x27;Customer Loyalty&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Loyalty</td><td>Loyalty Tier Up Count</td>
+              <td>Column &#x27;Loyalty Tier Up Count&#x27; in table &#x27;Customer Loyalty&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Loyalty Status</td><td>Is Deleted Flag</td>
+              <td>Column &#x27;Is Deleted Flag&#x27; in table &#x27;Customer Loyalty Status&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Loyalty Status</td><td>Loyalty Status Description</td>
+              <td>Column &#x27;Loyalty Status Description&#x27; in table &#x27;Customer Loyalty Status&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Loyalty Status</td><td>Loyalty Status Id</td>
+              <td>Column &#x27;Loyalty Status Id&#x27; in table &#x27;Customer Loyalty Status&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Loyalty Tenure</td><td>Dim Customer Loyalty Tenure Sk</td>
+              <td>Column &#x27;Dim Customer Loyalty Tenure Sk&#x27; in table &#x27;Customer Loyalty Tenure&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Loyalty Tenure</td><td>Is Deleted Flag</td>
+              <td>Column &#x27;Is Deleted Flag&#x27; in table &#x27;Customer Loyalty Tenure&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Loyalty Tenure</td><td>Loyalty Tenure Id</td>
+              <td>Column &#x27;Loyalty Tenure Id&#x27; in table &#x27;Customer Loyalty Tenure&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Loyalty Tenure</td><td>Loyalty Tenure Month From</td>
+              <td>Column &#x27;Loyalty Tenure Month From&#x27; in table &#x27;Customer Loyalty Tenure&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Loyalty Tenure</td><td>Loyalty Tenure Month To</td>
+              <td>Column &#x27;Loyalty Tenure Month To&#x27; in table &#x27;Customer Loyalty Tenure&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Loyalty Tenure</td><td>Loyalty Tenure</td>
+              <td>Column &#x27;Loyalty Tenure&#x27; in table &#x27;Customer Loyalty Tenure&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Loyalty Tier</td><td>Is Deleted Flag</td>
+              <td>Column &#x27;Is Deleted Flag&#x27; in table &#x27;Customer Loyalty Tier&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Loyalty Tier</td><td>Loyalty Tier Code</td>
+              <td>Column &#x27;Loyalty Tier Code&#x27; in table &#x27;Customer Loyalty Tier&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Loyalty Tier</td><td>Loyalty Tier Country Code</td>
+              <td>Column &#x27;Loyalty Tier Country Code&#x27; in table &#x27;Customer Loyalty Tier&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Loyalty Tier</td><td>Loyalty Tier Points To Unlock</td>
+              <td>Column &#x27;Loyalty Tier Points To Unlock&#x27; in table &#x27;Customer Loyalty Tier&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Sex</td><td>Customer Sex Code</td>
+              <td>Column &#x27;Customer Sex Code&#x27; in table &#x27;Customer Sex&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Sex</td><td>Customer Sex</td>
+              <td>Column &#x27;Customer Sex&#x27; in table &#x27;Customer Sex&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Sex</td><td>Dim Customer Sex Sk</td>
+              <td>Column &#x27;Dim Customer Sex Sk&#x27; in table &#x27;Customer Sex&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Sex</td><td>Is Deleted Flag</td>
+              <td>Column &#x27;Is Deleted Flag&#x27; in table &#x27;Customer Sex&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Tenure</td><td>Customer Tenure Id</td>
+              <td>Column &#x27;Customer Tenure Id&#x27; in table &#x27;Customer Tenure&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Tenure</td><td>Customer Tenure Month From</td>
+              <td>Column &#x27;Customer Tenure Month From&#x27; in table &#x27;Customer Tenure&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Tenure</td><td>Customer Tenure Month To</td>
+              <td>Column &#x27;Customer Tenure Month To&#x27; in table &#x27;Customer Tenure&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Tenure</td><td>Customer Tenure</td>
+              <td>Column &#x27;Customer Tenure&#x27; in table &#x27;Customer Tenure&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Tenure</td><td>Dim Customer Tenure Sk</td>
+              <td>Column &#x27;Dim Customer Tenure Sk&#x27; in table &#x27;Customer Tenure&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Customer Tenure</td><td>Is Deleted Flag</td>
+              <td>Column &#x27;Is Deleted Flag&#x27; in table &#x27;Customer Tenure&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Calendar Date Full</td>
+              <td>Column &#x27;Calendar Date Full&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Calendar Date Short</td>
+              <td>Column &#x27;Calendar Date Short&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Calendar Day Of Month Id</td>
+              <td>Column &#x27;Calendar Day Of Month Id&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Calendar Day Of Week Id</td>
+              <td>Column &#x27;Calendar Day Of Week Id&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Calendar Day Of Week Short</td>
+              <td>Column &#x27;Calendar Day Of Week Short&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Calendar Day Of Week</td>
+              <td>Column &#x27;Calendar Day Of Week&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Calendar Day Of Year Id</td>
+              <td>Column &#x27;Calendar Day Of Year Id&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Calendar Month Days Quantity</td>
+              <td>Column &#x27;Calendar Month Days Quantity&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Calendar Month Full</td>
+              <td>Column &#x27;Calendar Month Full&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Calendar Month Id</td>
+              <td>Column &#x27;Calendar Month Id&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Calendar Month Short</td>
+              <td>Column &#x27;Calendar Month Short&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Calendar Week Id</td>
+              <td>Column &#x27;Calendar Week Id&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Calendar Week Start Date</td>
+              <td>Column &#x27;Calendar Week Start Date&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Calendar Year Days Quantity</td>
+              <td>Column &#x27;Calendar Year Days Quantity&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Calendar Year Id</td>
+              <td>Column &#x27;Calendar Year Id&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Calendar Year Month Full</td>
+              <td>Column &#x27;Calendar Year Month Full&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Calendar Year Month Id</td>
+              <td>Column &#x27;Calendar Year Month Id&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Calendar Year Month</td>
+              <td>Column &#x27;Calendar Year Month&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Calendar Year Week Id</td>
+              <td>Column &#x27;Calendar Year Week Id&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Date Id</td>
+              <td>Column &#x27;Date Id&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Financial Day Of Year Id</td>
+              <td>Column &#x27;Financial Day Of Year Id&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Financial Half</td>
+              <td>Column &#x27;Financial Half&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Financial Month Full</td>
+              <td>Column &#x27;Financial Month Full&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Financial Month Id</td>
+              <td>Column &#x27;Financial Month Id&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Financial Month Period Id</td>
+              <td>Column &#x27;Financial Month Period Id&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Financial Month Period</td>
+              <td>Column &#x27;Financial Month Period&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Financial Month Short</td>
+              <td>Column &#x27;Financial Month Short&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Financial Month Year Calendar Range Long</td>
+              <td>Column &#x27;Financial Month Year Calendar Range Long&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Financial Month Year Calendar Range Short</td>
+              <td>Column &#x27;Financial Month Year Calendar Range Short&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Financial Quarter Full</td>
+              <td>Column &#x27;Financial Quarter Full&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Financial Quarter Short</td>
+              <td>Column &#x27;Financial Quarter Short&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Financial Week Id</td>
+              <td>Column &#x27;Financial Week Id&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Financial Year Calendar Range</td>
+              <td>Column &#x27;Financial Year Calendar Range&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Financial Year Days Quantity</td>
+              <td>Column &#x27;Financial Year Days Quantity&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Financial Year First Week Start Date Id</td>
+              <td>Column &#x27;Financial Year First Week Start Date Id&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Financial Year Half Id</td>
+              <td>Column &#x27;Financial Year Half Id&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Financial Year Half</td>
+              <td>Column &#x27;Financial Year Half&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Financial Year Month Id</td>
+              <td>Column &#x27;Financial Year Month Id&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Financial Year Number Of Days Past Id</td>
+              <td>Column &#x27;Financial Year Number Of Days Past Id&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Financial Year Quarter Id</td>
+              <td>Column &#x27;Financial Year Quarter Id&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Financial Year Quarter</td>
+              <td>Column &#x27;Financial Year Quarter&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Financial Year Week Id</td>
+              <td>Column &#x27;Financial Year Week Id&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Financial Year</td>
+              <td>Column &#x27;Financial Year&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Is A Leap Year</td>
+              <td>Column &#x27;Is A Leap Year&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr><tr>
+              <td>UNUSED_COLUMNS_CANDIDATE</td><td><span class="badge badge-low">Low</span></td>
+              <td>Date</td><td>Is Deleted Flag</td>
+              <td>Column &#x27;Is Deleted Flag&#x27; in table &#x27;Date&#x27; is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).</td></tr></tbody></table>
+        </details>
+        </div>
+        
+
+        <h2 class="section-title">5. dbt Lineage Analysis</h2>
+        <div class="metric-grid">
+          <div class="metric-card"><div class="value">144</div><div class="label">Serve Models</div><div class="sub">10 domains</div></div>
+          <div class="metric-card amber"><div class="value">144</div><div class="label">Views</div><div class="sub">not materialised</div></div>
+          <div class="metric-card red"><div class="value">19</div><div class="label">Wide Models</div><div class="sub">&gt;50 columns</div></div>
+          <div class="metric-card red"><div class="value">110</div><div class="label">Actionable Findings</div></div>
+        </div>
+        <div class="card"><h3>Actionable Findings (110)</h3>
+          <table><thead><tr><th>Type</th><th>Domain</th><th>Model</th><th>Detail</th></tr></thead>
+            <tbody><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>customer</td>
+                  <td>dim_customer_account_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_customer_account_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>customer</td>
+                  <td>dim_customer_activity_status_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_customer_activity_status_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>customer</td>
+                  <td>dim_customer_age_group_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_customer_age_group_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>customer</td>
+                  <td>dim_customer_age_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_customer_age_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>customer</td>
+                  <td>dim_customer_billing_address_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_customer_billing_address_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>customer</td>
+                  <td>dim_customer_delivery_address_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_customer_delivery_address_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>customer</td>
+                  <td>dim_customer_loyalty_status_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_customer_loyalty_status_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>customer</td>
+                  <td>dim_customer_loyalty_tenure_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_customer_loyalty_tenure_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>customer</td>
+                  <td>dim_customer_loyalty_tier_target_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_customer_loyalty_tier_target_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>customer</td>
+                  <td>dim_customer_loyalty_tier_v2</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_customer_loyalty_tier_v2&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>customer</td>
+                  <td>dim_customer_segment_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_customer_segment_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>customer</td>
+                  <td>dim_customer_sex_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_customer_sex_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>customer</td>
+                  <td>dim_customer_tenure_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_customer_tenure_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>customer</td>
+                  <td>dim_performance_marketing_channel_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_performance_marketing_channel_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>customer</td>
+                  <td>fact_customer_activity_all_weekly_snapshot_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_fact_customer_activity_all_weekly_snapshot_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>customer</td>
+                  <td>fact_customer_visit_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_fact_customer_visit_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>customer</td>
+                  <td>fact_product_view_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_fact_product_view_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>digital</td>
+                  <td>dim_platform_device_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_platform_device_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>digital</td>
+                  <td>dim_platform_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_platform_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>finance</td>
+                  <td>dim_currency_type_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_currency_type_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>finance</td>
+                  <td>dim_currency_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_currency_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>finance</td>
+                  <td>dim_fx_rate_type_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_fx_rate_type_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>finance</td>
+                  <td>fact_forecast_order_daily_snapshot_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_fact_forecast_order_daily_snapshot_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>finance</td>
+                  <td>fact_forecast_retail_daily_snapshot_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_fact_forecast_retail_daily_snapshot_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>marketing</td>
+                  <td>dim_affiliate_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_affiliate_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>product</td>
+                  <td>dim_product_in_pricing_store_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_product_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>product</td>
+                  <td>dim_product_option_fabric_composition_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_product_option_fabric_composition_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>product</td>
+                  <td>dim_product_option_in_pricing_store_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_product_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-high">Wide View</span></td>
+                  <td>product</td>
+                  <td>dim_product_option_v1</td>
+                  <td>75 columns exposed with no WHERE filter. Pass-through view over curated table.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>product</td>
+                  <td>insight_navigator_business_review_product_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_product_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>dim_basket_type_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_basket_type_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>dim_client_app_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_client_app_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>dim_discount_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_discount_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>dim_lifecycle_price_status_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_lifecycle_price_status_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>dim_payment_intent_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_payment_intent_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>dim_price_status_group_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_price_status_group_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>dim_price_status_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_price_status_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>dim_pricing_store_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_pricing_store_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>dim_product_lifecycle_status_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_product_lifecycle_status_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>dim_return_reason_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_return_reason_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>dim_seller_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_seller_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>dim_selling_channel_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_selling_channel_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>dim_shop_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_shop_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>dim_void_action_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_void_action_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>dim_void_reason_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_void_reason_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>dim_web_store_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_web_store_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>dim_wholesale_cancel_reason_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_wholesale_cancel_reason_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>dim_wholesale_order_status_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_wholesale_order_status_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>dim_wholesale_order_type_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_wholesale_order_type_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-high">Wide View</span></td>
+                  <td>sales</td>
+                  <td>fact_billed_sale_and_return_v1</td>
+                  <td>57 columns exposed with no WHERE filter. Pass-through view over curated table.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>fact_billed_sale_asos_fulfilled_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_fact_billed_sale_asos_fulfilled_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>fact_billed_sale_partner_fulfilled_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_fact_billed_sale_partner_fulfilled_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-high">Wide View</span></td>
+                  <td>sales</td>
+                  <td>fact_billed_sale_retail_v1</td>
+                  <td>56 columns exposed with no WHERE filter. Pass-through view over curated table.</td></tr><tr>
+                  <td><span class="badge badge-high">Wide View</span></td>
+                  <td>sales</td>
+                  <td>fact_demand_sale_current_day_v1</td>
+                  <td>53 columns exposed with no WHERE filter. Pass-through view over curated table.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>fact_online_return_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_fact_online_return_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-info">Materialise</span></td>
+                  <td>sales</td>
+                  <td>fact_order_line_operational_rate_v1</td>
+                  <td>View over large incremental table with liquid clustering. Materialising as a narrow table could enable better pruning.</td></tr><tr>
+                  <td><span class="badge badge-info">Materialise</span></td>
+                  <td>sales</td>
+                  <td>fact_order_line_retail_planning_rate_v1</td>
+                  <td>View over large incremental table with liquid clustering. Materialising as a narrow table could enable better pruning.</td></tr><tr>
+                  <td><span class="badge badge-high">Wide View</span></td>
+                  <td>sales</td>
+                  <td>fact_order_line_v1</td>
+                  <td>464 columns exposed with no WHERE filter. Pass-through view over curated table.</td></tr><tr>
+                  <td><span class="badge badge-info">Materialise</span></td>
+                  <td>sales</td>
+                  <td>fact_order_line_v1</td>
+                  <td>View over large incremental table with liquid clustering. Materialising as a narrow table could enable better pruning.</td></tr><tr>
+                  <td><span class="badge badge-high">Wide View</span></td>
+                  <td>sales</td>
+                  <td>fact_product_option_trade_daily_snapshot_v1</td>
+                  <td>96 columns exposed with no WHERE filter. Pass-through view over curated table.</td></tr><tr>
+                  <td><span class="badge badge-info">Materialise</span></td>
+                  <td>sales</td>
+                  <td>fact_product_option_trade_daily_snapshot_v1</td>
+                  <td>View over large incremental table with liquid clustering. Materialising as a narrow table could enable better pruning.</td></tr><tr>
+                  <td><span class="badge badge-high">Wide View</span></td>
+                  <td>sales</td>
+                  <td>fact_product_option_trade_weekly_snapshot_v1</td>
+                  <td>94 columns exposed with no WHERE filter. Pass-through view over curated table.</td></tr><tr>
+                  <td><span class="badge badge-info">Materialise</span></td>
+                  <td>sales</td>
+                  <td>fact_product_option_trade_weekly_snapshot_v1</td>
+                  <td>View over large incremental table with liquid clustering. Materialising as a narrow table could enable better pruning.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>fact_return_asos_fulfilled_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_fact_return_asos_fulfilled_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>fact_return_partner_fulfilled_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_fact_return_partner_fulfilled_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-high">Wide View</span></td>
+                  <td>sales</td>
+                  <td>fact_return_retail_v1</td>
+                  <td>58 columns exposed with no WHERE filter. Pass-through view over curated table.</td></tr><tr>
+                  <td><span class="badge badge-high">Wide View</span></td>
+                  <td>sales</td>
+                  <td>fact_shipped_sale_retail_v1</td>
+                  <td>54 columns exposed with no WHERE filter. Pass-through view over curated table.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>fact_wholesale_sale_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_fact_wholesale_sale_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sales</td>
+                  <td>insight_navigator_business_review_sale_and_return_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_insight_navigator_business_review_sale_and_return_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sourcing_and_buying</td>
+                  <td>dim_factory_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_factory_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sourcing_and_buying</td>
+                  <td>dim_purchase_order_shipping_method_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_purchase_order_shipping_method_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sourcing_and_buying</td>
+                  <td>dim_purchase_order_shipping_type_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_purchase_order_shipping_type_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sourcing_and_buying</td>
+                  <td>dim_purchase_order_status_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_purchase_order_status_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sourcing_and_buying</td>
+                  <td>dim_purchase_order_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_purchase_order_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>sourcing_and_buying</td>
+                  <td>dim_supplier_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_supplier_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>dim_advanced_shipment_notice_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_advanced_shipment_notice_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>dim_bridge_asn_product_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_bridge_asn_product_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>dim_carrier_booking_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_carrier_booking_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>dim_carrier_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_carrier_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>dim_delivery_option_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_delivery_option_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>dim_destination_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_destination_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>dim_house_waybill_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_house_waybill_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>dim_inventory_status_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_inventory_status_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>dim_parcel_carrier_service_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_parcel_carrier_service_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>dim_parcel_carrier_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_parcel_carrier_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>dim_parcel_status_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_parcel_status_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>dim_shipping_point_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_shipping_point_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>dim_stock_adjustment_reason_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_stock_adjustment_reason_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>dim_stock_age_band_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_stock_age_band_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>dim_stock_transaction_code_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_stock_transaction_code_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>dim_stock_transfer_lifecycle_status_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_stock_transfer_lifecycle_status_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>dim_stock_transfer_type_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_stock_transfer_type_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>dim_vessel_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_vessel_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>dim_warehouse_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_warehouse_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>dim_wholesale_delivery_type_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_wholesale_delivery_type_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>dim_wholesale_distribution_centre_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_wholesale_distribution_centre_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>dim_wholesale_freight_type_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_wholesale_freight_type_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>dim_wholesale_partner_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_wholesale_partner_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>dim_wms_stock_status_item_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_wms_stock_status_item_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>fact_carrier_bookings_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_fact_carrier_bookings_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>fact_inventory_availability_daily_snapshot_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_fact_inventory_availability_daily_snapshot_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>supply_chain</td>
+                  <td>fact_stock_adjustments_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_fact_stock_adjustments_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>technology</td>
+                  <td>dim_country_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_country_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>technology</td>
+                  <td>dim_date_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_date_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>technology</td>
+                  <td>dim_date_v2</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_date_v2&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>technology</td>
+                  <td>dim_financial_year_month_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_financial_year_month_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>technology</td>
+                  <td>dim_financial_year_week_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_financial_year_week_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>technology</td>
+                  <td>dim_territory_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_territory_v1&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-medium">Missing Filter</span></td>
+                  <td>technology</td>
+                  <td>insight_navigator_business_review_date_v1</td>
+                  <td>No WHERE clause on serve view over incremental curated table &#x27;curated_dim_date_v2&#x27;. Date filtering happens at query time instead.</td></tr><tr>
+                  <td><span class="badge badge-high">Wide View</span></td>
+                  <td>technology</td>
+                  <td>enriched_azure_amortized_costs_v1</td>
+                  <td>75 columns exposed with no WHERE filter. Pass-through view over curated table.</td></tr></tbody></table></div>
+        
+
+    <h2 class="section-title">6. Root Cause Analysis</h2>
+    <div class="card"><h3>Findings by Severity</h3>
+      <table><thead><tr><th>#</th><th>Finding</th><th>Severity</th><th>Scope</th><th>Where</th><th>Impact</th><th>Effort</th></tr></thead>
+        <tbody><tr><td>F1</td><td><strong>2 FILTER(ALL) Anti-Patterns</strong></td><td><span class="badge badge-medium">medium</span></td><td><span class="badge badge-info">Model-wide</span></td><td><span class="badge badge-medium">Semantic Model</span></td><td>medium</td><td>high</td></tr>
+<tr><td>F2</td><td><strong>135 Unused Column Candidates</strong></td><td><span class="badge badge-medium">medium</span></td><td><span class="badge badge-info">Model-wide</span></td><td><span class="badge badge-medium">Semantic Model</span></td><td>low</td><td>medium</td></tr>
+<tr><td>F3</td><td><strong>10 Pass-Through Serve Views (&gt;50 cols, no filter)</strong></td><td><span class="badge badge-medium">medium</span></td><td><span class="badge badge-info">Model-wide</span></td><td><span class="badge badge-high">Engineering</span></td><td>medium</td><td>low</td></tr>
+</tbody></table></div>
+    
+
+    <h2 class="section-title">7. Recommendation Quadrant</h2>
+    <div class="quadrant-grid">
+      <div class="quadrant-box" style="background:rgba(26,135,84,0.06);border:1px solid rgba(26,135,84,0.2)">
+        <h3 style="color:var(--green)">Quick Wins (Low Effort, High Impact)</h3>
+        <ul></ul>
+      </div>
+      <div class="quadrant-box" style="background:rgba(7,112,207,0.06);border:1px solid rgba(7,112,207,0.2)">
+        <h3 style="color:var(--accent)">Strategic Investments (Higher Effort, High Impact)</h3>
+        <ul><li><strong>F1</strong>: 2 FILTER(ALL) Anti-Patterns <span class="badge badge-medium">Semantic Model</span></li></ul>
+      </div>
+    </div>
+    
+    
+
+    <h2 class="section-title">8. Detailed Recommendations</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:20px">
+      Implementation details, trade-offs, and alternative options for each finding.
+    </p>
+    
+    <div class="card" style="border-left:4px solid var(--amber)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="margin:0">F1: 2 FILTER(ALL) Anti-Patterns</h3>
+        <div><span class="badge badge-medium">medium</span> <span class="badge badge-info">Model-wide</span> <span class="badge badge-medium">Semantic Model</span></div>
+      </div>
+      <p style="font-size:13px;margin-bottom:12px"><strong>Problem:</strong> 2 DAX measures use FILTER(ALL()) which forces full table scans in DirectQuery. Combined with large fact tables, each generates an unfiltered subquery.</p>
+      <div class="recommendation-box" style="margin:0">
+        <h4>How to Fix</h4>
+        <p>Refactor to REMOVEFILTERS() or direct CALCULATE predicates. Prioritise measures on high-traffic pages.</p>
+        <p style='margin-top:8px'><strong>Estimated improvement:</strong> 20-40% latency reduction per refactored measure.</p>
+      </div>
+      <div style="display:flex;gap:24px;margin-top:12px;font-size:13px">
+        <span><strong>Impact:</strong> medium</span>
+        <span><strong>Effort:</strong> high</span>
+      </div>
+      
+      
+      
+      
+      <div class="note-box" style="margin-top:12px">
+                  <strong>Requires Deep Dive</strong>
+                  <ol style='padding-left:18px;margin-top:8px'><li>Run top 10 FILTER(ALL) measures in DAX Studio with Server Timings</li><li>Compare SE vs FE time split</li></ol>
+                </div>
+      
+      <div style="margin-top:12px"><strong>Trade-offs:</strong><ul style="padding-left:18px;margin-top:4px"><li>Requires thorough testing for calculation equivalence</li></ul></div>
+      
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--amber)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="margin:0">F2: 135 Unused Column Candidates</h3>
+        <div><span class="badge badge-medium">medium</span> <span class="badge badge-info">Model-wide</span> <span class="badge badge-medium">Semantic Model</span></div>
+      </div>
+      <p style="font-size:13px;margin-bottom:12px"><strong>Problem:</strong> 135 columns not referenced in any DAX measure. Candidates for removal to reduce DQ payload.</p>
+      <div class="recommendation-box" style="margin:0">
+        <h4>How to Fix</h4>
+        <p>Audit columns, verify not used in visuals/slicers, remove confirmed unused.</p>
+        <p style='margin-top:8px'><strong>Estimated improvement:</strong> Cost reduction — fewer bytes read per query.</p>
+      </div>
+      <div style="display:flex;gap:24px;margin-top:12px;font-size:13px">
+        <span><strong>Impact:</strong> low</span>
+        <span><strong>Effort:</strong> medium</span>
+      </div>
+      
+      
+      
+      
+      
+      
+      <div style="margin-top:12px"><strong>Trade-offs:</strong><ul style="padding-left:18px;margin-top:4px"><li>Some may be used in visuals or bookmarks</li></ul></div>
+      
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--amber)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="margin:0">F3: 10 Pass-Through Serve Views (&gt;50 cols, no filter)</h3>
+        <div><span class="badge badge-medium">medium</span> <span class="badge badge-info">Model-wide</span> <span class="badge badge-high">Engineering</span></div>
+      </div>
+      <p style="font-size:13px;margin-bottom:12px"><strong>Problem:</strong> 10 dbt serve views are SELECT * pass-throughs with &gt;50 columns and no WHERE filter.</p>
+      <div class="recommendation-box" style="margin:0">
+        <h4>How to Fix</h4>
+        <p>Create narrow serve views selecting only columns used by PBI measures.</p>
+        <p style='margin-top:8px'><strong>Estimated improvement:</strong> 60-70% reduction in read_bytes for affected tables.</p>
+      </div>
+      <div style="display:flex;gap:24px;margin-top:12px;font-size:13px">
+        <span><strong>Impact:</strong> medium</span>
+        <span><strong>Effort:</strong> low</span>
+      </div>
+      
+      
+      
+      
+      
+      
+      <div style="margin-top:12px"><strong>Trade-offs:</strong><ul style="padding-left:18px;margin-top:4px"><li>Must audit PBI column usage before narrowing</li></ul></div>
+      
+    </div>
+
+    
+
+    <h2 class="section-title">9. Implementation Roadmap</h2>
+    <div class="note-box">
+      <strong>Where:</strong>
+      <span class="badge badge-high">Engineering</span> = Databricks / dbt / Delta tables
+      &nbsp;&middot;&nbsp;
+      <span class="badge badge-medium">Semantic Model</span> = PBI model / DAX / M expressions
+      &nbsp;&middot;&nbsp;
+      <span class="badge badge-info">Power BI</span> = Report layout / slicers / configuration
+    </div>
+    
+    <div class="recommendation-box"><h4>Phase 1: Quick Wins</h4>
+      <table style="margin-top:12px"><thead><tr><th>Action</th><th>Where</th></tr></thead>
+        <tbody><tr><td><strong>[F3] 10 Pass-Through Serve Views (&gt;50 cols, no filter)</strong></td><td><span class="badge badge-high">Engineering</span></td></tr>
+</tbody></table></div>
+    <div class="recommendation-box"><h4>Phase 2: Strategic Investments</h4>
+      <table style="margin-top:12px"><thead><tr><th>Action</th><th>Where</th></tr></thead>
+        <tbody><tr><td><strong>[F1] 2 FILTER(ALL) Anti-Patterns</strong></td><td><span class="badge badge-medium">Semantic Model</span></td></tr>
+</tbody></table></div>
+    <div class="recommendation-box"><h4>Phase 3: Minor Improvements</h4>
+      <table style="margin-top:12px"><thead><tr><th>Action</th><th>Where</th></tr></thead>
+        <tbody><tr><td><strong>[F2] 135 Unused Column Candidates</strong></td><td><span class="badge badge-medium">Semantic Model</span></td></tr>
+</tbody></table></div>
+    
+
+    <h2 class="section-title">10. Health Score Summary</h2>
+    <div class="card" style="text-align:center;padding:40px">
+      <div style="font-size:64px;font-weight:700;color:var(--green)">74/100</div>
+      <div style="font-size:16px;font-weight:600;color:var(--green);margin-top:8px">Grade B</div>
+    </div>
+    
+    <div class="report-footer">
+      Generated by PBI Performance Diagnosis Agent &middot; 10 Apr 2026 16:59 UTC &middot; Health Score: 74/100 (Grade B)
+    </div>
+  </div>
+</body>
+</html>

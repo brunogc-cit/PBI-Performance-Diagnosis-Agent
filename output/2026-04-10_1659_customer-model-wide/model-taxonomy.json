@@ -1,0 +1,1744 @@
+{
+  "modelName": "ADE - Customer",
+  "modelPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/asos-data-ade-powerbi/powerbi/models/customer/ADE - Customer",
+  "statistics": {
+    "totalTables": 12,
+    "directQueryTables": 1,
+    "dualTables": 7,
+    "importTables": 4,
+    "totalColumns": 79,
+    "totalMeasures": 103,
+    "totalRelationships": 14,
+    "bidirectionalRelationships": 0,
+    "manyToManyRelationships": 0,
+    "inactiveRelationships": 0
+  },
+  "bpaConfig": {
+    "externalRuleFiles": "",
+    "ignoredRules": []
+  },
+  "expressions": [
+    {
+      "name": "_BuildNumber",
+      "kind": "m",
+      "expression": "\"0\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_DbxEndpoint",
+      "kind": "m",
+      "expression": "\"/sql/1.0/warehouses/b409f694c828e99e\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_DbxEnvironmentSuffix",
+      "kind": "m",
+      "expression": "\"_dev\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_DbxServer",
+      "kind": "m",
+      "expression": "\"adb-1450006829160224.4.azuredatabricks.net\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_Environment",
+      "kind": "m",
+      "expression": "\"Development\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_fn_ConvertCatalog",
+      "kind": "m",
+      "expression": "let \n    Source = (catalog as any) => let \n    Source = catalog, \n    ConvertToTable = #table(1, {{Source}}), \n    Split = Table.SplitColumn(ConvertToTable, \"Column1\", Splitter.SplitTextByEachDelimiter({\"_\"}, QuoteStyle.Csv, true), {\"Catalog\"}), \n    AddEnv = Table.ReplaceValue(Split, each [Catalog], each [Catalog] & _DbxEnvironmentSuffix,Replacer.ReplaceText,{\"Catalog\"}), \n    ConvertToValue = List.Max(AddEnv[Catalog]) \nin \n    ConvertToValue \nin \nSource"
+    },
+    {
+      "name": "_fn_GetDataFromDBX",
+      "kind": "m",
+      "expression": "let \n    func = (_DbxCatalog as text, _DbxDatabase as text, _DbxTable as text) => let \n        Source = Databricks.Catalogs(_DbxServer, _DbxEndpoint, []), \n        catalog_Database = Source{[Name=_fn_ConvertCatalog(_DbxCatalog),Kind=\"Database\"]}[Data], \n        default_Schema = catalog_Database{[Name=_DbxDatabase,Kind=\"Schema\"]}[Data], \n        Table = default_Schema{[Name=_DbxTable,Kind=\"Table\"]}[Data] \n    in \n        Table \nin \n    func"
+    }
+  ],
+  "tables": [
+    {
+      "name": "@Dataset Metadata",
+      "storageMode": "import",
+      "columnCount": 3,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [
+        "let\n Refresh = Table.TransformColumnTypes(Table.FromList(List.DateTimes(DateTime.From(DateTimeZone.UtcNow()), 1, #duration(0, 0, 0, 0)), Splitter.SplitByNothing(), {\"Last Data Refresh (UTC)\"}, null, ExtraValues.Error), {{\"Last Data Refresh (UTC)\", type datetime}}),\n#\"Added Environment\" = Table.AddColumn(Refresh, \"Environment\", each _Environment),\n#\"Added BuildNumber\" = Table.AddColumn(#\"Added Environment\", \"Build Number\", each _BuildNumber)\n\n in\n#\"Added BuildNumber\""
+      ],
+      "columns": [
+        {
+          "name": "Build Number",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Environment",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Last Data Refresh (UTC)",
+          "dataType": "dateTime",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "metadata"
+    },
+    {
+      "name": "@Measures",
+      "storageMode": "import",
+      "columnCount": 0,
+      "measureCount": 103,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [
+        "let\n Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText(\"i44FAA==\", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t])\n\n in\nSource"
+      ],
+      "columns": [],
+      "measures": [
+        {
+          "name": "Average Basket Size LM",
+          "expression": "CALCULATE(\n    [Average Basket Size],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id] = MAX('Financial Month Year'[Financial Year Month Id]) - 1\n    )\n)\n",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "Sales\\Transformations\\LM",
+          "isHidden": false
+        },
+        {
+          "name": "Average Basket Size LY",
+          "expression": "CALCULATE(\n    [Average Basket Size],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id]\n            IN\n            SELECTCOLUMNS(\n                VALUES('Financial Month Year'[Financial Year Month Id]),\n                \"LYMonth\", 'Financial Month Year'[Financial Year Month Id] - 100\n            )\n    )\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "Sales\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Average Basket Size YOY %",
+          "expression": "DIVIDE (\n[Average Basket Size] - [Average Basket Size LY],\n[Average Basket Size LY]\n)",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "Sales\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Average Basket Size",
+          "expression": "DIVIDE(\n    [Retail Sales Quantity],\n    [Total Orders]\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "Sales",
+          "isHidden": false
+        },
+        {
+          "name": "Average Customer Value LM",
+          "expression": "CALCULATE(\n   [Average Customer Value],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id] = MAX('Financial Month Year'[Financial Year Month Id]) - 1\n    )\n)\n",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "Sales\\Transformations\\LM",
+          "isHidden": false
+        },
+        {
+          "name": "Average Customer Value LY",
+          "expression": "CALCULATE(\n    [Average Customer Value],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id]\n            IN\n            SELECTCOLUMNS(\n                VALUES('Financial Month Year'[Financial Year Month Id]),\n                \"LYMonth\", 'Financial Month Year'[Financial Year Month Id] - 100\n            )\n    )\n)",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "Sales\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Average Customer Value YOY %",
+          "expression": "DIVIDE (\n[Average Customer Value] - [Average Customer Value LY],\n[Average Customer Value LY]\n)",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "Sales\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Average Customer Value",
+          "expression": "DIVIDE(\n    [Retail Sales Value],\n    [Total Customers]\n)",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "Sales",
+          "isHidden": false
+        },
+        {
+          "name": "Average Order Frequency LM",
+          "expression": "CALCULATE(\n    [Average Order Frequency],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id] = MAX('Financial Month Year'[Financial Year Month Id]) - 1\n    )\n)\n",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "Sales\\Transformations\\LM",
+          "isHidden": false
+        },
+        {
+          "name": "Average Order Frequency LY",
+          "expression": "CALCULATE(\n    [Average Order Frequency],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id]\n            IN\n            SELECTCOLUMNS(\n                VALUES('Financial Month Year'[Financial Year Month Id]),\n                \"LYMonth\", 'Financial Month Year'[Financial Year Month Id] - 100\n            )\n    )\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "Sales\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Average Order Frequency YOY %",
+          "expression": "DIVIDE (\n[Average Order Frequency] - [Average Order Frequency LY],\n[Average Order Frequency LY]\n)",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "Sales\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Average Order Frequency",
+          "expression": "DIVIDE(\n    [Total Orders],\n    [Total Customers]\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "Sales",
+          "isHidden": false
+        },
+        {
+          "name": "Average Selling Price LM",
+          "expression": "CALCULATE(\n    [Average Selling Price],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id] = MAX('Financial Month Year'[Financial Year Month Id]) - 1\n    )\n)\n",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "Sales\\Transformations\\LM",
+          "isHidden": false
+        },
+        {
+          "name": "Average Selling Price LY",
+          "expression": "CALCULATE(\n   [Average Selling Price],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id]\n            IN\n            SELECTCOLUMNS(\n                VALUES('Financial Month Year'[Financial Year Month Id]),\n                \"LYMonth\", 'Financial Month Year'[Financial Year Month Id] - 100\n            )\n    )\n)",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "Sales\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Average Selling Price YOY %",
+          "expression": "DIVIDE (\n[Average Selling Price] - [Average Selling Price LY],\n[Average Selling Price LY]\n)",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "Sales\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Average Selling Price",
+          "expression": "DIVIDE(\n    [Retail Sales Value],\n    [Retail Sales Quantity]\n)",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "Sales",
+          "isHidden": false
+        },
+        {
+          "name": "Churned MAC %",
+          "expression": "([Churned MAC]/[Total Customers])",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "MAC",
+          "isHidden": false
+        },
+        {
+          "name": "Churned MAC LM",
+          "expression": "CALCULATE(\n   [Churned MAC] ,\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id] = MAX('Financial Month Year'[Financial Year Month Id]) - 1\n    )\n)\n",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "MAC\\Transformations\\LM",
+          "isHidden": false
+        },
+        {
+          "name": "Churned MAC LY",
+          "expression": "CALCULATE(\n   [Churned MAC],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id]\n            IN\n            SELECTCOLUMNS(\n                VALUES('Financial Month Year'[Financial Year Month Id]),\n                \"LYMonth\", 'Financial Month Year'[Financial Year Month Id] - 100\n            )\n    )\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "MAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Churned MAC YOY %",
+          "expression": "DIVIDE (\n   [Churned MAC] - [Churned MAC LY],\n   [Churned MAC LY]\n)",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "MAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Churned MAC",
+          "expression": "CALCULATE(\n    [Total Customers],\n    'Customer Activity Status Monthly'[Dim Customer Activity Status Sk] = \"Churn\"\n)\n",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "MAC",
+          "isHidden": false
+        },
+        {
+          "name": "Churned YAC %",
+          "expression": "([Churned YAC]/[Total Customers])",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "YAC",
+          "isHidden": false
+        },
+        {
+          "name": "Churned YAC LM",
+          "expression": "CALCULATE(\n    [Churned YAC],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id] = MAX('Financial Month Year'[Financial Year Month Id]) - 1\n    )\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "YAC\\Transformations\\LM",
+          "isHidden": false
+        },
+        {
+          "name": "Churned YAC LY",
+          "expression": "CALCULATE(\n   [Churned YAC],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id]\n            IN\n            SELECTCOLUMNS(\n                VALUES('Financial Month Year'[Financial Year Month Id]),\n                \"LYMonth\", 'Financial Month Year'[Financial Year Month Id] - 100\n            )\n    )\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "YAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Churned YAC YOY %",
+          "expression": "DIVIDE (\n   [Churned YAC] - [Churned YAC LY],\n   [Churned YAC LY]\n)",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "YAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Churned YAC",
+          "expression": "CALCULATE(\n    [Total Customers],\n    'Customer Activity Status Yearly'[Dim Customer Activity Status Sk] = \"Churn\"\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "YAC",
+          "isHidden": false
+        },
+        {
+          "name": "Existing MAC %",
+          "expression": "([Existing MAC]/[Total Customers])",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "MAC",
+          "isHidden": false
+        },
+        {
+          "name": "Existing MAC LM",
+          "expression": "CALCULATE(\n    [Existing MAC],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id] = MAX('Financial Month Year'[Financial Year Month Id]) - 1\n    )\n)\n",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "MAC\\Transformations\\LM",
+          "isHidden": false
+        },
+        {
+          "name": "Existing MAC LY",
+          "expression": "CALCULATE(\n   [Existing MAC],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id]\n            IN\n            SELECTCOLUMNS(\n                VALUES('Financial Month Year'[Financial Year Month Id]),\n                \"LYMonth\", 'Financial Month Year'[Financial Year Month Id] - 100\n            )\n    )\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "MAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Existing MAC YOY %",
+          "expression": "DIVIDE (\n   [Existing MAC] - [Existing MAC LY],\n   [Existing MAC LY]\n)",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "MAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Existing MAC",
+          "expression": "CALCULATE(\n    [Total Customers],\n    'Customer Activity Status Monthly'[Dim Customer Activity Status Sk] = \"Exist\"\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "MAC",
+          "isHidden": false
+        },
+        {
+          "name": "Existing YAC %",
+          "expression": "([Existing YAC]/[Total Customers])",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "YAC",
+          "isHidden": false
+        },
+        {
+          "name": "Existing YAC LM",
+          "expression": "CALCULATE(\n   [Existing YAC] ,\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id] = MAX('Financial Month Year'[Financial Year Month Id]) - 1\n    )\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "YAC\\Transformations\\LM",
+          "isHidden": false
+        },
+        {
+          "name": "Existing YAC LY",
+          "expression": "CALCULATE(\n   [Existing YAC],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id]\n            IN\n            SELECTCOLUMNS(\n                VALUES('Financial Month Year'[Financial Year Month Id]),\n                \"LYMonth\", 'Financial Month Year'[Financial Year Month Id] - 100\n            )\n    )\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "YAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Existing YAC YOY %",
+          "expression": "DIVIDE (\n   [Existing YAC] - [Existing YAC LY],\n   [Existing YAC LY]\n)",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "YAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Existing YAC",
+          "expression": "CALCULATE(\n    [Total Customers],\n   'Customer Activity Status Yearly'[Dim Customer Activity Status Sk]  = \"Exist\"\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "YAC",
+          "isHidden": false
+        },
+        {
+          "name": "First YAC LM",
+          "expression": "CALCULATE(\n  [First YAC],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id] = MAX('Financial Month Year'[Financial Year Month Id]) - 1\n    )\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "YAC\\Transformations\\LM",
+          "isHidden": false
+        },
+        {
+          "name": "First YAC LY",
+          "expression": "CALCULATE(\n   [First YAC],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id]\n            IN\n            SELECTCOLUMNS(\n                VALUES('Financial Month Year'[Financial Year Month Id]),\n                \"LYMonth\", 'Financial Month Year'[Financial Year Month Id] - 100\n            )\n    )\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "YAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "First YAC YOY %",
+          "expression": "DIVIDE (\n   [First YAC] - [First YAC LY],\n   [First YAC LY]\n)",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "YAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "First YAC",
+          "expression": "CALCULATE(\n    [Total Customers],\n    'Customer Activity Status Yearly'[Dim Customer Activity Status Sk] = \"First\"\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "YAC",
+          "isHidden": false
+        },
+        {
+          "name": "Has Data",
+          "expression": "VAR ThisMonthSK = SELECTEDVALUE('Financial Month Year'[Dim Financial Year Month Sk])\nRETURN\nIF (\n    CALCULATE (\n        COUNTROWS('Customer Monthly Agg'),\n        'Customer Monthly Agg'[Dim Financial Year Month Sk] = ThisMonthSK\n    ) > 0,\n    1,\n    0\n)\n",
+          "formatString": "",
+          "displayFolder": "Customers",
+          "isHidden": true
+        },
+        {
+          "name": "Is In Last 12 Months",
+          "expression": "VAR AnchorMonth =\n    [Selected FY Month]\nVAR AnchorIndex =\n    CALCULATE (\n        MAX ( 'Financial Month Axis'[MonthIndex Axis] ),\n        'Financial Month Axis'[Financial Year Month ID] = AnchorMonth\n    )\nVAR ThisIndex =\n    MAX ( 'Financial Month Axis'[MonthIndex Axis] )\nRETURN\nIF (\n    NOT ISBLANK ( AnchorIndex ) &&\n    ThisIndex <= AnchorIndex &&\n    ThisIndex > AnchorIndex - 12,\n    1\n)\n",
+          "formatString": "",
+          "displayFolder": "Customers",
+          "isHidden": true
+        },
+        {
+          "name": "New MAC %",
+          "expression": "([New MAC]/[Total Customers])",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "MAC",
+          "isHidden": false
+        },
+        {
+          "name": "New MAC LM",
+          "expression": "CALCULATE(\n   [New MAC] ,\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id] = MAX('Financial Month Year'[Financial Year Month Id]) - 1\n    )\n)\n",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "MAC\\Transformations\\LM",
+          "isHidden": false
+        },
+        {
+          "name": "New MAC LY",
+          "expression": "CALCULATE(\n   [New MAC],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id]\n            IN\n            SELECTCOLUMNS(\n                VALUES('Financial Month Year'[Financial Year Month Id]),\n                \"LYMonth\", 'Financial Month Year'[Financial Year Month Id] - 100\n            )\n    )\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "MAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "New MAC YOY %",
+          "expression": "DIVIDE (\n   [New MAC] - [New MAC LY],\n   [New MAC LY]\n)",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "MAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "New MAC",
+          "expression": "CALCULATE(\n    [Total Customers],\n    'Customer Activity Status Monthly'[Dim Customer Activity Status Sk] = \"New\"\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "MAC",
+          "isHidden": false
+        },
+        {
+          "name": "New YAC %",
+          "expression": "([New YAC]/[Total Customers])",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "YAC",
+          "isHidden": false
+        },
+        {
+          "name": "New YAC LM",
+          "expression": "CALCULATE(\n   [New YAC] ,\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id] = MAX('Financial Month Year'[Financial Year Month Id]) - 1\n    )\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "YAC\\Transformations\\LM",
+          "isHidden": false
+        },
+        {
+          "name": "New YAC LY",
+          "expression": "CALCULATE(\n   [New YAC],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id]\n            IN\n            SELECTCOLUMNS(\n                VALUES('Financial Month Year'[Financial Year Month Id]),\n                \"LYMonth\", 'Financial Month Year'[Financial Year Month Id] - 100\n            )\n    )\n)\n",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "YAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "New YAC YOY %",
+          "expression": "DIVIDE (\n   [New YAC] - [New YAC LY],\n   [New YAC LY]\n)",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "YAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "New YAC",
+          "expression": "CALCULATE(\n    [Total Customers],\n    'Customer Activity Status Yearly'[Dim Customer Activity Status Sk] = \"New\"\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "YAC",
+          "isHidden": false
+        },
+        {
+          "name": "Quick Ratio MAC %",
+          "expression": "DIVIDE(\n   [New MAC] + [Reactivated MAC],\n   [Churned MAC]\n)",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "MAC",
+          "isHidden": false
+        },
+        {
+          "name": "Quick Ratio MAC LM %",
+          "expression": "CALCULATE(\n   [Quick Ratio MAC %],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id] = MAX('Financial Month Year'[Financial Year Month Id]) - 1\n    )\n)\n",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "MAC\\Transformations\\LM",
+          "isHidden": false
+        },
+        {
+          "name": "Quick Ratio MAC LY %",
+          "expression": "DIVIDE(\n   [New MAC LY] + [Reactivated MAC LY],\n   [Churned MAC LY]\n)",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "MAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Quick Ratio MAC vs LY %",
+          "expression": "[Quick Ratio MAC %] - [Quick Ratio MAC LY %]",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "MAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Quick Ratio YAC %",
+          "expression": "DIVIDE(\n   [New YAC] + [Reactivated YAC],\n   [Churned YAC]\n)",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "YAC",
+          "isHidden": false
+        },
+        {
+          "name": "Quick Ratio YAC LM %",
+          "expression": "CALCULATE(\n  [Quick Ratio YAC %],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id] = MAX('Financial Month Year'[Financial Year Month Id]) - 1\n    )\n)",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "YAC\\Transformations\\LM",
+          "isHidden": false
+        },
+        {
+          "name": "Quick Ratio YAC LY %",
+          "expression": "DIVIDE(\n   [New YAC LY] + [Reactivated YAC LY],\n   [Churned YAC LY]\n)",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "YAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Quick Ratio YAC vs LY %",
+          "expression": "[Quick Ratio YAC %] - [Quick Ratio YAC LY %]",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "YAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Reactivated MAC %",
+          "expression": "([Reactivated MAC]/[Total Customers])",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "MAC",
+          "isHidden": false
+        },
+        {
+          "name": "Reactivated MAC LM",
+          "expression": "CALCULATE(\n    [Reactivated MAC],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id] = MAX('Financial Month Year'[Financial Year Month Id]) - 1\n    )\n)\n",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "MAC\\Transformations\\LM",
+          "isHidden": false
+        },
+        {
+          "name": "Reactivated MAC LY",
+          "expression": "CALCULATE(\n   [Reactivated MAC],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id]\n            IN\n            SELECTCOLUMNS(\n                VALUES('Financial Month Year'[Financial Year Month Id]),\n                \"LYMonth\", 'Financial Month Year'[Financial Year Month Id] - 100\n            )\n    )\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "MAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Reactivated MAC YOY %",
+          "expression": "DIVIDE (\n   [Reactivated MAC] - [Reactivated MAC LY],\n   [Reactivated MAC LY]\n)",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "MAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Reactivated MAC",
+          "expression": "CALCULATE(\n    [Total Customers],\n    'Customer Activity Status Monthly'[Dim Customer Activity Status Sk] = \"Reactive\"\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "MAC",
+          "isHidden": false
+        },
+        {
+          "name": "Reactivated YAC %",
+          "expression": "([Reactivated YAC]/[Total Customers])",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "YAC",
+          "isHidden": false
+        },
+        {
+          "name": "Reactivated YAC LM",
+          "expression": "CALCULATE(\n   [Reactivated YAC] ,\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id] = MAX('Financial Month Year'[Financial Year Month Id]) - 1\n    )\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "YAC\\Transformations\\LM",
+          "isHidden": false
+        },
+        {
+          "name": "Reactivated YAC LY",
+          "expression": "CALCULATE(\n   [Reactivated YAC],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id]\n            IN\n            SELECTCOLUMNS(\n                VALUES('Financial Month Year'[Financial Year Month Id]),\n                \"LYMonth\", 'Financial Month Year'[Financial Year Month Id] - 100\n            )\n    )\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "YAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Reactivated YAC YOY %",
+          "expression": "DIVIDE (\n   [Reactivated YAC] - [Reactivated YAC LY],\n   [Reactivated YAC LY]\n)",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "YAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Reactivated YAC",
+          "expression": "CALCULATE(\n    [Total Customers],\n    'Customer Activity Status Yearly'[Dim Customer Activity Status Sk] = \"Reactive\"\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "YAC",
+          "isHidden": false
+        },
+        {
+          "name": "Retail Quantity LM",
+          "expression": "CALCULATE(\n    [Retail Sales Quantity],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id] = MAX('Financial Month Year'[Financial Year Month Id]) - 1\n    )\n)\n",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "Sales\\Transformations\\LM",
+          "isHidden": false
+        },
+        {
+          "name": "Retail Sales Quantity LY",
+          "expression": "CALCULATE(\n   [Retail Sales Quantity],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id]\n            IN\n            SELECTCOLUMNS(\n                VALUES('Financial Month Year'[Financial Year Month Id]),\n                \"LYMonth\", 'Financial Month Year'[Financial Year Month Id] - 100\n            )\n    )\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "Sales\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Retail Sales Quantity YOY %",
+          "expression": "DIVIDE (\n  [Retail Sales Quantity] - [Retail Sales Quantity LY],\n [Retail Sales Quantity LY]\n)",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "Sales\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Retail Sales Quantity",
+          "expression": "sum('Customer Activity Monthly'[Retail Quantity])",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "Sales",
+          "isHidden": false
+        },
+        {
+          "name": "Retail Sales Value LY",
+          "expression": "CALCULATE(\n   [Retail Sales Value],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id]\n            IN\n            SELECTCOLUMNS(\n                VALUES('Financial Month Year'[Financial Year Month Id]),\n                \"LYMonth\", 'Financial Month Year'[Financial Year Month Id] - 100\n            )\n    )\n)",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "Sales\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Retail Sales Value YOY %",
+          "expression": "DIVIDE (\n   [Retail Sales Value] - [Retail Sales Value LY],\n   [Retail Sales Value LY]\n)",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "Sales\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Retail Sales Value",
+          "expression": "sum('Customer Activity Monthly'[Retail Value])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "Sales",
+          "isHidden": false
+        },
+        {
+          "name": "Retail Value LM",
+          "expression": "CALCULATE(\n    [Retail Sales Value],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id] = MAX('Financial Month Year'[Financial Year Month Id]) - 1\n    )\n)\n",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "Sales\\Transformations\\LM",
+          "isHidden": false
+        },
+        {
+          "name": "Selected FY Month",
+          "expression": "SELECTEDVALUE ('Financial Month Year'[Financial Year Month Id])\n",
+          "formatString": "",
+          "displayFolder": "Customers",
+          "isHidden": true
+        },
+        {
+          "name": "Total Customers Agg",
+          "expression": "SUM('Customer Monthly Agg'[Distinct Customers])",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "Customers",
+          "isHidden": true
+        },
+        {
+          "name": "Total Customers Dynamic",
+          "expression": "VAR AxisMonth =\n    SELECTEDVALUE ( 'Financial Month Axis'[Financial Year Month ID] )\nRETURN\nCALCULATE (\n    [Total Customers],\n    TREATAS ( { AxisMonth }, 'Financial Month Year'[Financial Year Month Id] )\n)\n",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "Customers",
+          "isHidden": true
+        },
+        {
+          "name": "Total Customers Fact",
+          "expression": "DISTINCTCOUNT('Customer Activity Monthly'[Dim Customer Account Primary Sk])",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "Customers",
+          "isHidden": true
+        },
+        {
+          "name": "Total Customers Forced Fact",
+          "expression": "    ISINSCOPE('Customer Activity Monthly'[Dim Customer Account Primary Sk]) ||\n    ISINSCOPE('Customer Activity Monthly'[Is First Order]) ||\n    ISINSCOPE('Customer Activity Monthly'[Is Premier Subscription]) ||\n    ISFILTERED('Customer Activity Monthly'[Dim Customer Account Primary Sk]) ||\n    ISFILTERED('Customer Activity Monthly'[Is First Order]) ||\n    ISFILTERED('Customer Activity Monthly'[Is Premier Subscription])",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "Customers",
+          "isHidden": true
+        },
+        {
+          "name": "Total Customers LM",
+          "expression": "CALCULATE(\n    [Total Customers],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id] = MAX('Financial Month Year'[Financial Year Month Id]) - 1\n    )\n)\n\n",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "Customers",
+          "isHidden": false
+        },
+        {
+          "name": "Total Customers LY",
+          "expression": "CALCULATE(\n    [Total Customers],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id]\n            IN\n            SELECTCOLUMNS(\n                VALUES('Financial Month Year'[Financial Year Month Id]),\n                \"LYMonth\", 'Financial Month Year'[Financial Year Month Id] - 100\n            )\n    )\n)\n",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "Customers",
+          "isHidden": false
+        },
+        {
+          "name": "Total Customers YOY %",
+          "expression": "DIVIDE (\n[Total Customers] - [Total Customers LY],\n[Total Customers LY]\n)",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "Customers",
+          "isHidden": false
+        },
+        {
+          "name": "Total Customers",
+          "expression": "IF([Total Customers Forced Fact], [Total Customers Fact], [Total Customers Agg])",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "Customers",
+          "isHidden": false
+        },
+        {
+          "name": "Total MAC Dynamic",
+          "expression": "VAR AxisMonth =\n    SELECTEDVALUE ( 'Financial Month Axis'[Financial Year Month ID] )\nRETURN\nCALCULATE (\n    [Total MAC],\n    TREATAS ( { AxisMonth }, 'Financial Month Year'[Financial Year Month ID] )\n)\n",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "Customers",
+          "isHidden": true
+        },
+        {
+          "name": "Total MAC LM",
+          "expression": "CALCULATE(\n   [Total MAC],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id] = MAX('Financial Month Year'[Financial Year Month Id]) - 1\n    )\n)\n",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "MAC\\Transformations\\LM",
+          "isHidden": false
+        },
+        {
+          "name": "Total MAC LY Dynamic",
+          "expression": "VAR AxisMonth =\n    SELECTEDVALUE ( 'Financial Month Axis'[Financial Year Month ID] )\nRETURN\nCALCULATE (\n    [Total MAC LY],\n    TREATAS ( { AxisMonth }, 'Financial Month Year'[Financial Year Month ID] )\n)\n",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "Customers",
+          "isHidden": true
+        },
+        {
+          "name": "Total MAC LY",
+          "expression": "CALCULATE(\n   [Total MAC],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id]\n            IN\n            SELECTCOLUMNS(\n                VALUES('Financial Month Year'[Financial Year Month Id]),\n                \"LYMonth\", 'Financial Month Year'[Financial Year Month Id] - 100\n            )\n    )\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "MAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Total MAC YOY %",
+          "expression": "DIVIDE (\n   [Total MAC] - [Total MAC LY],\n   [Total MAC LY]\n)",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "MAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Total MAC",
+          "expression": "CALCULATE(\n    [Total Customers],\n    KEEPFILTERS(\n        'Customer Activity Status Monthly'[Dim Customer Activity Status Sk]\n            IN { \"Reactive\", \"Exist\", \"New\" }\n    )\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "MAC",
+          "isHidden": false
+        },
+        {
+          "name": "Total Orders LM",
+          "expression": "CALCULATE(\n    [Total Orders],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id] = MAX('Financial Month Year'[Financial Year Month Id]) - 1\n    )\n)\n",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "Sales\\Transformations\\LM",
+          "isHidden": false
+        },
+        {
+          "name": "Total Orders LY",
+          "expression": "CALCULATE(\n   [Total Orders],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id]\n            IN\n            SELECTCOLUMNS(\n                VALUES('Financial Month Year'[Financial Year Month Id]),\n                \"LYMonth\", 'Financial Month Year'[Financial Year Month Id] - 100\n            )\n    )\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "Sales\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Total Orders YOY %",
+          "expression": "DIVIDE (\n[Total Orders] - [Total Orders LY] ,\n[Total Orders LY]\n)",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "Sales\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Total Orders",
+          "expression": "sum('Customer Activity Monthly'[Retail Order Count])",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "Sales",
+          "isHidden": false
+        },
+        {
+          "name": "Total YAC Dynamic",
+          "expression": "VAR AxisMonth =\n    SELECTEDVALUE ( 'Financial Month Axis'[Financial Year Month ID] )\nRETURN\nCALCULATE (\n    [Total YAC],\n    TREATAS ( { AxisMonth }, 'Financial Month Year'[Financial Year Month ID] )\n)\n",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "Customers",
+          "isHidden": true
+        },
+        {
+          "name": "Total YAC LM",
+          "expression": "CALCULATE(\n   [Total YAC],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id] = MAX('Financial Month Year'[Financial Year Month Id]) - 1\n    )\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "YAC\\Transformations\\LM",
+          "isHidden": false
+        },
+        {
+          "name": "Total YAC LY Dynamic",
+          "expression": "VAR AxisMonth =\n    SELECTEDVALUE ( 'Financial Month Axis'[Financial Year Month ID] )\nRETURN\nCALCULATE (\n    [Total YAC LY],\n    TREATAS ( { AxisMonth }, 'Financial Month Year'[Financial Year Month ID] )\n)\n",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "Customers",
+          "isHidden": true
+        },
+        {
+          "name": "Total YAC LY",
+          "expression": "CALCULATE(\n   [Total YAC],\n    FILTER(\n        ALL('Financial Month Year'),\n        'Financial Month Year'[Financial Year Month Id]\n            IN\n            SELECTCOLUMNS(\n                VALUES('Financial Month Year'[Financial Year Month Id]),\n                \"LYMonth\", 'Financial Month Year'[Financial Year Month Id] - 100\n            )\n    )\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "YAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Total YAC YOY %",
+          "expression": "DIVIDE (\n   [Total YAC] - [Total YAC LY],\n  [Total YAC LY]\n)",
+          "formatString": "#,##0.0 %;-#,##0.0 %",
+          "displayFolder": "YAC\\Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Total YAC",
+          "expression": "CALCULATE(\n    [Total Customers],\n    KEEPFILTERS(\n        'Customer Activity Status Yearly'[Dim Customer Activity Status Sk] <> \"Churn\"\n    )\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "YAC",
+          "isHidden": false
+        }
+      ],
+      "classification": "metadata"
+    },
+    {
+      "name": "Country",
+      "storageMode": "dual",
+      "columnCount": 19,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_country_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"dim_country_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Asos Continent",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Continent Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Continent",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Country Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Country Top 16 Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Country Top 4 Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Country Top 6 Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Country Top 60 Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Country",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Country Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Global Territory Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Deleted Flag",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Is Eu",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Europe",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Top 11 Country",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Iso2d3166 Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Iso3d3166 Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Nominal Store Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Sub Continent",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Customer Activity Monthly",
+      "storageMode": "directQuery",
+      "columnCount": 14,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "customer_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "fact_customer_activity_all_monthly_snapshot_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"customer_dev\", \"serve\", \"fact_customer_activity_all_monthly_snapshot_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Dim Billing Country Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Billing Country Top Eleven Group Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Customer Account Primary Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Customer Activity Status Monthly Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Customer Activity Status Yearly Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Customer Age Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Customer Sex Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Customer Tenure Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Financial Year Month Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Is First Order",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Premier Subscription",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Retail Order Count",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Retail Quantity",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Retail Value",
+          "dataType": "decimal",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "fact"
+    },
+    {
+      "name": "Customer Activity Status Monthly",
+      "storageMode": "dual",
+      "columnCount": 5,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "customer_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_customer_activity_status_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"customer_dev\", \"serve\", \"dim_customer_activity_status_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Customer Activity Status Monthly Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Customer Activity Status Monthly Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Customer Activity Status Monthly",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Activity Status Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Is Deleted Flag",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Customer Activity Status Yearly",
+      "storageMode": "dual",
+      "columnCount": 5,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "customer_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_customer_activity_status_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"customer_dev\", \"serve\", \"dim_customer_activity_status_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Customer Activity Status Yearly Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Customer Activity Status Yearly Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Customer Activity Status Yearly",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Activity Status Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Is Deleted Flag",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Customer Age",
+      "storageMode": "dual",
+      "columnCount": 7,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "customer_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_customer_age_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"customer_dev\", \"serve\", \"dim_customer_age_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Customer Age Band",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Customer Age Bucket",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Customer Age Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Customer Age",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Age Group Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Customer Age Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Is Deleted Flag",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Customer Monthly Agg",
+      "storageMode": "import",
+      "columnCount": 11,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": true,
+      "sourceCatalog": "customer_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "fact_customer_activity_monthly_summary_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"customer_dev\", \"serve\", \"fact_customer_activity_monthly_summary_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Dim Billing Country Sk",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Activity Status Monthly Sk",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Activity Status Yearly Sk",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Age Sk",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Sex Sk",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Tenure Sk",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Financial Year Month Sk",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Distinct Customers",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Total Retail Orders",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Total Retail Quantity",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Total Retail Value",
+          "dataType": "decimal",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "fact"
+    },
+    {
+      "name": "Customer Sex",
+      "storageMode": "dual",
+      "columnCount": 4,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "customer_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_customer_sex_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"customer_dev\", \"serve\", \"dim_customer_sex_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Customer Sex Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Customer Sex",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Sex Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Is Deleted Flag",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Customer Tenure",
+      "storageMode": "dual",
+      "columnCount": 6,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "customer_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_customer_tenure_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"customer_dev\", \"serve\", \"dim_customer_tenure_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Customer Tenure Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Customer Tenure Month From",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Customer Tenure Month To",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Customer Tenure",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Tenure Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Is Deleted Flag",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Financial Month Axis",
+      "storageMode": "import",
+      "columnCount": 2,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": true,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [
+        "SELECTCOLUMNS (\n    'Financial Month Year',\n    \"Financial Year Month ID\",'Financial Month Year'[Financial Year Month Id])"
+      ],
+      "columns": [
+        {
+          "name": "Financial Year Month ID",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "MonthIndex Axis",
+          "dataType": "int64",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "metadata"
+    },
+    {
+      "name": "Financial Month Year",
+      "storageMode": "dual",
+      "columnCount": 3,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_financial_year_month_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"dim_financial_year_month_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Dim Financial Year Month Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Year Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year",
+          "dataType": "int64",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    }
+  ],
+  "relationships": [
+    {
+      "name": "2766e032-6a45-43ba-8e54-893e2e9c40ba",
+      "fromTable": "Customer Activity Monthly",
+      "fromColumn": "Dim Financial Year Month Sk",
+      "toTable": "Financial Month Year",
+      "toColumn": "Dim Financial Year Month Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "3e78a8d8-8993-4450-b5bf-bb864c7c051a",
+      "fromTable": "Customer Monthly Agg",
+      "fromColumn": "Dim Customer Tenure Sk",
+      "toTable": "Customer Tenure",
+      "toColumn": "Dim Customer Tenure Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "4e452401-7d32-4b1f-b96e-d3e110e54e71",
+      "fromTable": "Customer Activity Monthly",
+      "fromColumn": "Dim Billing Country Sk",
+      "toTable": "Country",
+      "toColumn": "Dim Country Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "52877605-64f9-4217-935d-fdb9ca4ee2b0",
+      "fromTable": "Customer Monthly Agg",
+      "fromColumn": "Dim Customer Age Sk",
+      "toTable": "Customer Age",
+      "toColumn": "Dim Customer Age Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "54145be1-5ab1-401a-a388-489fe1743035",
+      "fromTable": "Customer Activity Monthly",
+      "fromColumn": "Dim Customer Sex Sk",
+      "toTable": "Customer Sex",
+      "toColumn": "Dim Customer Sex Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "56289aa2-2500-49a5-9cc4-5d4bcb1f737c",
+      "fromTable": "Customer Activity Monthly",
+      "fromColumn": "Dim Customer Activity Status Monthly Sk",
+      "toTable": "Customer Activity Status Monthly",
+      "toColumn": "Dim Customer Activity Status Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "71c091b4-df52-44ad-af72-51f2a599ea53",
+      "fromTable": "Customer Activity Monthly",
+      "fromColumn": "Dim Customer Activity Status Yearly Sk",
+      "toTable": "Customer Activity Status Yearly",
+      "toColumn": "Dim Customer Activity Status Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "7887afd9-1771-4abf-a151-751af091cc64",
+      "fromTable": "Customer Monthly Agg",
+      "fromColumn": "Dim Customer Sex Sk",
+      "toTable": "Customer Sex",
+      "toColumn": "Dim Customer Sex Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "7d9f63c4-b4d4-46c0-a84b-829b1ff1804f",
+      "fromTable": "Customer Monthly Agg",
+      "fromColumn": "Dim Customer Activity Status Yearly Sk",
+      "toTable": "Customer Activity Status Yearly",
+      "toColumn": "Dim Customer Activity Status Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "88b02ce9-d236-4a57-bb27-fb0165e81043",
+      "fromTable": "Customer Activity Monthly",
+      "fromColumn": "Dim Customer Age Sk",
+      "toTable": "Customer Age",
+      "toColumn": "Dim Customer Age Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "9593019f-9c84-498f-b6d5-d1298a822753",
+      "fromTable": "Customer Monthly Agg",
+      "fromColumn": "Dim Customer Activity Status Monthly Sk",
+      "toTable": "Customer Activity Status Monthly",
+      "toColumn": "Dim Customer Activity Status Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "a3dde5ed-071b-4757-861c-0df3a8bee0de",
+      "fromTable": "Customer Monthly Agg",
+      "fromColumn": "Dim Billing Country Sk",
+      "toTable": "Country",
+      "toColumn": "Dim Country Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "f2504253-4ad4-4854-afee-5aa2722a3fce",
+      "fromTable": "Customer Activity Monthly",
+      "fromColumn": "Dim Customer Tenure Sk",
+      "toTable": "Customer Tenure",
+      "toColumn": "Dim Customer Tenure Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "f2fd1f27-a28b-4801-84e1-1907dd197155",
+      "fromTable": "Customer Monthly Agg",
+      "fromColumn": "Dim Financial Year Month Sk",
+      "toTable": "Financial Month Year",
+      "toColumn": "Dim Financial Year Month Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    }
+  ],
+  "sourceMapping": [
+    {
+      "pbiTable": "Country",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_country_v1"
+    },
+    {
+      "pbiTable": "Customer Activity Monthly",
+      "storageMode": "directQuery",
+      "databricksCatalog": "customer_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "fact_customer_activity_all_monthly_snapshot_v1"
+    },
+    {
+      "pbiTable": "Customer Activity Status Monthly",
+      "storageMode": "dual",
+      "databricksCatalog": "customer_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_customer_activity_status_v1"
+    },
+    {
+      "pbiTable": "Customer Activity Status Yearly",
+      "storageMode": "dual",
+      "databricksCatalog": "customer_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_customer_activity_status_v1"
+    },
+    {
+      "pbiTable": "Customer Age",
+      "storageMode": "dual",
+      "databricksCatalog": "customer_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_customer_age_v1"
+    },
+    {
+      "pbiTable": "Customer Monthly Agg",
+      "storageMode": "import",
+      "databricksCatalog": "customer_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "fact_customer_activity_monthly_summary_v1"
+    },
+    {
+      "pbiTable": "Customer Sex",
+      "storageMode": "dual",
+      "databricksCatalog": "customer_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_customer_sex_v1"
+    },
+    {
+      "pbiTable": "Customer Tenure",
+      "storageMode": "dual",
+      "databricksCatalog": "customer_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_customer_tenure_v1"
+    },
+    {
+      "pbiTable": "Financial Month Year",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_financial_year_month_v1"
+    }
+  ],
+  "graphAnalysis": {
+    "maxSnowflakeDepth": 2,
+    "avgDegree": 2.3,
+    "hubTables": [
+      {
+        "name": "Customer Activity Monthly",
+        "degree": 7,
+        "classification": "fact",
+        "storageMode": "directQuery",
+        "sizeGB": null,
+        "rowCount": null
+      },
+      {
+        "name": "Customer Monthly Agg",
+        "degree": 7,
+        "classification": "fact",
+        "storageMode": "import",
+        "sizeGB": null,
+        "rowCount": null
+      }
+    ],
+    "tables": [
+      {
+        "name": "@Dataset Metadata",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      },
+      {
+        "name": "@Measures",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      },
+      {
+        "name": "Country",
+        "degree": 2,
+        "inDegree": 2,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Customer Activity Monthly",
+        "degree": 7,
+        "inDegree": 0,
+        "outDegree": 7,
+        "isHub": true,
+        "classification": "fact",
+        "storageMode": "directQuery"
+      },
+      {
+        "name": "Customer Activity Status Monthly",
+        "degree": 2,
+        "inDegree": 2,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Customer Activity Status Yearly",
+        "degree": 2,
+        "inDegree": 2,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Customer Age",
+        "degree": 2,
+        "inDegree": 2,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Customer Monthly Agg",
+        "degree": 7,
+        "inDegree": 0,
+        "outDegree": 7,
+        "isHub": true,
+        "classification": "fact",
+        "storageMode": "import"
+      },
+      {
+        "name": "Customer Sex",
+        "degree": 2,
+        "inDegree": 2,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Customer Tenure",
+        "degree": 2,
+        "inDegree": 2,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Financial Month Axis",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      },
+      {
+        "name": "Financial Month Year",
+        "degree": 2,
+        "inDegree": 2,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      }
+    ]
+  }
+}

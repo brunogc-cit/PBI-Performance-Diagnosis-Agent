@@ -1,0 +1,1269 @@
+{
+  "modelName": "ADE - PF Stock",
+  "modelPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/asos-data-ade-powerbi/powerbi/models/Sourcing and Buying/ADE - PF Stock",
+  "statistics": {
+    "totalTables": 8,
+    "directQueryTables": 2,
+    "dualTables": 4,
+    "importTables": 2,
+    "totalColumns": 138,
+    "totalMeasures": 28,
+    "totalRelationships": 5,
+    "bidirectionalRelationships": 1,
+    "manyToManyRelationships": 0,
+    "inactiveRelationships": 0
+  },
+  "bpaConfig": {
+    "externalRuleFiles": "",
+    "ignoredRules": []
+  },
+  "expressions": [
+    {
+      "name": "_BuildNumber",
+      "kind": "m",
+      "expression": "\"0\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_DbxEndpoint",
+      "kind": "m",
+      "expression": "\"/sql/1.0/warehouses/80bad8a5778c2e98\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_DbxEnvironmentSuffix",
+      "kind": "m",
+      "expression": "\"\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_DbxServer",
+      "kind": "m",
+      "expression": "\"adb-2762816844316267.7.azuredatabricks.net\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_Environment",
+      "kind": "m",
+      "expression": "\"Production\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_fn_ConvertCatalog",
+      "kind": "m",
+      "expression": "let \n    Source = (catalog as any) => let \n    Source = catalog, \n    ConvertToTable = #table(1, {{Source}}), \n    Split = Table.SplitColumn(ConvertToTable, \"Column1\", Splitter.SplitTextByEachDelimiter({\"_\"}, QuoteStyle.Csv, true), {\"Catalog\"}), \n    AddEnv = Table.ReplaceValue(Split, each [Catalog], each [Catalog] & _DbxEnvironmentSuffix,Replacer.ReplaceText,{\"Catalog\"}), \n    ConvertToValue = List.Max(AddEnv[Catalog]) \nin \n    ConvertToValue \nin \nSource"
+    },
+    {
+      "name": "_fn_GetDataFromDBX",
+      "kind": "m",
+      "expression": "let \n    func = (_DbxCatalog as text, _DbxDatabase as text, _DbxTable as text) => let \n    Source = Databricks.Catalogs(_DbxServer, _DbxEndpoint, []), \n    catalog_Database = Source{[Name=_fn_ConvertCatalog(_DbxCatalog),Kind=\"Database\"]}[Data], \n    default_Schema = catalog_Database{[Name=_DbxDatabase,Kind=\"Schema\"]}[Data], \n    Table = default_Schema{[Name=_DbxTable,Kind=\"Table\"]}[Data] \nin \n    Table \nin \n    func"
+    }
+  ],
+  "tables": [
+    {
+      "name": "@Dataset Metadata",
+      "storageMode": "import",
+      "columnCount": 3,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": true,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [
+        "let\n Refresh = Table.TransformColumnTypes(Table.FromList(List.DateTimes(DateTime.From(DateTimeZone.UtcNow()), 1, #duration(0, 0, 0, 0)), Splitter.SplitByNothing(), {\"Last Data Refresh (UTC)\"}, null, ExtraValues.Error), {{\"Last Data Refresh (UTC)\", type datetime}}),\n#\"Added Environment\" = Table.AddColumn(Refresh, \"Environment\", each _Environment),\n#\"Added BuildNumber\" = Table.AddColumn(#\"Added Environment\", \"Build Number\", each _BuildNumber)\n\n in\n#\"Added BuildNumber\""
+      ],
+      "columns": [
+        {
+          "name": "Build Number",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Environment",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Last Data Refresh (UTC)",
+          "dataType": "dateTime",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "metadata"
+    },
+    {
+      "name": "@Measures",
+      "storageMode": "import",
+      "columnCount": 0,
+      "measureCount": 28,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [
+        "let\n Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText(\"i44FAA==\", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t])\n\n in\nSource"
+      ],
+      "columns": [],
+      "measures": [
+        {
+          "name": "ASOS Saleable Quantity",
+          "expression": "SUM('PF Stock Daily'[Asos Saleable Quantity])",
+          "formatString": "#,##0",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "ASOS Tradeable Quantity",
+          "expression": "SUM('PF Stock Daily'[Asos Tradeable Quantity])",
+          "formatString": "#,##0",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "ASOS Tradeable Sku Count LW",
+          "expression": "VAR SelectedDates = VALUES('Date'[Calendar Date])\nVAR LWDates =\n    CALCULATETABLE(\n        DISTINCT('Daily Financial Transform'[Dim Date Sk Last Week]),\n        'Daily Financial Transform'[Dim Date Sk] IN SelectedDates\n    )\nRETURN\nIF(ISEMPTY(LWDates), BLANK(),\n   CALCULATE([ASOS Tradeable Sku Count],\n             REMOVEFILTERS('Date'),\n             'Date'[Calendar Date] IN LWDates))",
+          "formatString": "#,##0",
+          "displayFolder": "01-Transformations\\LW",
+          "isHidden": false
+        },
+        {
+          "name": "ASOS Tradeable Sku Count LY",
+          "expression": "VAR SelectedDates = VALUES('Date'[Calendar Date])\nVAR LYDates =\n    CALCULATETABLE(\n        DISTINCT('Daily Financial Transform'[Dim Date Sk Last Year]),\n        'Daily Financial Transform'[Dim Date Sk] IN SelectedDates\n    )\nRETURN\nIF(ISEMPTY(LYDates), BLANK(),\n   CALCULATE([ASOS Tradeable Sku Count],\n             REMOVEFILTERS('Date'),\n             'Date'[Calendar Date] IN LYDates))",
+          "formatString": "#,##0",
+          "displayFolder": "01-Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "ASOS Tradeable Sku Count",
+          "expression": "SUM('PF Stock Daily'[Asos Tradeable Sku Count])",
+          "formatString": "#,##0",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Option Is Online for PF",
+          "expression": "IF(\n    SUMX('PF Stock Daily', 'PF Stock Daily'[Partner Quantity]) > 0 ||\n    SUMX('PF Stock Daily', 'PF Stock Daily'[Asos Tradeable Quantity]) > 0,\n    \"Yes\",\n    \"No\"\n)",
+          "formatString": "General",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Partner Quantity",
+          "expression": "SUM('PF Stock Daily'[Partner Quantity])",
+          "formatString": "#,##0",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Partner Saleable Sku Count LW",
+          "expression": "VAR SelectedDates = VALUES('Date'[Calendar Date])\nVAR LWDates =\n    CALCULATETABLE(\n        DISTINCT('Daily Financial Transform'[Dim Date Sk Last Week]),\n        'Daily Financial Transform'[Dim Date Sk] IN SelectedDates\n    )\nRETURN\nIF(ISEMPTY(LWDates), BLANK(),\n   CALCULATE([Partner Saleable Sku Count],\n             REMOVEFILTERS('Date'),\n             'Date'[Calendar Date] IN LWDates))",
+          "formatString": "#,##0",
+          "displayFolder": "01-Transformations\\LW",
+          "isHidden": false
+        },
+        {
+          "name": "Partner Saleable Sku Count LY",
+          "expression": "VAR SelectedDates = VALUES('Date'[Calendar Date])\nVAR LYDates =\n    CALCULATETABLE(\n        DISTINCT('Daily Financial Transform'[Dim Date Sk Last Year]),\n        'Daily Financial Transform'[Dim Date Sk] IN SelectedDates\n    )\nRETURN\nIF(ISEMPTY(LYDates), BLANK(),\n   CALCULATE([Partner Saleable Sku Count],\n             REMOVEFILTERS('Date'),\n             'Date'[Calendar Date] IN LYDates))",
+          "formatString": "#,##0",
+          "displayFolder": "01-Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Partner Saleable Sku Count",
+          "expression": "SUM('PF Stock Daily'[Partner Sku Count])",
+          "formatString": "#,##0",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Partner Tradeable Sku Count LW",
+          "expression": "VAR SelectedDates = VALUES('Date'[Calendar Date])\nVAR LWDates =\n    CALCULATETABLE(\n        DISTINCT('Daily Financial Transform'[Dim Date Sk Last Week]),\n        'Daily Financial Transform'[Dim Date Sk] IN SelectedDates\n    )\nRETURN\nIF(ISEMPTY(LWDates), BLANK(),\n   CALCULATE([Partner Tradeable Sku Count],\n             REMOVEFILTERS('Date'),\n             'Date'[Calendar Date] IN LWDates))",
+          "formatString": "#,##0",
+          "displayFolder": "01-Transformations\\LW",
+          "isHidden": false
+        },
+        {
+          "name": "Partner Tradeable Sku Count LY",
+          "expression": "VAR SelectedDates = VALUES('Date'[Calendar Date])\nVAR LYDates =\n    CALCULATETABLE(\n        DISTINCT('Daily Financial Transform'[Dim Date Sk Last Year]),\n        'Daily Financial Transform'[Dim Date Sk] IN SelectedDates\n    )\nRETURN\nIF(ISEMPTY(LYDates), BLANK(),\n   CALCULATE([Partner Tradeable Sku Count],\n             REMOVEFILTERS('Date'),\n             'Date'[Calendar Date] IN LYDates))",
+          "formatString": "#,##0",
+          "displayFolder": "01-Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Partner Tradeable Sku Count",
+          "expression": "SUM('PF Stock Daily'[Partner Tradeable Sku Count])",
+          "formatString": "#,##0",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Total Live Sku Count LW",
+          "expression": "VAR SelectedDates = VALUES('Date'[Calendar Date])\nVAR LWDates =\n    CALCULATETABLE(\n        DISTINCT('Daily Financial Transform'[Dim Date Sk Last Week]),\n        'Daily Financial Transform'[Dim Date Sk] IN SelectedDates\n    )\nRETURN\nIF(ISEMPTY(LWDates), BLANK(),\n   CALCULATE([Total Live Sku Count],\n             REMOVEFILTERS('Date'),\n             'Date'[Calendar Date] IN LWDates))",
+          "formatString": "#,##0",
+          "displayFolder": "01-Transformations\\LW",
+          "isHidden": false
+        },
+        {
+          "name": "Total Live Sku Count LY",
+          "expression": "VAR SelectedDates = VALUES('Date'[Calendar Date])\nVAR LYDates =\n    CALCULATETABLE(\n        DISTINCT('Daily Financial Transform'[Dim Date Sk Last Year]),\n        'Daily Financial Transform'[Dim Date Sk] IN SelectedDates\n    )\nRETURN\nIF(ISEMPTY(LYDates), BLANK(),\n   CALCULATE([Total Live Sku Count],\n             REMOVEFILTERS('Date'),\n             'Date'[Calendar Date] IN LYDates))",
+          "formatString": "#,##0",
+          "displayFolder": "01-Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Total Live Sku Count",
+          "expression": "SUM('PF Stock Daily'[Total Live Sku Count])",
+          "formatString": "#,##0",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Total Tradeable Sku Count LW",
+          "expression": "VAR SelectedDates = VALUES('Date'[Calendar Date])\nVAR LWDates =\n    CALCULATETABLE(\n        DISTINCT('Daily Financial Transform'[Dim Date Sk Last Week]),\n        'Daily Financial Transform'[Dim Date Sk] IN SelectedDates\n    )\nRETURN\nIF(ISEMPTY(LWDates), BLANK(),\n   CALCULATE([Total Tradeable Sku Count],\n             REMOVEFILTERS('Date'),\n             'Date'[Calendar Date] IN LWDates))",
+          "formatString": "#,##0",
+          "displayFolder": "01-Transformations\\LW",
+          "isHidden": false
+        },
+        {
+          "name": "Total Tradeable Sku Count LY",
+          "expression": "VAR SelectedDates = VALUES('Date'[Calendar Date])\nVAR LYDates =\n    CALCULATETABLE(\n        DISTINCT('Daily Financial Transform'[Dim Date Sk Last Year]),\n        'Daily Financial Transform'[Dim Date Sk] IN SelectedDates\n    )\nRETURN\nIF(ISEMPTY(LYDates), BLANK(),\n   CALCULATE([Total Tradeable Sku Count],\n             REMOVEFILTERS('Date'),\n             'Date'[Calendar Date] IN LYDates))",
+          "formatString": "#,##0",
+          "displayFolder": "01-Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Total Tradeable Sku Count",
+          "expression": "SUM('PF Stock Daily'[Total Tradeable Sku Count])",
+          "formatString": "#,##0",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Tradeable ASOS Stock Availability % LW",
+          "expression": "VAR SelectedDates = VALUES('Date'[Calendar Date])\nVAR LWDates =\n    CALCULATETABLE(\n        DISTINCT('Daily Financial Transform'[Dim Date Sk Last Week]),\n        'Daily Financial Transform'[Dim Date Sk] IN SelectedDates\n    )\nRETURN\nIF(ISEMPTY(LWDates), BLANK(),\n   CALCULATE([Tradeable ASOS Stock Availability %],\n             REMOVEFILTERS('Date'),\n             'Date'[Calendar Date] IN LWDates))",
+          "formatString": "#,##0.0%",
+          "displayFolder": "01-Transformations\\LW",
+          "isHidden": false
+        },
+        {
+          "name": "Tradeable ASOS Stock Availability % LY",
+          "expression": "VAR SelectedDates = VALUES('Date'[Calendar Date])\nVAR LYDates =\n    CALCULATETABLE(\n        DISTINCT('Daily Financial Transform'[Dim Date Sk Last Year]),\n        'Daily Financial Transform'[Dim Date Sk] IN SelectedDates\n    )\nRETURN\nIF(ISEMPTY(LYDates), BLANK(),\n   CALCULATE([Tradeable ASOS Stock Availability %],\n             REMOVEFILTERS('Date'),\n             'Date'[Calendar Date] IN LYDates))",
+          "formatString": "#,##0.0%",
+          "displayFolder": "01-Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Tradeable ASOS Stock Availability %",
+          "expression": "DIVIDE([ASOS Tradeable Sku Count], [Total Tradeable Sku Count])",
+          "formatString": "#,##0.0%",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Tradeable Partner Stock Availability % LW",
+          "expression": "VAR SelectedDates = VALUES('Date'[Calendar Date])\nVAR LWDates =\n    CALCULATETABLE(\n        DISTINCT('Daily Financial Transform'[Dim Date Sk Last Week]),\n        'Daily Financial Transform'[Dim Date Sk] IN SelectedDates\n    )\nRETURN\nIF(ISEMPTY(LWDates), BLANK(),\n   CALCULATE([Tradeable Partner Stock Availability %],\n             REMOVEFILTERS('Date'),\n             'Date'[Calendar Date] IN LWDates))",
+          "formatString": "#,##0.0%",
+          "displayFolder": "01-Transformations\\LW",
+          "isHidden": false
+        },
+        {
+          "name": "Tradeable Partner Stock Availability % LY",
+          "expression": "VAR SelectedDates = VALUES('Date'[Calendar Date])\nVAR LYDates =\n    CALCULATETABLE(\n        DISTINCT('Daily Financial Transform'[Dim Date Sk Last Year]),\n        'Daily Financial Transform'[Dim Date Sk] IN SelectedDates\n    )\nRETURN\nIF(ISEMPTY(LYDates), BLANK(),\n   CALCULATE([Tradeable Partner Stock Availability %],\n             REMOVEFILTERS('Date'),\n             'Date'[Calendar Date] IN LYDates))",
+          "formatString": "#,##0.0%",
+          "displayFolder": "01-Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Tradeable Partner Stock Availability %",
+          "expression": "DIVIDE([Partner Tradeable Sku Count], [Total Tradeable Sku Count])",
+          "formatString": "#,##0.0%",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Tradeable Total Stock Availability % LW",
+          "expression": "VAR SelectedDates = VALUES('Date'[Calendar Date])\nVAR LWDates =\n    CALCULATETABLE(\n        DISTINCT('Daily Financial Transform'[Dim Date Sk Last Week]),\n        'Daily Financial Transform'[Dim Date Sk] IN SelectedDates\n    )\nRETURN\nIF(ISEMPTY(LWDates), BLANK(),\n   CALCULATE([Tradeable Total Stock Availability %],\n             REMOVEFILTERS('Date'),\n             'Date'[Calendar Date] IN LWDates))",
+          "formatString": "#,##0.0%",
+          "displayFolder": "01-Transformations\\LW",
+          "isHidden": false
+        },
+        {
+          "name": "Tradeable Total Stock Availability % LY",
+          "expression": "VAR SelectedDates = VALUES('Date'[Calendar Date])\nVAR LYDates =\n    CALCULATETABLE(\n        DISTINCT('Daily Financial Transform'[Dim Date Sk Last Year]),\n        'Daily Financial Transform'[Dim Date Sk] IN SelectedDates\n    )\nRETURN\nIF(ISEMPTY(LYDates), BLANK(),\n   CALCULATE([Tradeable Total Stock Availability %],\n             REMOVEFILTERS('Date'),\n             'Date'[Calendar Date] IN LYDates))",
+          "formatString": "#,##0.0%",
+          "displayFolder": "01-Transformations\\LY",
+          "isHidden": false
+        },
+        {
+          "name": "Tradeable Total Stock Availability %",
+          "expression": "DIVIDE([Total Tradeable Sku Count], [Total Live Sku Count])",
+          "formatString": "#,##0.0%",
+          "displayFolder": "",
+          "isHidden": false
+        }
+      ],
+      "classification": "metadata"
+    },
+    {
+      "name": "Daily Financial Transform",
+      "storageMode": "dual",
+      "columnCount": 5,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": true,
+      "sourceCatalog": "technology",
+      "sourceDatabase": "serve",
+      "sourceTable": "financial_transform_daily_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology\", \"serve\", \"financial_transform_daily_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Dim Date Sk Last Week",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Date Sk Last Year Minus 1",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Date Sk Last Year",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Date Sk Yesterday",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Date Sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Date",
+      "storageMode": "dual",
+      "columnCount": 47,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "technology",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_date_v2",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology\", \"serve\", \"dim_date_v2\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Calendar Date Full",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Date Short",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Day Of Month Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Day Of Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Day Of Week Short",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Day Of Week",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Day Of Year Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Month Days Quantity",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Month Full",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Month Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Month Short",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Week Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Week Start Date",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Year Days Quantity",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Year Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Year Month Full",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Year Month Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Year Month",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Year Week Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Date Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Date Sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Day Of Year Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Half",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Full",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Period Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Month Period",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Month Short",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Year Calendar Range Long",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Month Year Calendar Range Short",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Quarter Full",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Quarter Short",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Calendar Range",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Days Quantity",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Year First Week Start Date Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Half Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Half",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Number Of Days Past Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Year Quarter Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Quarter",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Is A Leap Year",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Deleted Flag",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Option",
+      "storageMode": "dual",
+      "columnCount": 61,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "product",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_product_option_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"product\", \"serve\", \"dim_product_option_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Ade Source Last Updated",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Asset Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Asset Image Url",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Asset Name",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Asset Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Event Classification Published Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Event Media Complete Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Event Sample Received Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Model Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Model Last Updated Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Model Name",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Commodity Code DE",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Commodity Code UK",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Commodity Code US",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Current Uk Partner Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Current Uk Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Product Option Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Supplier Sk",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Colourway Primary Colour",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Option Production Complete",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Last Known Uk Full Partner Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Last Known Uk Full Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Option Colour Group Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Option Colour Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Option Colour",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Option Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Option Earliest Global Available To Sell Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Option Earliest Global Go Live Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Option Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Option Size Group Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Option Size Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Original Uk Partner Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Original Uk Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Brand Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Brand",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Business Model",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Buying Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Buying Set",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Buying Subgroup",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Division",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Parent Buying Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Parent Buying Subgroup",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Care Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Event Copy Published Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Product Event Created Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Product Hierarchy Category",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Hierarchy Division",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Hierarchy Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Hierarchy Product Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Hierarchy Subcategory",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Style Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Supplier Colour",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Supplier Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Supplier Origin Country",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Supplier Reference Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Supplier Unit Cost Price",
+          "dataType": "decimal",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "PF Stock Daily",
+      "storageMode": "directQuery",
+      "columnCount": 14,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "supplychain",
+      "sourceDatabase": "serve",
+      "sourceTable": "fact_inventory_availability_daily_snapshot_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"supplychain\", \"serve\", \"fact_inventory_availability_daily_snapshot_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Asos Saleable Quantity",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Asos Tradeable Quantity",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Asos Tradeable Sku Count",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Created Date",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Date Sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Product Option Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Territory Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Is Partner Quantity Available",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Partner Quantity",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Partner Sku Count",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Partner Tradeable Sku Count",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Total Live Sku Count",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Total Tradeable Sku Count",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Updated Date",
+          "dataType": "dateTime",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "fact"
+    },
+    {
+      "name": "Product Option In Store",
+      "storageMode": "directQuery",
+      "columnCount": 5,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "product_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_product_option_in_store_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"product_dev\", \"serve\", \"dim_product_option_in_store_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Available To Sell Date Store",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Product Option Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Store Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Go Live Date Store",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "dim_product_option_in_store_sk",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "fact"
+    },
+    {
+      "name": "Territory",
+      "storageMode": "dual",
+      "columnCount": 3,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "technology",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_territory_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology\", \"serve\", \"dim_territory_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Dim Territory Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Territory Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Territory",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    }
+  ],
+  "relationships": [
+    {
+      "name": "a1b2c3d4-4001-4000-8001-000000000099",
+      "fromTable": "Product Option In Store",
+      "fromColumn": "Dim Product Option Sk",
+      "toTable": "Option",
+      "toColumn": "Dim Product Option Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "aa1b2c3d-4e5f-6789-abcd-ef0123456789",
+      "fromTable": "PF Stock Daily",
+      "fromColumn": "Dim Date Sk",
+      "toTable": "Date",
+      "toColumn": "Dim Date Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "bb2c3d4e-5f67-89ab-cdef-123456789012",
+      "fromTable": "PF Stock Daily",
+      "fromColumn": "Dim Product Option Sk",
+      "toTable": "Option",
+      "toColumn": "Dim Product Option Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "cc3d4e5f-6789-abcd-ef01-23456789abcd",
+      "fromTable": "PF Stock Daily",
+      "fromColumn": "Dim Territory Sk",
+      "toTable": "Territory",
+      "toColumn": "Dim Territory Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "dd4e5f67-89ab-cdef-0123-456789abcdef",
+      "fromTable": "Daily Financial Transform",
+      "fromColumn": "Dim Date Sk",
+      "toTable": "Date",
+      "toColumn": "Dim Date Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "bothDirections",
+      "fromCardinality": "one",
+      "toCardinality": "one"
+    }
+  ],
+  "sourceMapping": [
+    {
+      "pbiTable": "Daily Financial Transform",
+      "storageMode": "dual",
+      "databricksCatalog": "technology",
+      "databricksSchema": "serve",
+      "databricksTable": "financial_transform_daily_v1"
+    },
+    {
+      "pbiTable": "Date",
+      "storageMode": "dual",
+      "databricksCatalog": "technology",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_date_v2"
+    },
+    {
+      "pbiTable": "Option",
+      "storageMode": "dual",
+      "databricksCatalog": "product",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_product_option_v1"
+    },
+    {
+      "pbiTable": "PF Stock Daily",
+      "storageMode": "directQuery",
+      "databricksCatalog": "supplychain",
+      "databricksSchema": "serve",
+      "databricksTable": "fact_inventory_availability_daily_snapshot_v1"
+    },
+    {
+      "pbiTable": "Product Option In Store",
+      "storageMode": "directQuery",
+      "databricksCatalog": "product_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_product_option_in_store_v1"
+    },
+    {
+      "pbiTable": "Territory",
+      "storageMode": "dual",
+      "databricksCatalog": "technology",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_territory_v1"
+    }
+  ],
+  "graphAnalysis": {
+    "maxSnowflakeDepth": 4,
+    "avgDegree": 1.2,
+    "hubTables": [],
+    "tables": [
+      {
+        "name": "@Dataset Metadata",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      },
+      {
+        "name": "@Measures",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      },
+      {
+        "name": "Daily Financial Transform",
+        "degree": 1,
+        "inDegree": 0,
+        "outDegree": 1,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Date",
+        "degree": 2,
+        "inDegree": 2,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Option",
+        "degree": 2,
+        "inDegree": 2,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "PF Stock Daily",
+        "degree": 3,
+        "inDegree": 0,
+        "outDegree": 3,
+        "isHub": false,
+        "classification": "fact",
+        "storageMode": "directQuery"
+      },
+      {
+        "name": "Product Option In Store",
+        "degree": 1,
+        "inDegree": 0,
+        "outDegree": 1,
+        "isHub": false,
+        "classification": "fact",
+        "storageMode": "directQuery"
+      },
+      {
+        "name": "Territory",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      }
+    ]
+  }
+}

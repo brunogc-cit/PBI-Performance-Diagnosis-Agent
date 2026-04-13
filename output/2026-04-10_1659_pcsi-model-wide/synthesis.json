@@ -1,0 +1,188 @@
+{
+  "modelName": "ADE - Purchase, Commitment, Stock and Intake",
+  "analysisMode": "model-wide",
+  "analysedAt": "2026-04-10T16:59:31.090336+00:00",
+  "healthScore": 0,
+  "executiveSummary": "The ADE - Purchase, Commitment, Stock and Intake semantic model has a health score of 0/100 (Grade F). It contains 81 tables (23 DirectQuery, 46 Dual), 235 measures, and 230 relationships (4 bidirectional). BPA detected 1258 findings (9 high, 14 medium). DAX analysis found 3 FILTER(ALL) anti-patterns and 2 measures generating 5+ SQL subqueries.",
+  "topFindings": [
+    {
+      "id": "F1",
+      "title": "4 Bidirectional Cross-Filter Relationships",
+      "severity": "high",
+      "impact": "medium",
+      "effort": "low",
+      "quadrant": "quick-win",
+      "layers": [
+        "Semantic Model"
+      ],
+      "scope": "model-wide",
+      "reportContext": null,
+      "description": "4 relationships use bidirectional cross-filtering. In DirectQuery mode, each can double the number of SQL queries per visual.",
+      "recommendation": "Change to single-direction unless explicitly required. Use CROSSFILTER() in specific measures if needed.",
+      "estimatedImprovement": "30-50% reduction in SQL queries for affected visuals.",
+      "tradeoffs": [
+        "May break visuals relying on cross-filter direction"
+      ],
+      "options": []
+    },
+    {
+      "id": "F2",
+      "title": "3 FILTER(ALL) Anti-Patterns",
+      "severity": "medium",
+      "impact": "medium",
+      "effort": "high",
+      "quadrant": "strategic",
+      "layers": [
+        "Semantic Model"
+      ],
+      "scope": "model-wide",
+      "reportContext": null,
+      "description": "3 DAX measures use FILTER(ALL()) which forces full table scans in DirectQuery. Combined with large fact tables, each generates an unfiltered subquery.",
+      "recommendation": "Refactor to REMOVEFILTERS() or direct CALCULATE predicates. Prioritise measures on high-traffic pages.",
+      "estimatedImprovement": "20-40% latency reduction per refactored measure.",
+      "requiresDeepDive": true,
+      "suggestedAnalysisSteps": [
+        "Run top 10 FILTER(ALL) measures in DAX Studio with Server Timings",
+        "Compare SE vs FE time split"
+      ],
+      "tradeoffs": [
+        "Requires thorough testing for calculation equivalence"
+      ],
+      "options": []
+    },
+    {
+      "id": "F3",
+      "title": "9 Wide Tables (>50 columns)",
+      "severity": "medium",
+      "impact": "medium",
+      "effort": "medium",
+      "quadrant": "quick-win",
+      "layers": [
+        "Semantic Model",
+        "Engineering"
+      ],
+      "scope": "model-wide",
+      "reportContext": null,
+      "description": "9 tables have >50 columns. In DirectQuery, all columns are included in generated SQL.",
+      "recommendation": "Audit unused columns and remove from model. Consider narrow serve views.",
+      "estimatedImprovement": "Proportional reduction in read_bytes per query.",
+      "tradeoffs": [
+        "Column removal requires coordination with report authors"
+      ],
+      "options": []
+    },
+    {
+      "id": "F4",
+      "title": "1190 Unused Column Candidates",
+      "severity": "medium",
+      "impact": "low",
+      "effort": "medium",
+      "quadrant": "minor",
+      "layers": [
+        "Semantic Model"
+      ],
+      "scope": "model-wide",
+      "reportContext": null,
+      "description": "1190 columns not referenced in any DAX measure. Candidates for removal to reduce DQ payload.",
+      "recommendation": "Audit columns, verify not used in visuals/slicers, remove confirmed unused.",
+      "estimatedImprovement": "Cost reduction — fewer bytes read per query.",
+      "tradeoffs": [
+        "Some may be used in visuals or bookmarks"
+      ],
+      "options": []
+    },
+    {
+      "id": "F5",
+      "title": "5 Dual-Mode Tables Could Be Import",
+      "severity": "medium",
+      "impact": "low",
+      "effort": "low",
+      "quadrant": "minor",
+      "layers": [
+        "Semantic Model"
+      ],
+      "scope": "model-wide",
+      "reportContext": null,
+      "description": "5 tables in Dual mode are hidden or have no relationships. Switch to Import to reduce DQ overhead.",
+      "recommendation": "Switch to Import mode in Tabular Editor.",
+      "estimatedImprovement": "Minor — reduces refresh time and DQ calls.",
+      "tradeoffs": [
+        "Verify no visual references these in DQ mode"
+      ],
+      "options": []
+    },
+    {
+      "id": "F6",
+      "title": "10 Pass-Through Serve Views (>50 cols, no filter)",
+      "severity": "high",
+      "impact": "high",
+      "effort": "low",
+      "quadrant": "quick-win",
+      "layers": [
+        "Engineering"
+      ],
+      "scope": "model-wide",
+      "reportContext": null,
+      "description": "10 dbt serve views are SELECT * pass-throughs with >50 columns and no WHERE filter.",
+      "recommendation": "Create narrow serve views selecting only columns used by PBI measures.",
+      "estimatedImprovement": "60-70% reduction in read_bytes for affected tables.",
+      "tradeoffs": [
+        "Must audit PBI column usage before narrowing"
+      ],
+      "options": []
+    }
+  ],
+  "implementationRoadmap": [
+    {
+      "phase": "Phase 1: Quick Wins",
+      "actions": [
+        {
+          "action": "4 Bidirectional Cross-Filter Relationships",
+          "where": "Semantic Model",
+          "finding": "F1",
+          "impact": "High"
+        },
+        {
+          "action": "9 Wide Tables (>50 columns)",
+          "where": "Semantic Model, Engineering",
+          "finding": "F3",
+          "impact": "Medium"
+        },
+        {
+          "action": "10 Pass-Through Serve Views (>50 cols, no filter)",
+          "where": "Engineering",
+          "finding": "F6",
+          "impact": "High"
+        }
+      ]
+    },
+    {
+      "phase": "Phase 2: Strategic Investments",
+      "actions": [
+        {
+          "action": "3 FILTER(ALL) Anti-Patterns",
+          "where": "Semantic Model",
+          "finding": "F2",
+          "impact": "Medium"
+        }
+      ]
+    },
+    {
+      "phase": "Phase 3: Minor Improvements",
+      "actions": [
+        {
+          "action": "1190 Unused Column Candidates",
+          "where": "Semantic Model",
+          "finding": "F4",
+          "impact": "Medium"
+        },
+        {
+          "action": "5 Dual-Mode Tables Could Be Import",
+          "where": "Semantic Model",
+          "finding": "F5",
+          "impact": "Medium"
+        }
+      ]
+    }
+  ]
+}

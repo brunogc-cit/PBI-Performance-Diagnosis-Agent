@@ -1,0 +1,737 @@
+{
+  "version": "2.0.0",
+  "analysedAt": "2026-04-10T16:59:27.833925+00:00",
+  "modelPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/asos-data-ade-powerbi/powerbi/models/Sourcing and Buying/ADE - PF Stock",
+  "measures": [
+    {
+      "name": "Option Is Online for PF",
+      "hostTable": "@Measures",
+      "complexityScore": 6,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "iterators: SUMX"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 6,
+      "referencedTables": [
+        "PF Stock Daily"
+      ],
+      "directQueryTables": [
+        "PF Stock Daily"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "General",
+      "isHidden": false
+    },
+    {
+      "name": "ASOS Tradeable Sku Count LW",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 11,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "ASOS Tradeable Sku Count LY",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 11,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Partner Saleable Sku Count LW",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 11,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Partner Saleable Sku Count LY",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 11,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Partner Tradeable Sku Count LW",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 11,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Partner Tradeable Sku Count LY",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 11,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total Live Sku Count LW",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 11,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total Live Sku Count LY",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 11,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total Tradeable Sku Count LW",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 11,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total Tradeable Sku Count LY",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 11,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Tradeable ASOS Stock Availability % LW",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 11,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0%",
+      "isHidden": false
+    },
+    {
+      "name": "Tradeable ASOS Stock Availability % LY",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 11,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0%",
+      "isHidden": false
+    },
+    {
+      "name": "Tradeable Partner Stock Availability % LW",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 11,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0%",
+      "isHidden": false
+    },
+    {
+      "name": "Tradeable Partner Stock Availability % LY",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 11,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0%",
+      "isHidden": false
+    },
+    {
+      "name": "Tradeable Total Stock Availability % LW",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 11,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0%",
+      "isHidden": false
+    },
+    {
+      "name": "Tradeable Total Stock Availability % LY",
+      "hostTable": "@Measures",
+      "complexityScore": 4,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 11,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0%",
+      "isHidden": false
+    },
+    {
+      "name": "ASOS Saleable Quantity",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "PF Stock Daily"
+      ],
+      "directQueryTables": [
+        "PF Stock Daily"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "ASOS Tradeable Quantity",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "PF Stock Daily"
+      ],
+      "directQueryTables": [
+        "PF Stock Daily"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "ASOS Tradeable Sku Count",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "PF Stock Daily"
+      ],
+      "directQueryTables": [
+        "PF Stock Daily"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Partner Quantity",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "PF Stock Daily"
+      ],
+      "directQueryTables": [
+        "PF Stock Daily"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Partner Saleable Sku Count",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "PF Stock Daily"
+      ],
+      "directQueryTables": [
+        "PF Stock Daily"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Partner Tradeable Sku Count",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "PF Stock Daily"
+      ],
+      "directQueryTables": [
+        "PF Stock Daily"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total Live Sku Count",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "PF Stock Daily"
+      ],
+      "directQueryTables": [
+        "PF Stock Daily"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Total Tradeable Sku Count",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "PF Stock Daily"
+      ],
+      "directQueryTables": [
+        "PF Stock Daily"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Tradeable ASOS Stock Availability %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0%",
+      "isHidden": false
+    },
+    {
+      "name": "Tradeable Partner Stock Availability %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0%",
+      "isHidden": false
+    },
+    {
+      "name": "Tradeable Total Stock Availability %",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0.0%",
+      "isHidden": false
+    }
+  ],
+  "hotTables": [
+    {
+      "table": "Daily Financial Transform",
+      "referenceCount": 16,
+      "storageMode": "dual",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 1,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Date",
+      "referenceCount": 16,
+      "storageMode": "dual",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 2,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "PF Stock Daily",
+      "referenceCount": 9,
+      "storageMode": "directQuery",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 3,
+      "optimizationPriority": "low"
+    }
+  ],
+  "statistics": {
+    "totalMeasures": 28,
+    "byComplexity": {
+      "low": 11,
+      "medium": 17,
+      "high": 0,
+      "critical": 0
+    },
+    "crossMultipleDQ": 0,
+    "avgComplexityScore": 2.5,
+    "avgContextTransitions": 0.6,
+    "avgRelationshipHops": 1.5,
+    "measuresWithFilterAll": 0,
+    "measuresWithHighSubqueries": 0
+  }
+}

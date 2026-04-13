@@ -1,0 +1,575 @@
+{
+  "version": "1.0.0",
+  "analysedAt": "2026-04-10T16:59:33.227535+00:00",
+  "modelPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/asos-data-ade-powerbi/powerbi/models/customer/ADE - Loyalty",
+  "modelName": "ADE - Loyalty",
+  "format": "json",
+  "totalMeasures": 27,
+  "measuresWithIssues": 17,
+  "measures": [
+    {
+      "name": "Tier 2 KPI Colour",
+      "table": "@Measures",
+      "isHidden": true,
+      "hasFormatString": false,
+      "expressionLength": 125,
+      "lineCount": 5,
+      "issues": [
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Count of Customer Accounts opted In], [Tier 2 Target Count] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 5 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Tier 3 KPI Colour",
+      "table": "@Measures",
+      "isHidden": true,
+      "hasFormatString": false,
+      "expressionLength": 125,
+      "lineCount": 5,
+      "issues": [
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Count of Customer Accounts opted In], [Tier 3 Target Count] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 5 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Tier 4 KPI Colour",
+      "table": "@Measures",
+      "isHidden": true,
+      "hasFormatString": false,
+      "expressionLength": 125,
+      "lineCount": 5,
+      "issues": [
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Count of Customer Accounts opted In], [Tier 4 Target Count] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 5 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Count of Customer Accounts Opted In LTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 698,
+      "lineCount": 24,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "NESTED_CALCULATE",
+          "severity": "High",
+          "message": "Contains 3 CALCULATE calls -- likely deeply nested, harming readability and performance",
+          "fix": "Extract inner calculations into VAR variables or separate measures to reduce nesting",
+          "line": 2
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Count of Customer Accounts Opted Out LTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 698,
+      "lineCount": 24,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "NESTED_CALCULATE",
+          "severity": "High",
+          "message": "Contains 3 CALCULATE calls -- likely deeply nested, harming readability and performance",
+          "fix": "Extract inner calculations into VAR variables or separate measures to reduce nesting",
+          "line": 2
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Count of Invites Sent for All Tiers",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 140,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ' Count]+[Total Requests Sent T' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Requests Sent Tier 1 Count], [Total Requests Sent Tier 2 Count], [Total Requests Sent Tier 3 Count], [Total Requests Sent Tier 4 Count] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Tier 1 Adoption Rate %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 344,
+      "lineCount": 11,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Requests Sent Tier 1 Count] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 9
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"GB_LOYT_1\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 5
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Tier 1 KPI Colour",
+      "table": "@Measures",
+      "isHidden": true,
+      "hasFormatString": true,
+      "expressionLength": 125,
+      "lineCount": 5,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Count of Customer Accounts opted In], [Tier 1 Target Count] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 5 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Tier 2 Adoption Rate %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 330,
+      "lineCount": 10,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Requests Sent Tier 2 Count] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 8
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"GB_LOYT_2\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 5
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Tier 3 Adoption Rate %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 331,
+      "lineCount": 10,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Requests Sent Tier 3 Count] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 8
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"GB_LOYT_3\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 5
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Tier 4 Adoption Rate %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 330,
+      "lineCount": 10,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Requests Sent Tier 4 Count] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 8
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"GB_LOYT_4\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 5
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Count of Customer Accounts Opted In (As Today)",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 381,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"OptedIn\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 10
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Count of Customer Accounts Opted Out (As Today)",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 382,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"OptedOut\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 10
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Count of Customers Downgraded (As Today)",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 1172,
+      "lineCount": 29,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Current Tier Number], [Previous Tier Number] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 27
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Count of Customers Downgraded LTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 1179,
+      "lineCount": 29,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Current Tier Number], [Previous Tier Number] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 27
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Count of Customers Upgraded (As Today)",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 1168,
+      "lineCount": 29,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Current Tier Number], [Previous Tier Number] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 27
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Count of Customers Upgraded LTD",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 1175,
+      "lineCount": 29,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Current Tier Number], [Previous Tier Number] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 27
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Count of Customer Accounts opted In",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 128,
+      "lineCount": 3,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Count of Unique Customers Enrolled",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 124,
+      "lineCount": 3,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Tier 1 Target Count",
+      "table": "Tier 1 Target",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 53,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Tier 2 Target Count",
+      "table": "Tier 2 Target",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 53,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Tier 3 Target Count",
+      "table": "Tier 3 Target",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 53,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Tier 4 Target Count",
+      "table": "Tier 4 Target",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 53,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Total Requests Sent Tier 1 Count",
+      "table": "Total Invites Sent for Tier 1",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 85,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Total Requests Sent Tier 2 Count",
+      "table": "Total Invites Sent for Tier 2",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 85,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Total Requests Sent Tier 3 Count",
+      "table": "Total Invites Sent for Tier 3",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 85,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Total Requests Sent Tier 4 Count",
+      "table": "Total Invites Sent for Tier 4",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 85,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    }
+  ],
+  "antiPatternSummary": [
+    {
+      "rule": "FILTER_ALL",
+      "severity": "High",
+      "count": 2
+    },
+    {
+      "rule": "IFERROR_ISERROR",
+      "severity": "High",
+      "count": 0
+    },
+    {
+      "rule": "NESTED_CALCULATE",
+      "severity": "High",
+      "count": 2
+    },
+    {
+      "rule": "REPEATED_SUBEXPRESSION",
+      "severity": "Medium",
+      "count": 1
+    },
+    {
+      "rule": "BARE_DIVISION",
+      "severity": "Medium",
+      "count": 0
+    },
+    {
+      "rule": "COUNT_VS_COUNTROWS",
+      "severity": "Medium",
+      "count": 0
+    },
+    {
+      "rule": "MISSING_FORMAT_STRING",
+      "severity": "Medium",
+      "count": 3
+    },
+    {
+      "rule": "UNQUALIFIED_COLUMNS",
+      "severity": "Low",
+      "count": 13
+    },
+    {
+      "rule": "NO_VARIABLES",
+      "severity": "Low",
+      "count": 4
+    },
+    {
+      "rule": "HARDCODED_VALUES",
+      "severity": "Low",
+      "count": 6
+    }
+  ],
+  "summary": {
+    "high": 4,
+    "medium": 4,
+    "low": 23,
+    "totalIssues": 31,
+    "rulesChecked": 10,
+    "cleanMeasures": 10
+  }
+}

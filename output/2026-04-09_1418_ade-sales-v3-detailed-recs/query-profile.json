@@ -1,0 +1,157 @@
+{
+  "source": "manual_databricks_query_history",
+  "queries": [
+    {
+      "query_id": "b7172539-0696-117c-6474-08bce2e83d24",
+      "activity_id": "a6328e87-c126-4305-b9a2-a82f9aadd13a",
+      "report_name": "ADE - Sales",
+      "report_id": "d3c2e3a6-6828-4c56-8387-c30a52c485dc",
+      "dataset_id": "206f6b97-7828-455c-8bdb-b46b32d95318",
+      "visual_id": "7ec54807677383fbebef",
+      "workspace_name": "ADE - Sales",
+      "workspace_id": "73DD8C2D-CBAA-4F67-80ED-3042AB5DCD18",
+      "capacity_name": "fabcapdataservicesprod01",
+      "consumption_method": "Power BI Web App",
+      "executed_by": "spn-ade-pbi",
+      "warehouse": "Technology SQL Warehouse",
+      "start_time": "2026-04-09T17:14:04Z",
+      "end_time": "2026-04-09T17:14:38Z",
+      "duration_ms": 33350,
+      "rows_read": 8636448393,
+      "rows_returned": 5003,
+      "bytes_read": 18920202240,
+      "data_read_gb": 17.63,
+      "photon_pct": 100,
+      "aggregated_task_time_min": 14.13,
+      "scan_amplification_ratio": 1726000,
+      "tables_joined": [
+        {
+          "name": "sales.curated.fact_product_option_trade_daily_snapshot_v1",
+          "role": "fact",
+          "columns_selected": 90,
+          "columns_needed": 1,
+          "scan_time_min": 2.22,
+          "pct_total": 13.9
+        },
+        {
+          "name": "technology.curated.dim_date_v2",
+          "role": "dimension",
+          "columns_selected": 47,
+          "columns_needed": 0,
+          "note": "No date column in visual output - date join serves no purpose without filter"
+        },
+        {
+          "name": "sales.curated.dim_product_lifecycle_status_v1",
+          "role": "dimension",
+          "columns_selected": 5,
+          "columns_needed": 2
+        },
+        {
+          "name": "product.curated.dim_product_option_v1",
+          "role": "dimension",
+          "columns_selected": 73,
+          "columns_needed": 3
+        },
+        {
+          "name": "product.curated.dim_product_option_user_defined_attributes_v1",
+          "role": "dimension",
+          "columns_selected": 160,
+          "columns_needed": 1,
+          "note": "LEFT OUTER JOIN for single column: priority"
+        },
+        {
+          "name": "supplychain.curated.dim_warehouse_v1",
+          "role": "dimension",
+          "columns_selected": "unknown",
+          "columns_needed": 1,
+          "note": "parent_warehouse_code"
+        }
+      ],
+      "operators": [
+        {"id": 13, "type": "Grouping Aggregate", "time_min": 10.49, "pct": 65.9, "note": "Final aggregation - bottleneck"},
+        {"id": 14, "type": "Inner Join", "time_min": 2.37, "pct": 20.1, "note": "lifecycle_status_sk join"},
+        {"id": 16, "type": "Scan Table", "time_min": 2.22, "pct": 13.9, "note": "fact_product_option_trade_daily_snapshot_v1"},
+        {"id": 15, "type": "Inner Join", "time_sec": 45.68, "note": "dim_date_sk join"},
+        {"id": 12, "type": "Inner Join", "time_sec": 3.44, "note": "dim_product_option_sk join"},
+        {"id": 11, "type": "Grouping Aggregate", "time_sec": 2.27},
+        {"id": 10, "type": "Left Outer Join", "time_sec": 1.07, "note": "UDA table join"},
+        {"id": 23, "type": "Shuffle", "time_ms": 493},
+        {"id": 6, "type": "Shuffle", "time_ms": 416},
+        {"id": 9, "type": "Grouping Aggregate", "time_ms": 286},
+        {"id": 22, "type": "Scan Table", "time_ms": 56, "note": "dim_product_option_v1"},
+        {"id": 24, "type": "Scan Table", "time_ms": 18, "note": "dim_product_option_user_defined_attributes_v1"},
+        {"id": 18, "type": "Scan Table", "time_ms": 1, "note": "dim_date_v2"},
+        {"id": 20, "type": "Scan Table", "time_ms": 0, "note": "dim_product_lifecycle_status_v1"},
+        {"id": 26, "type": "Scan Table", "time_ms": 0, "note": "dim_warehouse_v1"}
+      ],
+      "output_columns": [
+        "product_lifecycle_status_group",
+        "product_lifecycle_status",
+        "product_buyrarchy_buying_set",
+        "product_hierarchy_category",
+        "product_hierarchy_product_group",
+        "parent_warehouse_code",
+        "priority",
+        "SUM(retail_return_value)"
+      ],
+      "date_filter": {
+        "type": "IN_list",
+        "date_count_approx": 8000,
+        "date_range": "2004-10-01 to 2027-04-02",
+        "effective_filter": "NONE - covers entire history",
+        "note": "No date slicer active. The IN list contains ~8000 dates spanning 22 years."
+      },
+      "root_causes": [
+        {
+          "id": "RC1",
+          "title": "No date filter applied",
+          "severity": "critical",
+          "layer": "PBI Report",
+          "description": "The visual has no date slicer. The dim_date_v2 IN clause spans 2004-2027 (~8000 dates), meaning the entire fact table history is scanned."
+        },
+        {
+          "id": "RC2",
+          "title": "Extreme column over-selection",
+          "severity": "high",
+          "layer": "PBI DirectQuery Engine",
+          "description": "375+ columns selected across 6 tables; only 8 needed. The UDA table alone contributes 160 columns for a single value (priority)."
+        },
+        {
+          "id": "RC3",
+          "title": "Date filter via JOIN not WHERE",
+          "severity": "high",
+          "layer": "PBI DirectQuery Engine",
+          "description": "Date predicate applied to dim_date_v2 then JOINed to fact via surrogate key, preventing partition pruning on the fact table."
+        },
+        {
+          "id": "RC4",
+          "title": "Cross-catalog JOINs (4 catalogs)",
+          "severity": "medium",
+          "layer": "Databricks",
+          "description": "Single query spans sales, technology, product, supplychain catalogs."
+        },
+        {
+          "id": "RC5",
+          "title": "Scan amplification 1.7M:1",
+          "severity": "critical",
+          "layer": "Databricks",
+          "description": "8.6B rows read to return 5,003. The aggregation operator alone takes 10.49 min (65.9% of task time)."
+        },
+        {
+          "id": "RC6",
+          "title": "Serve views are pass-through",
+          "severity": "medium",
+          "layer": "dbt",
+          "description": "All 144 serve models are views with no column reduction or filtering."
+        },
+        {
+          "id": "RC7",
+          "title": "Wide UDA dimension table joined for 1 column",
+          "severity": "high",
+          "layer": "PBI Model",
+          "description": "dim_product_option_user_defined_attributes_v1 (160+ cols) LEFT OUTER JOINed just for priority column."
+        }
+      ]
+    }
+  ]
+}

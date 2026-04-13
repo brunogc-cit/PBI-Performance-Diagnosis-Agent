@@ -1,0 +1,1352 @@
+{
+  "modelName": "ADE - SCH Origin",
+  "modelPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/asos-data-ade-powerbi/powerbi/models/supplychain/ADE - SCH Origin",
+  "statistics": {
+    "totalTables": 13,
+    "directQueryTables": 0,
+    "dualTables": 0,
+    "importTables": 13,
+    "totalColumns": 113,
+    "totalMeasures": 21,
+    "totalRelationships": 14,
+    "bidirectionalRelationships": 1,
+    "manyToManyRelationships": 0,
+    "inactiveRelationships": 8
+  },
+  "bpaConfig": {
+    "externalRuleFiles": "[\"..\\\\..\\\\..\\\\bestpracticeanalyser\\\\BPARules.json\"]",
+    "ignoredRules": []
+  },
+  "expressions": [
+    {
+      "name": "_BuildNumber",
+      "kind": "m",
+      "expression": "\"0\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_DbxEndpoint",
+      "kind": "m",
+      "expression": "\"/sql/1.0/warehouses/93cbcc0a6399bb92\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_DbxEnvironmentSuffix",
+      "kind": "m",
+      "expression": "\"_e2e\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_DbxServer",
+      "kind": "m",
+      "expression": "\"adb-3446804381685809.9.azuredatabricks.net\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_Environment",
+      "kind": "m",
+      "expression": "\"Development\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_fn_ConvertCatalog",
+      "kind": "m",
+      "expression": "let \n    Source = (catalog as any) => let \n    Source = catalog, \n    ConvertToTable = #table(1, {{Source}}), \n    Split = Table.SplitColumn(ConvertToTable, \"Column1\", Splitter.SplitTextByEachDelimiter({\"_\"}, QuoteStyle.Csv, true), {\"Catalog\"}), \n    AddEnv = Table.ReplaceValue(Split, each [Catalog], each [Catalog] & _DbxEnvironmentSuffix,Replacer.ReplaceText,{\"Catalog\"}), \n    ConvertToValue = List.Max(AddEnv[Catalog]) \nin \n    ConvertToValue \nin \nSource"
+    },
+    {
+      "name": "_fn_GetDataFromDBX",
+      "kind": "m",
+      "expression": "let \n    func = (_DbxCatalog as text, _DbxDatabase as text, _DbxTable as text) => let \n        Source = Databricks.Catalogs(_DbxServer, _DbxEndpoint, []), \n        catalog_Database = Source{[Name=_fn_ConvertCatalog(_DbxCatalog),Kind=\"Database\"]}[Data], \n        default_Schema = catalog_Database{[Name=_DbxDatabase,Kind=\"Schema\"]}[Data], \n        Table = default_Schema{[Name=_DbxTable,Kind=\"Table\"]}[Data] \n    in \n        Table \nin \n    func"
+    }
+  ],
+  "tables": [
+    {
+      "name": "@Dataset Metadata",
+      "storageMode": "import",
+      "columnCount": 3,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [
+        "let\n Refresh = Table.TransformColumnTypes(Table.FromList(List.DateTimes(DateTime.From(DateTimeZone.UtcNow()), 1, #duration(0, 0, 0, 0)), Splitter.SplitByNothing(), {\"Last Data Refresh (UTC)\"}, null, ExtraValues.Error), {{\"Last Data Refresh (UTC)\", type datetime}}),\n#\"Added Environment\" = Table.AddColumn(Refresh, \"Environment\", each _Environment),\n#\"Added BuildNumber\" = Table.AddColumn(#\"Added Environment\", \"Build Number\", each _BuildNumber)\n\n in\n#\"Added BuildNumber\""
+      ],
+      "columns": [
+        {
+          "name": "Build Number",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Environment",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Last Data Refresh (UTC)",
+          "dataType": "dateTime",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "metadata"
+    },
+    {
+      "name": "@Measures",
+      "storageMode": "import",
+      "columnCount": 0,
+      "measureCount": 8,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [
+        "let\n Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText(\"i44FAA==\", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t])\n\n in\nSource"
+      ],
+      "columns": [],
+      "measures": [
+        {
+          "name": "# Number of ASNs",
+          "expression": "COUNTROWS('Carrier Booking')",
+          "formatString": "#,##0",
+          "displayFolder": "Carrier Bookings",
+          "isHidden": false
+        },
+        {
+          "name": "# Original PO Units",
+          "expression": "SUM ( 'Carrier Booking'[Original Purchase Order Skus Quantity] )",
+          "formatString": "#,##0",
+          "displayFolder": "Carrier Bookings",
+          "isHidden": false
+        },
+        {
+          "name": "# Planned Supplier Booked to Carrier Confirmed Duration",
+          "expression": "AVERAGE( 'Carrier Booking'[Planned Supplier Booked To Carrier Confirmed Duration Days] )",
+          "formatString": "#,##0",
+          "displayFolder": "Carrier Bookings",
+          "isHidden": false
+        },
+        {
+          "name": "# Planned Supplier Booked to Goods Ready Duration",
+          "expression": "AVERAGE( 'Carrier Booking'[Planned Supplier Booked To Goods Ready Duration Days] )",
+          "formatString": "#,##0",
+          "displayFolder": "Carrier Bookings",
+          "isHidden": false
+        },
+        {
+          "name": "# Supplier Booked Cartons",
+          "expression": "SUM ( 'Carrier Booking'[Supplier Booked Cartons Quantity] )",
+          "formatString": "#,##0",
+          "displayFolder": "Carrier Bookings",
+          "isHidden": false
+        },
+        {
+          "name": "# Supplier Booked Cubic Meters",
+          "expression": "SUM ( 'Carrier Booking'[Supplier Booked Shipment Size Cubic Meters] )",
+          "formatString": "#,##0",
+          "displayFolder": "Carrier Bookings",
+          "isHidden": false
+        },
+        {
+          "name": "# Supplier Booked Units",
+          "expression": "SUM ( 'Carrier Booking'[Supplier Booked Sku Quantity] )",
+          "formatString": "#,##0",
+          "displayFolder": "Carrier Bookings",
+          "isHidden": false
+        },
+        {
+          "name": "£ Goods Cost Value Gbp",
+          "expression": "SUM ( 'Carrier Booking'[Goods Cost Value Gbp] )",
+          "formatString": "£ #,##0",
+          "displayFolder": "Carrier Bookings",
+          "isHidden": true
+        }
+      ],
+      "classification": "metadata"
+    },
+    {
+      "name": "Carrier",
+      "storageMode": "import",
+      "columnCount": 2,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "supplychain_e2e",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_carrier_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"supplychain_e2e\", \"serve\", \"dim_carrier_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Carrier Name",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Carrier Sk",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Carrier Booking",
+      "storageMode": "import",
+      "columnCount": 37,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "supplychain_e2e",
+      "sourceDatabase": "serve",
+      "sourceTable": "fact_carrier_bookings_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"supplychain_e2e\", \"serve\", \"fact_carrier_bookings_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Asn Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Commitment Buy Value Gbp",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Actual Handover Date Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Advanced Shipment Notice Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Carrier Booking Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Carrier Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Factory Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Final Destination Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim First Destination Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Handover Point Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Inbound Carrier Booking Confirmation Date Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Original Purchase Order Handover Date Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Planned Handover Date Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Planned Shipment Arrival Date Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Planned Shipment Departure Date Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Purchase Order Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Requested Intake First Destination Date Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Requested Intake First Destination Week End Date Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Shipping Point Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Supplier Booked Date Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Supplier Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Transportation Mode Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Distance To Handover Point Miles",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Goods Cost Value First Destination Currency",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Goods Cost Value Gbp",
+          "dataType": "decimal",
+          "isHidden": true
+        },
+        {
+          "name": "Is Carrier Within Target Booking Days",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Supplier Within Target Booking Days",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Original Purchase Order Skus Quantity",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Planned Supplier Booked To Carrier Confirmed Duration Days",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Planned Supplier Booked To Goods Ready Duration Days",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Product Option Original Retail Price Gbp",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Supplier Booked Asn Sku Quantity",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Supplier Booked Cartons Quantity",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Supplier Booked Shipment Size Cubic Meters",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Supplier Booked Sku Quantity",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Target Booking Confirmation Days",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Target Booking Days",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "fact"
+    },
+    {
+      "name": "Carrier Target",
+      "storageMode": "import",
+      "columnCount": 1,
+      "measureCount": 1,
+      "partitionCount": 1,
+      "isHidden": true,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [
+        "GENERATESERIES(0,1,0.01)"
+      ],
+      "columns": [
+        {
+          "name": "Carrier Target",
+          "dataType": "",
+          "isHidden": true
+        }
+      ],
+      "measures": [
+        {
+          "name": "Carrier Target Value",
+          "expression": "SELECTEDVALUE('Carrier Target'[Carrier Target], 0.9)",
+          "formatString": "#,##0 %",
+          "displayFolder": "",
+          "isHidden": true
+        }
+      ],
+      "classification": "metadata"
+    },
+    {
+      "name": "Date",
+      "storageMode": "import",
+      "columnCount": 45,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "technology_e2e",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_date_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_e2e\", \"serve\", \"dim_date_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Calendar Date Full",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Date Of Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Date Short",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Day Of Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Day Of Week Short",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Day Of Week",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Day Of Year Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Month Days Quantity",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Month Full",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Month Short",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Week Start Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Year Days Quantity",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Year Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Year Month Full",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Year Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Year Month",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Year Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Date Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Day Of Year Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Half",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Full",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Period Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Period",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Short",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Year Calendar Range Long",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Year Calendar Range Short",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Quarter Full",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Quarter Short",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Calendar Range",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Days Quantity",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year First Week Start Date Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Half Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Half",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Number Of Days Past Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Quarter Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Quarter",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Is A Leap Year",
+          "dataType": "int64",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Shipping Point",
+      "storageMode": "import",
+      "columnCount": 5,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "supplychain_e2e",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_shipping_point_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"supplychain_e2e\", \"serve\", \"dim_shipping_point_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Shipping Point Continent",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Shipping Point Country",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Shipping Point Port",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Shipping Point Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Shipping Point Sub Continent",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Supplier",
+      "storageMode": "import",
+      "columnCount": 8,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "supplychain_e2e",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_supplier_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"sourcingandbuying_e2e\", \"serve\", \"dim_supplier_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Currency Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Supplier Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Parent Supplier",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Primary Country Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Primary State",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Shipped Quantity Tolerance Cycle",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Shipped Quantity Tolerance Percentage",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Supplier",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Supplier Target",
+      "storageMode": "import",
+      "columnCount": 1,
+      "measureCount": 1,
+      "partitionCount": 1,
+      "isHidden": true,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [
+        "GENERATESERIES(0,1,0.01)"
+      ],
+      "columns": [
+        {
+          "name": "Supplier Target",
+          "dataType": "decimal",
+          "isHidden": true
+        }
+      ],
+      "measures": [
+        {
+          "name": "Supplier Target Value",
+          "expression": "SELECTEDVALUE('Supplier Target'[Supplier Target], 0.8)",
+          "formatString": "#,##0 %",
+          "displayFolder": "",
+          "isHidden": true
+        }
+      ],
+      "classification": "metadata"
+    },
+    {
+      "name": "Time Period",
+      "storageMode": "import",
+      "columnCount": 3,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_time_period_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"dim_time_period_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Dim Date Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Sort Order",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Time Period",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "fact"
+    },
+    {
+      "name": "Transportation Mode",
+      "storageMode": "import",
+      "columnCount": 4,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "supplychain_e2e",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_transportation_mode_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"supplychain_e2e\", \"serve\", \"dim_transportation_mode_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Dim Transportation Mode Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Transportation Mode Load Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Transportation Mode Sub Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Transportation Mode Type",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "_Booking Measure Selector",
+      "storageMode": "import",
+      "columnCount": 2,
+      "measureCount": 11,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [],
+      "columns": [
+        {
+          "name": "Measure Selection",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Ordinal",
+          "dataType": "int64",
+          "isHidden": true
+        }
+      ],
+      "measures": [
+        {
+          "name": "% Inside Carrier KPI",
+          "expression": "DIVIDE ( [Confirmation Inside KPI], [All Bookings] )",
+          "formatString": "#,##0.0 %",
+          "displayFolder": "Dynamic KPI",
+          "isHidden": false
+        },
+        {
+          "name": "% Inside KPI",
+          "expression": "DIVIDE ( [Bookings Inside KPI], [All Bookings] )",
+          "formatString": "#,##0.0 %",
+          "displayFolder": "Dynamic KPI",
+          "isHidden": false
+        },
+        {
+          "name": "% Outside Carrier KPI",
+          "expression": "DIVIDE ( [Confirmation Outside KPI], [All Bookings] )",
+          "formatString": "#,##0.0 %",
+          "displayFolder": "Dynamic KPI",
+          "isHidden": false
+        },
+        {
+          "name": "% Outside KPI",
+          "expression": "DIVIDE ( [Bookings Outside KPI], [All Bookings] )",
+          "formatString": "#,##0.0 %",
+          "displayFolder": "Dynamic KPI",
+          "isHidden": false
+        },
+        {
+          "name": "All Bookings",
+          "expression": "CALCULATE (\n    [ChosenMeasureValue],\n    REMOVEFILTERS (\n        'Carrier Booking'[Is Supplier Within Target Booking Days],\n        'Carrier Booking'[Is Carrier Within Target Booking Days]\n    )\n)",
+          "formatString": "#,##0",
+          "displayFolder": "Dynamic KPI",
+          "isHidden": false
+        },
+        {
+          "name": "Bookings Inside KPI",
+          "expression": "[All Bookings] - [Bookings Outside KPI]",
+          "formatString": "#,##0",
+          "displayFolder": "Dynamic KPI",
+          "isHidden": false
+        },
+        {
+          "name": "Bookings Outside KPI",
+          "expression": "CALCULATE (\n    [ChosenMeasureValue],\n    'Carrier Booking'[Is Supplier Within Target Booking Days] = \"No\"\n)",
+          "formatString": "#,##0",
+          "displayFolder": "Dynamic KPI",
+          "isHidden": false
+        },
+        {
+          "name": "ChosenMeasureValue",
+          "expression": "SWITCH (\n    MIN ( '_Booking Measure Selector'[Ordinal] ),\n    0, [# Number of ASNs],\n    1, [# Original PO Units],\n    2, [# Supplier Booked Units],\n    3, [# Supplier Booked Cartons],\n    4, [# Supplier Booked Cubic Meters]\n)",
+          "formatString": "#,0",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Confirmation Inside KPI",
+          "expression": "[All Bookings] - [Confirmation Outside KPI]",
+          "formatString": "#,##0",
+          "displayFolder": "Dynamic KPI",
+          "isHidden": false
+        },
+        {
+          "name": "Confirmation Outside KPI",
+          "expression": "CALCULATE (\n    [ChosenMeasureValue],\n    'Carrier Booking'[Is Carrier Within Target Booking Days] = \"No\"\n)",
+          "formatString": "#,##0",
+          "displayFolder": "Dynamic KPI",
+          "isHidden": false
+        },
+        {
+          "name": "Dynamic Measure",
+          "expression": "BLANK()",
+          "formatString": "#,0",
+          "displayFolder": "",
+          "isHidden": true
+        }
+      ],
+      "classification": "metadata"
+    },
+    {
+      "name": "_Date Filter",
+      "storageMode": "import",
+      "columnCount": 2,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [],
+      "columns": [
+        {
+          "name": "Date to Filter",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Ordinal",
+          "dataType": "int64",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "metadata"
+    }
+  ],
+  "relationships": [
+    {
+      "name": "009ceeca-f433-0a1f-cb68-3004428915e0",
+      "fromTable": "Carrier Booking",
+      "fromColumn": "Dim Planned Shipment Arrival Date Sk",
+      "toTable": "Date",
+      "toColumn": "Dim Date Sk",
+      "isActive": false,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "11cb60d6-85cf-4061-8842-014f52f84735",
+      "fromTable": "Carrier Booking",
+      "fromColumn": "Dim Transportation Mode Sk",
+      "toTable": "Transportation Mode",
+      "toColumn": "Dim Transportation Mode Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "1b142d58-eab8-0d38-668e-4237ad77357b",
+      "fromTable": "Carrier Booking",
+      "fromColumn": "Dim Planned Shipment Departure Date Sk",
+      "toTable": "Date",
+      "toColumn": "Dim Date Sk",
+      "isActive": false,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "20de8fd1-8bc1-1b1c-bdc9-e27ad4133921",
+      "fromTable": "Carrier Booking",
+      "fromColumn": "Dim Planned Handover Date Sk",
+      "toTable": "Date",
+      "toColumn": "Dim Date Sk",
+      "isActive": false,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "2184be7c-abf9-4b41-84f3-465fc73bc135",
+      "fromTable": "Carrier Booking",
+      "fromColumn": "Dim Shipping Point Sk",
+      "toTable": "Shipping Point",
+      "toColumn": "Shipping Point Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "4b88cc92-9dfc-4a88-f107-7ece8151c7e3",
+      "fromTable": "Carrier Booking",
+      "fromColumn": "Dim Requested Intake First Destination Date Sk",
+      "toTable": "Date",
+      "toColumn": "Dim Date Sk",
+      "isActive": false,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "539eb016-0e8a-4db9-be4b-9872a6e0abc0",
+      "fromTable": "Carrier Booking",
+      "fromColumn": "Dim Carrier Sk",
+      "toTable": "Carrier",
+      "toColumn": "Dim Carrier Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "72029bad-cbe0-756b-1036-f4fe9a3b70dd",
+      "fromTable": "Carrier Booking",
+      "fromColumn": "Dim Requested Intake First Destination Week End Date Sk",
+      "toTable": "Date",
+      "toColumn": "Dim Date Sk",
+      "isActive": false,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "98ac4628-4028-4734-9cf7-37d9db35f8b2",
+      "fromTable": "Carrier Booking",
+      "fromColumn": "Dim Supplier Booked Date Sk",
+      "toTable": "Date",
+      "toColumn": "Dim Date Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "99055e96-a5b9-5c51-ba7c-54d6ae493306",
+      "fromTable": "Carrier Booking",
+      "fromColumn": "Dim Original Purchase Order Handover Date Sk",
+      "toTable": "Date",
+      "toColumn": "Dim Date Sk",
+      "isActive": false,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "9b9c93c6-e6a3-7e6c-89fc-944364c87e5b",
+      "fromTable": "Carrier Booking",
+      "fromColumn": "Dim Inbound Carrier Booking Confirmation Date Sk",
+      "toTable": "Date",
+      "toColumn": "Dim Date Sk",
+      "isActive": false,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "9bd4b413-f97c-489f-ba6b-f7543ecac7ef",
+      "fromTable": "Carrier Booking",
+      "fromColumn": "Dim Supplier Sk",
+      "toTable": "Supplier",
+      "toColumn": "Dim Supplier Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "d279584e-3d95-47a5-01c1-5074b5dcf643",
+      "fromTable": "Carrier Booking",
+      "fromColumn": "Dim Actual Handover Date Sk",
+      "toTable": "Date",
+      "toColumn": "Dim Date Sk",
+      "isActive": false,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "ebb3fb6d-0fb6-414a-b6c1-74c5a3638a87",
+      "fromTable": "Time Period",
+      "fromColumn": "Dim Date Sk",
+      "toTable": "Date",
+      "toColumn": "Dim Date Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "bothDirections",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    }
+  ],
+  "sourceMapping": [
+    {
+      "pbiTable": "Carrier",
+      "storageMode": "import",
+      "databricksCatalog": "supplychain_e2e",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_carrier_v1"
+    },
+    {
+      "pbiTable": "Carrier Booking",
+      "storageMode": "import",
+      "databricksCatalog": "supplychain_e2e",
+      "databricksSchema": "serve",
+      "databricksTable": "fact_carrier_bookings_v1"
+    },
+    {
+      "pbiTable": "Date",
+      "storageMode": "import",
+      "databricksCatalog": "technology_e2e",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_date_v1"
+    },
+    {
+      "pbiTable": "Shipping Point",
+      "storageMode": "import",
+      "databricksCatalog": "supplychain_e2e",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_shipping_point_v1"
+    },
+    {
+      "pbiTable": "Supplier",
+      "storageMode": "import",
+      "databricksCatalog": "supplychain_e2e",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_supplier_v1"
+    },
+    {
+      "pbiTable": "Time Period",
+      "storageMode": "import",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_time_period_v1"
+    },
+    {
+      "pbiTable": "Transportation Mode",
+      "storageMode": "import",
+      "databricksCatalog": "supplychain_e2e",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_transportation_mode_v1"
+    }
+  ],
+  "graphAnalysis": {
+    "maxSnowflakeDepth": 3,
+    "avgDegree": 2.2,
+    "hubTables": [
+      {
+        "name": "Carrier Booking",
+        "degree": 13,
+        "classification": "fact",
+        "storageMode": "import",
+        "sizeGB": null,
+        "rowCount": null
+      },
+      {
+        "name": "Date",
+        "degree": 10,
+        "classification": "dimension",
+        "storageMode": "import",
+        "sizeGB": null,
+        "rowCount": null
+      }
+    ],
+    "tables": [
+      {
+        "name": "@Dataset Metadata",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      },
+      {
+        "name": "@Measures",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      },
+      {
+        "name": "Carrier",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "import"
+      },
+      {
+        "name": "Carrier Booking",
+        "degree": 13,
+        "inDegree": 0,
+        "outDegree": 13,
+        "isHub": true,
+        "classification": "fact",
+        "storageMode": "import"
+      },
+      {
+        "name": "Carrier Target",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      },
+      {
+        "name": "Date",
+        "degree": 10,
+        "inDegree": 10,
+        "outDegree": 0,
+        "isHub": true,
+        "classification": "dimension",
+        "storageMode": "import"
+      },
+      {
+        "name": "Shipping Point",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "import"
+      },
+      {
+        "name": "Supplier",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "import"
+      },
+      {
+        "name": "Supplier Target",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      },
+      {
+        "name": "Time Period",
+        "degree": 1,
+        "inDegree": 0,
+        "outDegree": 1,
+        "isHub": false,
+        "classification": "fact",
+        "storageMode": "import"
+      },
+      {
+        "name": "Transportation Mode",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "import"
+      },
+      {
+        "name": "_Booking Measure Selector",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      },
+      {
+        "name": "_Date Filter",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      }
+    ]
+  }
+}

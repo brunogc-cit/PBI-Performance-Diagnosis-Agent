@@ -1,0 +1,470 @@
+{
+  "version": "1.0.0",
+  "analysedAt": "2026-04-10T16:59:27.723014+00:00",
+  "modelPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/asos-data-ade-powerbi/powerbi/models/Sourcing and Buying/ADE - PF Stock",
+  "modelName": "ADE - PF Stock",
+  "format": "json",
+  "totalMeasures": 28,
+  "measuresWithIssues": 14,
+  "measures": [
+    {
+      "name": "Option Is Online for PF",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 170,
+      "lineCount": 6,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ' SUMX('PF Stock Daily', 'PF St' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 6 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "ASOS Tradeable Sku Count LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 387,
+      "lineCount": 11,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [ASOS Tradeable Sku Count] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 9
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "ASOS Tradeable Sku Count LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 387,
+      "lineCount": 11,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [ASOS Tradeable Sku Count] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 9
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Partner Saleable Sku Count LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 389,
+      "lineCount": 11,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Partner Saleable Sku Count] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 9
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Partner Saleable Sku Count LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 389,
+      "lineCount": 11,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Partner Saleable Sku Count] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 9
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Partner Tradeable Sku Count LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 390,
+      "lineCount": 11,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Partner Tradeable Sku Count] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 9
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Partner Tradeable Sku Count LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 390,
+      "lineCount": 11,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Partner Tradeable Sku Count] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 9
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total Live Sku Count LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 383,
+      "lineCount": 11,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Live Sku Count] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 9
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total Live Sku Count LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 383,
+      "lineCount": 11,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Live Sku Count] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 9
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total Tradeable Sku Count LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 388,
+      "lineCount": 11,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Tradeable Sku Count] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 9
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total Tradeable Sku Count LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 388,
+      "lineCount": 11,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Tradeable Sku Count] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 9
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Tradeable ASOS Stock Availability %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 63,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [ASOS Tradeable Sku Count], [Total Tradeable Sku Count] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Tradeable Partner Stock Availability %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 66,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Partner Tradeable Sku Count], [Total Tradeable Sku Count] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Tradeable Total Stock Availability %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 59,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Live Sku Count], [Total Tradeable Sku Count] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "ASOS Saleable Quantity",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 45,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "ASOS Tradeable Quantity",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 46,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "ASOS Tradeable Sku Count",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 47,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Partner Quantity",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 39,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Partner Saleable Sku Count",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 40,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Partner Tradeable Sku Count",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 50,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Total Live Sku Count",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 43,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Total Tradeable Sku Count",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 48,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Tradeable ASOS Stock Availability % LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 398,
+      "lineCount": 11,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Tradeable ASOS Stock Availability % LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 398,
+      "lineCount": 11,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Tradeable Partner Stock Availability % LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 401,
+      "lineCount": 11,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Tradeable Partner Stock Availability % LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 401,
+      "lineCount": 11,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Tradeable Total Stock Availability % LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 399,
+      "lineCount": 11,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Tradeable Total Stock Availability % LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 399,
+      "lineCount": 11,
+      "issues": [],
+      "issueCount": 0
+    }
+  ],
+  "antiPatternSummary": [
+    {
+      "rule": "FILTER_ALL",
+      "severity": "High",
+      "count": 0
+    },
+    {
+      "rule": "IFERROR_ISERROR",
+      "severity": "High",
+      "count": 0
+    },
+    {
+      "rule": "NESTED_CALCULATE",
+      "severity": "High",
+      "count": 0
+    },
+    {
+      "rule": "REPEATED_SUBEXPRESSION",
+      "severity": "Medium",
+      "count": 1
+    },
+    {
+      "rule": "BARE_DIVISION",
+      "severity": "Medium",
+      "count": 0
+    },
+    {
+      "rule": "COUNT_VS_COUNTROWS",
+      "severity": "Medium",
+      "count": 0
+    },
+    {
+      "rule": "MISSING_FORMAT_STRING",
+      "severity": "Medium",
+      "count": 0
+    },
+    {
+      "rule": "UNQUALIFIED_COLUMNS",
+      "severity": "Low",
+      "count": 13
+    },
+    {
+      "rule": "NO_VARIABLES",
+      "severity": "Low",
+      "count": 1
+    },
+    {
+      "rule": "HARDCODED_VALUES",
+      "severity": "Low",
+      "count": 0
+    }
+  ],
+  "summary": {
+    "high": 0,
+    "medium": 1,
+    "low": 14,
+    "totalIssues": 15,
+    "rulesChecked": 10,
+    "cleanMeasures": 14
+  }
+}

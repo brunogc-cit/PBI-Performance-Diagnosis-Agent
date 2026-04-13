@@ -1,0 +1,727 @@
+{
+  "version": "1.0.0",
+  "analysedAt": "2026-04-10T16:59:31.478560+00:00",
+  "modelPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/asos-data-ade-powerbi/powerbi/models/Sourcing and Buying/ADE - Wholesale",
+  "modelName": "ADE - Wholesale",
+  "format": "json",
+  "totalMeasures": 36,
+  "measuresWithIssues": 23,
+  "measures": [
+    {
+      "name": "Wholesale Demand RRP Margin Value Inc Tax LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 480,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 3
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Wholesale Demand RRP Margin Value Inc Tax] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 8
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Wholesale Demand RRP Value LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 465,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 3
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Wholesale Demand RRP Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 8
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Wholesale Demand Sales Margin Value Exc Tax LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 482,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 3
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Wholesale Demand Sales Margin Value Exc Tax] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 8
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Wholesale Demand WAC Value LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 465,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 3
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Wholesale Demand WAC Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 8
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Wholesale Despatched RRP Margin Value Exc Tax LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 484,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 3
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Wholesale Despatched RRP Margin Value Exc Tax] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 8
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Wholesale Despatched RRP Value LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 469,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 3
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Wholesale Despatched RRP Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 8
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Wholesale Despatched Sales Margin Value Exc Tax LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 486,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 3
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Wholesale Despatched Sales Margin Value Exc Tax] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 8
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Wholesale Despatched Sales Value LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 471,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 3
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Wholesale Despatched Sales Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 8
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Wholesale Despatched Units LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 465,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 3
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Wholesale Despatched Units] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 8
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Wholesale Despatched WAC Value LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 469,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 3
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Wholesale Despatched WAC Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 8
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Wholesale Orders LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 455,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 3
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Wholesale Orders] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 8
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Wholesale Original Demand Units LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 470,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 3
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Wholesale Original Demand Units] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 8
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Wholesale Partner Rrp Value LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 466,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 3
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Wholesale Partner RRP Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 8
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Wholesale Partner Sales Value LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 468,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 3
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Wholesale Partner Sales Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 8
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Wholesale RRP Margin Exc Tax LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 467,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 3
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Wholesale RRP Margin Exc Tax] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 8
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Wholesale Sales Margin Value Inc Tax LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 475,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 3
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Wholesale Sales Margin Value Inc Tax] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 8
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Wholesale Average Order Value LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 65,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Wholesale Orders LW], [Wholesale Partner Sales Value LW] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Wholesale Average Order Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 59,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Wholesale Orders], [Wholesale Partner Sales Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Wholesale Despatched RRP Margin Value Exc Tax",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 137,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Wholesale Despatched RRP Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 136,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Wholesale Despatched Sales Margin Value Exc Tax",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 124,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Wholesale Despatched Sales Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 117,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Wholesale Despatched WAC Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 115,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Wholesale Demand RRP Margin Value Inc Tax",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 72,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Wholesale Demand RRP Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 71,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Wholesale Demand Sales Margin Value Exc Tax",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 59,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Wholesale Demand Sales Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 52,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Wholesale Demand Units",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 51,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Wholesale Demand WAC Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 50,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Wholesale Despatched Units",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 43,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Wholesale Orders",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 47,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Wholesale Original Demand Units",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 52,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Wholesale Partner RRP Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 71,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Wholesale Partner Sales Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 52,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Wholesale RRP Margin Exc Tax",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 72,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Wholesale Sales Margin Value Inc Tax",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 59,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    }
+  ],
+  "antiPatternSummary": [
+    {
+      "rule": "FILTER_ALL",
+      "severity": "High",
+      "count": 16
+    },
+    {
+      "rule": "IFERROR_ISERROR",
+      "severity": "High",
+      "count": 0
+    },
+    {
+      "rule": "NESTED_CALCULATE",
+      "severity": "High",
+      "count": 0
+    },
+    {
+      "rule": "REPEATED_SUBEXPRESSION",
+      "severity": "Medium",
+      "count": 0
+    },
+    {
+      "rule": "BARE_DIVISION",
+      "severity": "Medium",
+      "count": 0
+    },
+    {
+      "rule": "COUNT_VS_COUNTROWS",
+      "severity": "Medium",
+      "count": 0
+    },
+    {
+      "rule": "MISSING_FORMAT_STRING",
+      "severity": "Medium",
+      "count": 0
+    },
+    {
+      "rule": "UNQUALIFIED_COLUMNS",
+      "severity": "Low",
+      "count": 18
+    },
+    {
+      "rule": "NO_VARIABLES",
+      "severity": "Low",
+      "count": 5
+    },
+    {
+      "rule": "HARDCODED_VALUES",
+      "severity": "Low",
+      "count": 0
+    }
+  ],
+  "summary": {
+    "high": 16,
+    "medium": 0,
+    "low": 23,
+    "totalIssues": 39,
+    "rulesChecked": 10,
+    "cleanMeasures": 13
+  }
+}

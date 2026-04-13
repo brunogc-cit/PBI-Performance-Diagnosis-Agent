@@ -1,0 +1,941 @@
+{
+  "version": "2.0.0",
+  "analysedAt": "2026-04-10T16:59:31.573021+00:00",
+  "modelPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/asos-data-ade-powerbi/powerbi/models/Sourcing and Buying/ADE - Wholesale",
+  "measures": [
+    {
+      "name": "Wholesale Demand RRP Margin Value Inc Tax LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 13,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Demand RRP Value LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 13,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Demand Sales Margin Value Exc Tax LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 13,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Demand WAC Value LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 13,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Despatched RRP Margin Value Exc Tax LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 13,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Despatched RRP Value LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 13,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Despatched Sales Margin Value Exc Tax LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 13,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Despatched Sales Value LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 13,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Despatched Units LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 13,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Despatched WAC Value LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 13,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Orders LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 13,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Original Demand Units LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 13,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Partner Rrp Value LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 13,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Partner Sales Value LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 13,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale RRP Margin Exc Tax LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 13,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Sales Margin Value Inc Tax LW",
+      "hostTable": "@Measures",
+      "complexityScore": 8,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "1 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 13,
+      "referencedTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Daily Financial Transform",
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Despatched RRP Margin Value Exc Tax",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Wholesale Sale"
+      ],
+      "directQueryTables": [
+        "Wholesale Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Despatched RRP Value",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Wholesale Sale"
+      ],
+      "directQueryTables": [
+        "Wholesale Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Despatched Sales Margin Value Exc Tax",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Wholesale Sale"
+      ],
+      "directQueryTables": [
+        "Wholesale Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Despatched Sales Value",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Wholesale Sale"
+      ],
+      "directQueryTables": [
+        "Wholesale Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Despatched WAC Value",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 4,
+      "referencedTables": [
+        "Wholesale Sale"
+      ],
+      "directQueryTables": [
+        "Wholesale Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Average Order Value LW",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Average Order Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Demand RRP Margin Value Inc Tax",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Wholesale Sale"
+      ],
+      "directQueryTables": [
+        "Wholesale Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Demand RRP Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Wholesale Sale"
+      ],
+      "directQueryTables": [
+        "Wholesale Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Demand Sales Margin Value Exc Tax",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Wholesale Sale"
+      ],
+      "directQueryTables": [
+        "Wholesale Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Demand Sales Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Wholesale Sale"
+      ],
+      "directQueryTables": [
+        "Wholesale Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Demand Units",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Wholesale Sale"
+      ],
+      "directQueryTables": [
+        "Wholesale Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Demand WAC Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Wholesale Sale"
+      ],
+      "directQueryTables": [
+        "Wholesale Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Despatched Units",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Wholesale Sale"
+      ],
+      "directQueryTables": [
+        "Wholesale Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Orders",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Wholesale Sale"
+      ],
+      "directQueryTables": [
+        "Wholesale Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Original Demand Units",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Wholesale Sale"
+      ],
+      "directQueryTables": [
+        "Wholesale Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Partner RRP Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Wholesale Sale"
+      ],
+      "directQueryTables": [
+        "Wholesale Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Partner Sales Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Wholesale Sale"
+      ],
+      "directQueryTables": [
+        "Wholesale Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale RRP Margin Exc Tax",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Wholesale Sale"
+      ],
+      "directQueryTables": [
+        "Wholesale Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Wholesale Sales Margin Value Inc Tax",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Wholesale Sale"
+      ],
+      "directQueryTables": [
+        "Wholesale Sale"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    }
+  ],
+  "hotTables": [
+    {
+      "table": "Wholesale Sale",
+      "referenceCount": 18,
+      "storageMode": "directQuery",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 25,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Daily Financial Transform",
+      "referenceCount": 16,
+      "storageMode": "dual",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 1,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Date",
+      "referenceCount": 16,
+      "storageMode": "dual",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 15,
+      "optimizationPriority": "low"
+    }
+  ],
+  "statistics": {
+    "totalMeasures": 36,
+    "byComplexity": {
+      "low": 20,
+      "medium": 16,
+      "high": 0,
+      "critical": 0
+    },
+    "crossMultipleDQ": 0,
+    "avgComplexityScore": 4.0,
+    "avgContextTransitions": 0.6,
+    "avgRelationshipHops": 1.4,
+    "measuresWithFilterAll": 16,
+    "measuresWithHighSubqueries": 0
+  }
+}

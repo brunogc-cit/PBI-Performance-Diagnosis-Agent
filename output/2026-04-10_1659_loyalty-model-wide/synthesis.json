@@ -1,0 +1,109 @@
+{
+  "modelName": "ADE - Loyalty",
+  "analysisMode": "model-wide",
+  "analysedAt": "2026-04-10T16:59:33.633837+00:00",
+  "healthScore": 74,
+  "executiveSummary": "The ADE - Loyalty semantic model has a health score of 74/100 (Grade B). It contains 26 tables (2 DirectQuery, 11 Dual), 27 measures, and 17 relationships (0 bidirectional). BPA detected 150 findings (0 high, 2 medium). DAX analysis found 2 FILTER(ALL) anti-patterns and 2 measures generating 5+ SQL subqueries.",
+  "topFindings": [
+    {
+      "id": "F1",
+      "title": "2 FILTER(ALL) Anti-Patterns",
+      "severity": "medium",
+      "impact": "medium",
+      "effort": "high",
+      "quadrant": "strategic",
+      "layers": [
+        "Semantic Model"
+      ],
+      "scope": "model-wide",
+      "reportContext": null,
+      "description": "2 DAX measures use FILTER(ALL()) which forces full table scans in DirectQuery. Combined with large fact tables, each generates an unfiltered subquery.",
+      "recommendation": "Refactor to REMOVEFILTERS() or direct CALCULATE predicates. Prioritise measures on high-traffic pages.",
+      "estimatedImprovement": "20-40% latency reduction per refactored measure.",
+      "requiresDeepDive": true,
+      "suggestedAnalysisSteps": [
+        "Run top 10 FILTER(ALL) measures in DAX Studio with Server Timings",
+        "Compare SE vs FE time split"
+      ],
+      "tradeoffs": [
+        "Requires thorough testing for calculation equivalence"
+      ],
+      "options": []
+    },
+    {
+      "id": "F2",
+      "title": "135 Unused Column Candidates",
+      "severity": "medium",
+      "impact": "low",
+      "effort": "medium",
+      "quadrant": "minor",
+      "layers": [
+        "Semantic Model"
+      ],
+      "scope": "model-wide",
+      "reportContext": null,
+      "description": "135 columns not referenced in any DAX measure. Candidates for removal to reduce DQ payload.",
+      "recommendation": "Audit columns, verify not used in visuals/slicers, remove confirmed unused.",
+      "estimatedImprovement": "Cost reduction — fewer bytes read per query.",
+      "tradeoffs": [
+        "Some may be used in visuals or bookmarks"
+      ],
+      "options": []
+    },
+    {
+      "id": "F3",
+      "title": "10 Pass-Through Serve Views (>50 cols, no filter)",
+      "severity": "medium",
+      "impact": "medium",
+      "effort": "low",
+      "quadrant": "quick-win",
+      "layers": [
+        "Engineering"
+      ],
+      "scope": "model-wide",
+      "reportContext": null,
+      "description": "10 dbt serve views are SELECT * pass-throughs with >50 columns and no WHERE filter.",
+      "recommendation": "Create narrow serve views selecting only columns used by PBI measures.",
+      "estimatedImprovement": "60-70% reduction in read_bytes for affected tables.",
+      "tradeoffs": [
+        "Must audit PBI column usage before narrowing"
+      ],
+      "options": []
+    }
+  ],
+  "implementationRoadmap": [
+    {
+      "phase": "Phase 1: Quick Wins",
+      "actions": [
+        {
+          "action": "10 Pass-Through Serve Views (>50 cols, no filter)",
+          "where": "Engineering",
+          "finding": "F3",
+          "impact": "Medium"
+        }
+      ]
+    },
+    {
+      "phase": "Phase 2: Strategic Investments",
+      "actions": [
+        {
+          "action": "2 FILTER(ALL) Anti-Patterns",
+          "where": "Semantic Model",
+          "finding": "F1",
+          "impact": "Medium"
+        }
+      ]
+    },
+    {
+      "phase": "Phase 3: Minor Improvements",
+      "actions": [
+        {
+          "action": "135 Unused Column Candidates",
+          "where": "Semantic Model",
+          "finding": "F2",
+          "impact": "Medium"
+        }
+      ]
+    }
+  ]
+}

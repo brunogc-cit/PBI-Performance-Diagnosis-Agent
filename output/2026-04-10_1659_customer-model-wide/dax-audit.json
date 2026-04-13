@@ -1,0 +1,3094 @@
+{
+  "version": "1.0.0",
+  "analysedAt": "2026-04-10T16:59:32.353821+00:00",
+  "modelPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/asos-data-ade-powerbi/powerbi/models/customer/ADE - Customer",
+  "modelName": "ADE - Customer",
+  "format": "json",
+  "totalMeasures": 103,
+  "measuresWithIssues": 96,
+  "measures": [
+    {
+      "name": "Average Basket Size LM",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 210,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Financial Month Year'[Financi' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Average Basket Size] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Average Basket Size LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 360,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ', 'Financial Month Year'[Finan' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Average Basket Size] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Average Customer Value LM",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 212,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Financial Month Year'[Financi' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Average Customer Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Average Customer Value LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 363,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ', 'Financial Month Year'[Finan' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Average Customer Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Average Order Frequency LM",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 214,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Financial Month Year'[Financi' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Average Order Frequency] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Average Order Frequency LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 364,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ', 'Financial Month Year'[Finan' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Average Order Frequency] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Average Selling Price LM",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 212,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Financial Month Year'[Financi' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Average Selling Price] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Average Selling Price LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 361,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ', 'Financial Month Year'[Finan' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Average Selling Price] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Churned MAC LM",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 202,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Financial Month Year'[Financi' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Churned MAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Churned MAC LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 351,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ', 'Financial Month Year'[Finan' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Churned MAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Churned YAC LM",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 201,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Financial Month Year'[Financi' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Churned YAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Churned YAC LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 351,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ', 'Financial Month Year'[Finan' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Churned YAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Existing MAC LM",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 203,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Financial Month Year'[Financi' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Existing MAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Existing MAC LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 352,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ', 'Financial Month Year'[Finan' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Existing MAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Existing YAC LM",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 202,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Financial Month Year'[Financi' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Existing YAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Existing YAC LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 352,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ', 'Financial Month Year'[Finan' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Existing YAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "First YAC LM",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 197,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Financial Month Year'[Financi' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [First YAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "First YAC LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 349,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ', 'Financial Month Year'[Finan' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [First YAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "New MAC LM",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 198,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Financial Month Year'[Financi' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [New MAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "New MAC LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 347,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ', 'Financial Month Year'[Finan' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [New MAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "New YAC LM",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 197,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Financial Month Year'[Financi' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [New YAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "New YAC LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 348,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ', 'Financial Month Year'[Finan' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [New YAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Reactivated MAC LM",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 206,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Financial Month Year'[Financi' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Reactivated MAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Reactivated MAC LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 355,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ', 'Financial Month Year'[Finan' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Reactivated MAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Reactivated YAC LM",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 205,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Financial Month Year'[Financi' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Reactivated YAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Reactivated YAC LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 355,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ', 'Financial Month Year'[Finan' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Reactivated YAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Retail Quantity LM",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 212,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Financial Month Year'[Financi' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Retail Sales Quantity] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Retail Sales Quantity LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 361,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ', 'Financial Month Year'[Finan' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Retail Sales Quantity] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Retail Sales Value LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 358,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ', 'Financial Month Year'[Finan' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Retail Sales Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Retail Value LM",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 209,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Financial Month Year'[Financi' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Retail Sales Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Total Customers LM",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 207,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Financial Month Year'[Financi' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Customers] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Total Customers LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 357,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ', 'Financial Month Year'[Finan' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Customers] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Total MAC LM",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 199,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Financial Month Year'[Financi' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total MAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Total MAC LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 349,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ', 'Financial Month Year'[Finan' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total MAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Total Orders LM",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 203,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Financial Month Year'[Financi' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Orders] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Total Orders LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 352,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ', 'Financial Month Year'[Finan' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Orders] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Total YAC LM",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 198,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Financial Month Year'[Financi' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total YAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Total YAC LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 349,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ', 'Financial Month Year'[Finan' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total YAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 4
+    },
+    {
+      "name": "Churned MAC",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 118,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Customers] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Churn\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Churned YAC",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 116,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Customers] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Churn\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Existing MAC",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 117,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Customers] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Exist\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Existing YAC",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 116,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Customers] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Exist\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "First YAC",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 116,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Customers] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"First\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "New MAC",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 115,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Customers] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"New\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "New YAC",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 114,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Customers] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"New\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Quick Ratio MAC LM %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 207,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Financial Month Year'[Financi' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Quick Ratio YAC LM %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 205,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Financial Month Year'[Financi' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Reactivated MAC",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 120,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Customers] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Reactive\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Reactivated YAC",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 119,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Customers] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        },
+        {
+          "rule": "HARDCODED_VALUES",
+          "severity": "Low",
+          "message": "Hardcoded literals in filter context: = \"Reactive\" -- consider parameterising",
+          "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+          "line": 3
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Average Basket Size YOY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 85,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Average Basket Size], [Average Basket Size LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Average Basket Size",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 57,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Retail Sales Quantity], [Total Orders] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Average Customer Value YOY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 94,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Average Customer Value], [Average Customer Value LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Average Customer Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 57,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Retail Sales Value], [Total Customers] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Average Order Frequency YOY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 97,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Average Order Frequency], [Average Order Frequency LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Average Order Frequency",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 51,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Customers], [Total Orders] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Average Selling Price YOY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 91,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Average Selling Price], [Average Selling Price LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Average Selling Price",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 63,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Retail Sales Quantity], [Retail Sales Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Churned MAC %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 33,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "BARE_DIVISION",
+          "severity": "Medium",
+          "message": "Uses '/' operator instead of DIVIDE() -- risk of division by zero",
+          "fix": "Wrap in DIVIDE(numerator, denominator) for safe division",
+          "line": 1
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Churned MAC], [Total Customers] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Churned MAC YOY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 67,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Churned MAC], [Churned MAC LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Churned YAC %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 33,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "BARE_DIVISION",
+          "severity": "Medium",
+          "message": "Uses '/' operator instead of DIVIDE() -- risk of division by zero",
+          "fix": "Wrap in DIVIDE(numerator, denominator) for safe division",
+          "line": 1
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Churned YAC], [Total Customers] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Churned YAC YOY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 67,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Churned YAC], [Churned YAC LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Existing MAC %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 34,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "BARE_DIVISION",
+          "severity": "Medium",
+          "message": "Uses '/' operator instead of DIVIDE() -- risk of division by zero",
+          "fix": "Wrap in DIVIDE(numerator, denominator) for safe division",
+          "line": 1
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Existing MAC], [Total Customers] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Existing MAC YOY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 70,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Existing MAC], [Existing MAC LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Existing YAC %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 34,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "BARE_DIVISION",
+          "severity": "Medium",
+          "message": "Uses '/' operator instead of DIVIDE() -- risk of division by zero",
+          "fix": "Wrap in DIVIDE(numerator, denominator) for safe division",
+          "line": 1
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Existing YAC], [Total Customers] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Existing YAC YOY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 70,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Existing YAC], [Existing YAC LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "First YAC YOY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 61,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [First YAC], [First YAC LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Is In Last 12 Months",
+      "table": "@Measures",
+      "isHidden": true,
+      "hasFormatString": false,
+      "expressionLength": 398,
+      "lineCount": 16,
+      "issues": [
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Selected FY Month] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "New MAC %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 29,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "BARE_DIVISION",
+          "severity": "Medium",
+          "message": "Uses '/' operator instead of DIVIDE() -- risk of division by zero",
+          "fix": "Wrap in DIVIDE(numerator, denominator) for safe division",
+          "line": 1
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [New MAC], [Total Customers] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "New MAC YOY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 55,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [New MAC], [New MAC LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "New YAC %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 29,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "BARE_DIVISION",
+          "severity": "Medium",
+          "message": "Uses '/' operator instead of DIVIDE() -- risk of division by zero",
+          "fix": "Wrap in DIVIDE(numerator, denominator) for safe division",
+          "line": 1
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [New YAC], [Total Customers] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "New YAC YOY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 55,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [New YAC], [New YAC LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Quick Ratio MAC %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 60,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Churned MAC], [New MAC], [Reactivated MAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Quick Ratio MAC LY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 69,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Churned MAC LY], [New MAC LY], [Reactivated MAC LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Quick Ratio YAC %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 60,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Churned YAC], [New YAC], [Reactivated YAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Quick Ratio YAC LY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 69,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Churned YAC LY], [New YAC LY], [Reactivated YAC LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Reactivated MAC %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 37,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "BARE_DIVISION",
+          "severity": "Medium",
+          "message": "Uses '/' operator instead of DIVIDE() -- risk of division by zero",
+          "fix": "Wrap in DIVIDE(numerator, denominator) for safe division",
+          "line": 1
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Reactivated MAC], [Total Customers] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Reactivated MAC YOY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 79,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Reactivated MAC], [Reactivated MAC LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Reactivated YAC %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 37,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "BARE_DIVISION",
+          "severity": "Medium",
+          "message": "Uses '/' operator instead of DIVIDE() -- risk of division by zero",
+          "fix": "Wrap in DIVIDE(numerator, denominator) for safe division",
+          "line": 1
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Reactivated YAC], [Total Customers] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Reactivated YAC YOY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 79,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Reactivated YAC], [Reactivated YAC LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Retail Sales Quantity YOY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 94,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Retail Sales Quantity], [Retail Sales Quantity LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Retail Sales Value YOY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 88,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Retail Sales Value], [Retail Sales Value LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Total Customers Forced Fact",
+      "table": "@Measures",
+      "isHidden": true,
+      "hasFormatString": true,
+      "expressionLength": 423,
+      "lineCount": 6,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (3x): 'ISINSCOPE('Customer Activity M' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 6 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Total Customers YOY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 73,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Customers], [Total Customers LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Total MAC YOY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 61,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total MAC], [Total MAC LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Total MAC",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 180,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Customers] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Total Orders YOY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 65,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Orders], [Total Orders LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Total YAC YOY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 60,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total YAC], [Total YAC LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Total YAC",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 144,
+      "lineCount": 6,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Customers] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 6 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Has Data",
+      "table": "@Measures",
+      "isHidden": true,
+      "hasFormatString": false,
+      "expressionLength": 256,
+      "lineCount": 10,
+      "issues": [
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Selected FY Month",
+      "table": "@Measures",
+      "isHidden": true,
+      "hasFormatString": false,
+      "expressionLength": 64,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total Customers Dynamic",
+      "table": "@Measures",
+      "isHidden": true,
+      "hasFormatString": true,
+      "expressionLength": 209,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Customers] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 5
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total Customers",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 80,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total Customers Agg], [Total Customers Fact], [Total Customers Forced Fact] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total MAC Dynamic",
+      "table": "@Measures",
+      "isHidden": true,
+      "hasFormatString": true,
+      "expressionLength": 203,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total MAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 5
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total MAC LY Dynamic",
+      "table": "@Measures",
+      "isHidden": true,
+      "hasFormatString": true,
+      "expressionLength": 206,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total MAC LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 5
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total YAC Dynamic",
+      "table": "@Measures",
+      "isHidden": true,
+      "hasFormatString": true,
+      "expressionLength": 203,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total YAC] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 5
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total YAC LY Dynamic",
+      "table": "@Measures",
+      "isHidden": true,
+      "hasFormatString": true,
+      "expressionLength": 206,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Total YAC LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 5
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Quick Ratio MAC vs LY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 44,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Quick Ratio YAC vs LY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 44,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Retail Sales Quantity",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 49,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Retail Sales Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 46,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Total Customers Agg",
+      "table": "@Measures",
+      "isHidden": true,
+      "hasFormatString": true,
+      "expressionLength": 47,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Total Customers Fact",
+      "table": "@Measures",
+      "isHidden": true,
+      "hasFormatString": true,
+      "expressionLength": 75,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Total Orders",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 52,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    }
+  ],
+  "antiPatternSummary": [
+    {
+      "rule": "FILTER_ALL",
+      "severity": "High",
+      "count": 40
+    },
+    {
+      "rule": "IFERROR_ISERROR",
+      "severity": "High",
+      "count": 0
+    },
+    {
+      "rule": "NESTED_CALCULATE",
+      "severity": "High",
+      "count": 0
+    },
+    {
+      "rule": "REPEATED_SUBEXPRESSION",
+      "severity": "Medium",
+      "count": 41
+    },
+    {
+      "rule": "BARE_DIVISION",
+      "severity": "Medium",
+      "count": 8
+    },
+    {
+      "rule": "COUNT_VS_COUNTROWS",
+      "severity": "Medium",
+      "count": 0
+    },
+    {
+      "rule": "MISSING_FORMAT_STRING",
+      "severity": "Medium",
+      "count": 3
+    },
+    {
+      "rule": "UNQUALIFIED_COLUMNS",
+      "severity": "Low",
+      "count": 91
+    },
+    {
+      "rule": "NO_VARIABLES",
+      "severity": "Low",
+      "count": 79
+    },
+    {
+      "rule": "HARDCODED_VALUES",
+      "severity": "Low",
+      "count": 9
+    }
+  ],
+  "summary": {
+    "high": 40,
+    "medium": 52,
+    "low": 179,
+    "totalIssues": 271,
+    "rulesChecked": 10,
+    "cleanMeasures": 7
+  }
+}

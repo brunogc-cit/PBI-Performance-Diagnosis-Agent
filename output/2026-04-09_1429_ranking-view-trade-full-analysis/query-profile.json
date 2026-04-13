@@ -1,0 +1,66 @@
+{
+  "reportName": "Ranking View of Trade",
+  "modelName": "ADE - Trade",
+  "profilingPeriod": "Last 7 days",
+  "profilingDate": "2026-04-09",
+  "metrics": {
+    "totalQueriesAnalysed": 20,
+    "maxDurationMs": 150494,
+    "avgDurationMs": 136000,
+    "minDurationMs": 133490,
+    "totalReadBytes": 100000000000,
+    "maxReadRows": 4462901888,
+    "avgReadRows": 1500000000,
+    "maxProducedRows": 1000001,
+    "avgProducedRows": 50
+  },
+  "tablesScanned": [
+    {"table": "sales.serve.fact_product_option_trade_daily_snapshot_v1", "type": "VIEW → Delta", "columnsSelected": 91, "estimatedRows": "6B+", "sizeGB": 124.7, "clusteringKeys": "dim_date_sk, dim_product_option_sk, _updated_date"},
+    {"table": "sales.serve.fact_product_option_trade_weekly_snapshot_v1", "type": "VIEW → Delta", "columnsSelected": 89, "estimatedRows": "2B+", "sizeGB": 54.3, "clusteringKeys": "financial_year_week_id, dim_product_option_sk"},
+    {"table": "technology.serve.dim_date_v2", "type": "VIEW → Delta", "columnsSelected": 47, "estimatedRows": "30K", "sizeGB": 0.01, "clusteringKeys": "dim_date_sk"},
+    {"table": "product.serve.dim_product_option_v1", "type": "VIEW → Delta", "columnsSelected": 75, "estimatedRows": "2M", "sizeGB": 1.2, "clusteringKeys": "dim_product_option_sk"},
+    {"table": "product.serve.dim_product_option_single_valued_user_defined_attributes_v1", "type": "VIEW → Delta", "columnsSelected": 10, "estimatedRows": "1M", "sizeGB": 0.3, "clusteringKeys": "dim_product_option_sk"},
+    {"table": "technology.serve.dim_financial_time_period_v1", "type": "VIEW → Delta", "columnsSelected": 7, "estimatedRows": "50K", "sizeGB": 0.01, "clusteringKeys": "dim_date_sk"}
+  ],
+  "operatorBottlenecks": [
+    {"operator": "Scan: fact_product_option_trade_daily_snapshot_v1", "pctTime": 65, "detail": "Full table scan of 124.7 GB Delta table via pass-through view. Reads all 91 columns despite query needing only 8 aggregates + 14 group-by columns. Date filter via JOIN not pushed down."},
+    {"operator": "Join: dim_date_v2 ↔ fact", "pctTime": 15, "detail": "INNER JOIN on dim_date_sk after filtering dim_date to 2-year window. Clustering on fact not leveraged because filter is on the dimension side."},
+    {"operator": "Join: dim_product_option_v1 ↔ fact", "pctTime": 10, "detail": "INNER JOIN with IN-list of 50 option_ids. Applied on dimension side — fact table scans all product options before join."},
+    {"operator": "Aggregation + Projection", "pctTime": 10, "detail": "Final GROUP BY 14 columns with 8 SUM/MAX aggregates. Only 50 rows produced from 2.7B rows read."}
+  ],
+  "slowestQueries": [
+    {
+      "statementId": "01f13194-0ccc-1a56-95c1-4f9afc0c6842",
+      "durationMs": 150494,
+      "readRows": 2748145451,
+      "readBytes": 14577163741,
+      "producedRows": 50,
+      "readFiles": 1236,
+      "prunedFiles": 1475,
+      "scanAmplification": "54,962,909:1",
+      "pattern": "5 nested subqueries, 3 cross-catalog JOINs, 91 fact columns selected, date filter via JOIN to dim_date_v2 (2-year window), product filter via IN-list on dim_product_option_v1, LEFT JOIN to UDA dimension, time_period='Yesterday'"
+    },
+    {
+      "statementId": "01f12fe2-889d-1897-a59e-ebdd23512e56",
+      "durationMs": 140219,
+      "readRows": 4462901888,
+      "readBytes": 12857976112,
+      "producedRows": 1,
+      "readFiles": 2049,
+      "prunedFiles": 639,
+      "scanAmplification": "4,462,901,888:1",
+      "pattern": "Single row result from 4.5B row scan. Minimal file pruning (639 pruned vs 2049 read). Likely a total/summary visual."
+    },
+    {
+      "statementId": "01f12f61-17a7-1d99-8de2-919f81156577",
+      "durationMs": 135435,
+      "readRows": 4463427476,
+      "readBytes": 16870295522,
+      "producedRows": 37,
+      "readFiles": 2021,
+      "prunedFiles": 634,
+      "scanAmplification": "120,633,445:1",
+      "pattern": "4.5B rows read, 16.9 GB, 37 rows returned. Aggressive full scan with minimal pruning."
+    }
+  ]
+}

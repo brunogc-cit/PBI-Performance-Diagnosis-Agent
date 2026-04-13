@@ -1,0 +1,407 @@
+{
+  "version": "2.0.0",
+  "analysedAt": "2026-04-10T16:59:28.769446+00:00",
+  "modelPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/asos-data-ade-powerbi/powerbi/models/Sourcing and Buying/ADE - Parcel Tracking",
+  "measures": [
+    {
+      "name": "Shipped Number Of Weeks On Site",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Parcel Tracking"
+      ],
+      "directQueryTables": [
+        "Parcel Tracking"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Shipped Sale Buy Value Exc Tax",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Parcel Tracking"
+      ],
+      "directQueryTables": [
+        "Parcel Tracking"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Shipped Sale Buy Value Tax Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Parcel Tracking"
+      ],
+      "directQueryTables": [
+        "Parcel Tracking"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Shipped Sale Buy Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Parcel Tracking"
+      ],
+      "directQueryTables": [
+        "Parcel Tracking"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Shipped Sale Checkout Tax Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Parcel Tracking"
+      ],
+      "directQueryTables": [
+        "Parcel Tracking"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Shipped Sale Pricing Store Full Price Value Exc Tax",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Parcel Tracking"
+      ],
+      "directQueryTables": [
+        "Parcel Tracking"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Shipped Sale Pricing Store Full Price Value Tax Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Parcel Tracking"
+      ],
+      "directQueryTables": [
+        "Parcel Tracking"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Shipped Sale Pricing Store Full Price Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Parcel Tracking"
+      ],
+      "directQueryTables": [
+        "Parcel Tracking"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Shipped Sale Quantity",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Parcel Tracking"
+      ],
+      "directQueryTables": [
+        "Parcel Tracking"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Shipped Sale Tax Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Parcel Tracking"
+      ],
+      "directQueryTables": [
+        "Parcel Tracking"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Shipped Sale Unit Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Parcel Tracking"
+      ],
+      "directQueryTables": [
+        "Parcel Tracking"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Shipped Sale Value Exc Tax",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Parcel Tracking"
+      ],
+      "directQueryTables": [
+        "Parcel Tracking"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Shipped Sale Value Inc Tax",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Parcel Tracking"
+      ],
+      "directQueryTables": [
+        "Parcel Tracking"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Shipped Sale Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Parcel Tracking"
+      ],
+      "directQueryTables": [
+        "Parcel Tracking"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Shipped Sale Website Full Price Value Exc Tax",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Parcel Tracking"
+      ],
+      "directQueryTables": [
+        "Parcel Tracking"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Shipped Sale Website Full Price Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Parcel Tracking"
+      ],
+      "directQueryTables": [
+        "Parcel Tracking"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    },
+    {
+      "name": "Shipped Sale Weighted Average Cost Value",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Parcel Tracking"
+      ],
+      "directQueryTables": [
+        "Parcel Tracking"
+      ],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "£#,##0.00;-£#,##0.00",
+      "isHidden": false
+    }
+  ],
+  "hotTables": [
+    {
+      "table": "Parcel Tracking",
+      "referenceCount": 17,
+      "storageMode": "directQuery",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 20,
+      "optimizationPriority": "low"
+    }
+  ],
+  "statistics": {
+    "totalMeasures": 17,
+    "byComplexity": {
+      "low": 17,
+      "medium": 0,
+      "high": 0,
+      "critical": 0
+    },
+    "crossMultipleDQ": 0,
+    "avgComplexityScore": 0.0,
+    "avgContextTransitions": 0.0,
+    "avgRelationshipHops": 1.0,
+    "measuresWithFilterAll": 0,
+    "measuresWithHighSubqueries": 0
+  }
+}

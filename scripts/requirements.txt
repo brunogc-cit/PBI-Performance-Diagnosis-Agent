@@ -1,0 +1,3 @@
+# PBI Performance Diagnosis Agent — Python dependencies
+# All scripts use Python standard library only (json, re, os, argparse, pathlib, sys, datetime, html, statistics)
+# No external packages required.

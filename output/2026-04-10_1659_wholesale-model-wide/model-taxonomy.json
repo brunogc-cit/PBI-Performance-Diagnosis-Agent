@@ -1,0 +1,4348 @@
+{
+  "modelName": "ADE - Wholesale",
+  "modelPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/asos-data-ade-powerbi/powerbi/models/Sourcing and Buying/ADE - Wholesale",
+  "statistics": {
+    "totalTables": 32,
+    "directQueryTables": 5,
+    "dualTables": 25,
+    "importTables": 2,
+    "totalColumns": 504,
+    "totalMeasures": 36,
+    "totalRelationships": 37,
+    "bidirectionalRelationships": 2,
+    "manyToManyRelationships": 0,
+    "inactiveRelationships": 9
+  },
+  "bpaConfig": {
+    "externalRuleFiles": "",
+    "ignoredRules": []
+  },
+  "expressions": [
+    {
+      "name": "_BuildNumber",
+      "kind": "m",
+      "expression": "\"0\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_DbxEndpoint",
+      "kind": "m",
+      "expression": "\"/sql/1.0/warehouses/b409f694c828e99e\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_DbxEnvironmentSuffix",
+      "kind": "m",
+      "expression": "\"_dev\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_DbxServer",
+      "kind": "m",
+      "expression": "\"adb-1450006829160224.4.azuredatabricks.net\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_Environment",
+      "kind": "m",
+      "expression": "\"Development\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_fn_ConvertCatalog",
+      "kind": "m",
+      "expression": "let \n    Source = (catalog as any) => let \n    Source = catalog, \n    ConvertToTable = #table(1, {{Source}}), \n    Split = Table.SplitColumn(ConvertToTable, \"Column1\", Splitter.SplitTextByEachDelimiter({\"_\"}, QuoteStyle.Csv, true), {\"Catalog\"}), \n    AddEnv = Table.ReplaceValue(Split, each [Catalog], each [Catalog] & _DbxEnvironmentSuffix,Replacer.ReplaceText,{\"Catalog\"}), \n    ConvertToValue = List.Max(AddEnv[Catalog]) \nin \n    ConvertToValue \nin \nSource"
+    },
+    {
+      "name": "_fn_GetDataFromDBX",
+      "kind": "m",
+      "expression": "let \n    func = (_DbxCatalog as text, _DbxDatabase as text, _DbxTable as text) => let \n        Source = Databricks.Catalogs(_DbxServer, _DbxEndpoint, []), \n        catalog_Database = Source{[Name=_fn_ConvertCatalog(_DbxCatalog),Kind=\"Database\"]}[Data], \n        default_Schema = catalog_Database{[Name=_DbxDatabase,Kind=\"Schema\"]}[Data], \n        Table = default_Schema{[Name=_DbxTable,Kind=\"Table\"]}[Data] \n    in \n        Table \nin \n    func"
+    }
+  ],
+  "tables": [
+    {
+      "name": "@Dataset Metadata",
+      "storageMode": "import",
+      "columnCount": 3,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": true,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [
+        "let\n Refresh = Table.TransformColumnTypes(Table.FromList(List.DateTimes(DateTime.From(DateTimeZone.UtcNow()), 1, #duration(0, 0, 0, 0)), Splitter.SplitByNothing(), {\"Last Data Refresh (UTC)\"}, null, ExtraValues.Error), {{\"Last Data Refresh (UTC)\", type datetime}}),\n#\"Added Environment\" = Table.AddColumn(Refresh, \"Environment\", each _Environment),\n#\"Added BuildNumber\" = Table.AddColumn(#\"Added Environment\", \"Build Number\", each _BuildNumber)\n\n in\n#\"Added BuildNumber\""
+      ],
+      "columns": [
+        {
+          "name": "Build Number",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Environment",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Last Data Refresh (UTC)",
+          "dataType": "dateTime",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "metadata"
+    },
+    {
+      "name": "@Measures",
+      "storageMode": "import",
+      "columnCount": 0,
+      "measureCount": 36,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [
+        "let\n Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText(\"i44FAA==\", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t])\n\n in\nSource"
+      ],
+      "columns": [],
+      "measures": [
+        {
+          "name": "Wholesale Average Order Value LW",
+          "expression": "DIVIDE([Wholesale Partner Sales Value LW], [Wholesale Orders LW])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "01 - Transformations\\LW",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Average Order Value",
+          "expression": "DIVIDE([Wholesale Partner Sales Value], [Wholesale Orders])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Demand RRP Margin Value Inc Tax LW",
+          "expression": "VAR SelectedDates = VALUES('Date'[dim_date_sk])\nVAR LWDates = SELECTCOLUMNS(\n    FILTER(ALL('Daily Financial Transform'),\n        'Daily Financial Transform'[dim_date_sk] IN SelectedDates),\n    \"dim_date_sk\", 'Daily Financial Transform'[Dim Date Sk Last Week]\n)\nRETURN IF(ISEMPTY(LWDates), BLANK(),\n    CALCULATE([Wholesale Demand RRP Margin Value Inc Tax],\n        REMOVEFILTERS('Date'),\n        REMOVEFILTERS('Time Period'),\n        TREATAS(LWDates, 'Date'[dim_date_sk])\n    )\n)",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "01 - Transformations\\LW",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Demand RRP Margin Value Inc Tax",
+          "expression": "SUM('Wholesale Sale'[Wholesale Recommended Retail Price Margin Inc Tax])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Demand RRP Value LW",
+          "expression": "VAR SelectedDates = VALUES('Date'[dim_date_sk])\nVAR LWDates = SELECTCOLUMNS(\n    FILTER(ALL('Daily Financial Transform'),\n        'Daily Financial Transform'[dim_date_sk] IN SelectedDates),\n    \"dim_date_sk\", 'Daily Financial Transform'[Dim Date Sk Last Week]\n)\nRETURN IF(ISEMPTY(LWDates), BLANK(),\n    CALCULATE([Wholesale Demand RRP Value],\n        REMOVEFILTERS('Date'),\n        REMOVEFILTERS('Time Period'),\n        TREATAS(LWDates, 'Date'[dim_date_sk])\n    )\n)",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "01 - Transformations\\LW",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Demand RRP Value",
+          "expression": "SUM('Wholesale Sale'[Wholesale Partner Recommended Retail Price Value])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Demand Sales Margin Value Exc Tax LW",
+          "expression": "VAR SelectedDates = VALUES('Date'[dim_date_sk])\nVAR LWDates = SELECTCOLUMNS(\n    FILTER(ALL('Daily Financial Transform'),\n        'Daily Financial Transform'[dim_date_sk] IN SelectedDates),\n    \"dim_date_sk\", 'Daily Financial Transform'[Dim Date Sk Last Week]\n)\nRETURN IF(ISEMPTY(LWDates), BLANK(),\n    CALCULATE([Wholesale Demand Sales Margin Value Exc Tax],\n        REMOVEFILTERS('Date'),\n        REMOVEFILTERS('Time Period'),\n        TREATAS(LWDates, 'Date'[dim_date_sk])\n    )\n)",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "01 - Transformations\\LW",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Demand Sales Margin Value Exc Tax",
+          "expression": "SUM('Wholesale Sale'[Wholesale Sales Margin Value Exc Tax])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Demand Sales Value",
+          "expression": "SUM('Wholesale Sale'[Wholesale Partner Sales Value])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Demand Units",
+          "expression": "SUM('Wholesale Sale'[Sku Ordered Current Quantity])",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Demand WAC Value LW",
+          "expression": "VAR SelectedDates = VALUES('Date'[dim_date_sk])\nVAR LWDates = SELECTCOLUMNS(\n    FILTER(ALL('Daily Financial Transform'),\n        'Daily Financial Transform'[dim_date_sk] IN SelectedDates),\n    \"dim_date_sk\", 'Daily Financial Transform'[Dim Date Sk Last Week]\n)\nRETURN IF(ISEMPTY(LWDates), BLANK(),\n    CALCULATE([Wholesale Demand WAC Value],\n        REMOVEFILTERS('Date'),\n        REMOVEFILTERS('Time Period'),\n        TREATAS(LWDates, 'Date'[dim_date_sk])\n    )\n)",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "01 - Transformations\\LW",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Demand WAC Value",
+          "expression": "SUM('Wholesale Sale'[Weighted Average Cost Value])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Despatched RRP Margin Value Exc Tax LW",
+          "expression": "VAR SelectedDates = VALUES('Date'[dim_date_sk])\nVAR LWDates = SELECTCOLUMNS(\n    FILTER(ALL('Daily Financial Transform'),\n        'Daily Financial Transform'[dim_date_sk] IN SelectedDates),\n    \"dim_date_sk\", 'Daily Financial Transform'[Dim Date Sk Last Week]\n)\nRETURN IF(ISEMPTY(LWDates), BLANK(),\n    CALCULATE([Wholesale Despatched RRP Margin Value Exc Tax],\n        REMOVEFILTERS('Date'),\n        REMOVEFILTERS('Time Period'),\n        TREATAS(LWDates, 'Date'[dim_date_sk])\n    )\n)",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "01 - Transformations\\LW",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Despatched RRP Margin Value Exc Tax",
+          "expression": "CALCULATE(\n    SUM('Wholesale Sale'[Wholesale Recommended Retail Price Margin Exc Tax]),\n    'Wholesale Sale'[Sku Shipped Quantity] > 0\n)",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Despatched RRP Value LW",
+          "expression": "VAR SelectedDates = VALUES('Date'[dim_date_sk])\nVAR LWDates = SELECTCOLUMNS(\n    FILTER(ALL('Daily Financial Transform'),\n        'Daily Financial Transform'[dim_date_sk] IN SelectedDates),\n    \"dim_date_sk\", 'Daily Financial Transform'[Dim Date Sk Last Week]\n)\nRETURN IF(ISEMPTY(LWDates), BLANK(),\n    CALCULATE([Wholesale Despatched RRP Value],\n        REMOVEFILTERS('Date'),\n        REMOVEFILTERS('Time Period'),\n        TREATAS(LWDates, 'Date'[dim_date_sk])\n    )\n)",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "01 - Transformations\\LW",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Despatched RRP Value",
+          "expression": "CALCULATE(\n    SUM('Wholesale Sale'[Wholesale Partner Recommended Retail Price Value]),\n    'Wholesale Sale'[Sku Shipped Quantity] > 0\n)",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Despatched Sales Margin Value Exc Tax LW",
+          "expression": "VAR SelectedDates = VALUES('Date'[dim_date_sk])\nVAR LWDates = SELECTCOLUMNS(\n    FILTER(ALL('Daily Financial Transform'),\n        'Daily Financial Transform'[dim_date_sk] IN SelectedDates),\n    \"dim_date_sk\", 'Daily Financial Transform'[Dim Date Sk Last Week]\n)\nRETURN IF(ISEMPTY(LWDates), BLANK(),\n    CALCULATE([Wholesale Despatched Sales Margin Value Exc Tax],\n        REMOVEFILTERS('Date'),\n        REMOVEFILTERS('Time Period'),\n        TREATAS(LWDates, 'Date'[dim_date_sk])\n    )\n)",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "01 - Transformations\\LW",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Despatched Sales Margin Value Exc Tax",
+          "expression": "CALCULATE(\n    SUM('Wholesale Sale'[Wholesale Sales Margin Value Exc Tax]),\n    'Wholesale Sale'[Sku Shipped Quantity] > 0\n)",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Despatched Sales Value LW",
+          "expression": "VAR SelectedDates = VALUES('Date'[dim_date_sk])\nVAR LWDates = SELECTCOLUMNS(\n    FILTER(ALL('Daily Financial Transform'),\n        'Daily Financial Transform'[dim_date_sk] IN SelectedDates),\n    \"dim_date_sk\", 'Daily Financial Transform'[Dim Date Sk Last Week]\n)\nRETURN IF(ISEMPTY(LWDates), BLANK(),\n    CALCULATE([Wholesale Despatched Sales Value],\n        REMOVEFILTERS('Date'),\n        REMOVEFILTERS('Time Period'),\n        TREATAS(LWDates, 'Date'[dim_date_sk])\n    )\n)",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "01 - Transformations\\LW",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Despatched Sales Value",
+          "expression": "CALCULATE(\n    SUM('Wholesale Sale'[Wholesale Partner Sales Value]),\n    'Wholesale Sale'[Sku Shipped Quantity] > 0\n)",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Despatched Units LW",
+          "expression": "VAR SelectedDates = VALUES('Date'[dim_date_sk])\nVAR LWDates = SELECTCOLUMNS(\n    FILTER(ALL('Daily Financial Transform'),\n        'Daily Financial Transform'[dim_date_sk] IN SelectedDates),\n    \"dim_date_sk\", 'Daily Financial Transform'[Dim Date Sk Last Week]\n)\nRETURN IF(ISEMPTY(LWDates), BLANK(),\n    CALCULATE([Wholesale Despatched Units],\n        REMOVEFILTERS('Date'),\n        REMOVEFILTERS('Time Period'),\n        TREATAS(LWDates, 'Date'[dim_date_sk])\n    )\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "01 - Transformations\\LW",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Despatched Units",
+          "expression": "SUM('Wholesale Sale'[Sku Shipped Quantity])",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Despatched WAC Value LW",
+          "expression": "VAR SelectedDates = VALUES('Date'[dim_date_sk])\nVAR LWDates = SELECTCOLUMNS(\n    FILTER(ALL('Daily Financial Transform'),\n        'Daily Financial Transform'[dim_date_sk] IN SelectedDates),\n    \"dim_date_sk\", 'Daily Financial Transform'[Dim Date Sk Last Week]\n)\nRETURN IF(ISEMPTY(LWDates), BLANK(),\n    CALCULATE([Wholesale Despatched WAC Value],\n        REMOVEFILTERS('Date'),\n        REMOVEFILTERS('Time Period'),\n        TREATAS(LWDates, 'Date'[dim_date_sk])\n    )\n)",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "01 - Transformations\\LW",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Despatched WAC Value",
+          "expression": "CALCULATE(\n    SUM('Wholesale Sale'[Weighted Average Cost Value]),\n    'Wholesale Sale'[Sku Shipped Quantity] > 0\n)",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Orders LW",
+          "expression": "VAR SelectedDates = VALUES('Date'[dim_date_sk])\nVAR LWDates = SELECTCOLUMNS(\n    FILTER(ALL('Daily Financial Transform'),\n        'Daily Financial Transform'[dim_date_sk] IN SelectedDates),\n    \"dim_date_sk\", 'Daily Financial Transform'[Dim Date Sk Last Week]\n)\nRETURN IF(ISEMPTY(LWDates), BLANK(),\n    CALCULATE([Wholesale Orders],\n        REMOVEFILTERS('Date'),\n        REMOVEFILTERS('Time Period'),\n        TREATAS(LWDates, 'Date'[dim_date_sk])\n    )\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "01 - Transformations\\LW",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Orders",
+          "expression": "DISTINCTCOUNT('Wholesale Sale'[Order Sales Id])",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Original Demand Units LW",
+          "expression": "VAR SelectedDates = VALUES('Date'[dim_date_sk])\nVAR LWDates = SELECTCOLUMNS(\n    FILTER(ALL('Daily Financial Transform'),\n        'Daily Financial Transform'[dim_date_sk] IN SelectedDates),\n    \"dim_date_sk\", 'Daily Financial Transform'[Dim Date Sk Last Week]\n)\nRETURN IF(ISEMPTY(LWDates), BLANK(),\n    CALCULATE([Wholesale Original Demand Units],\n        REMOVEFILTERS('Date'),\n        REMOVEFILTERS('Time Period'),\n        TREATAS(LWDates, 'Date'[dim_date_sk])\n    )\n)",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "01 - Transformations\\LW",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Original Demand Units",
+          "expression": "SUM('Wholesale Sale'[Sku Ordered Original Quantity])",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Partner Rrp Value LW",
+          "expression": "VAR SelectedDates = VALUES('Date'[dim_date_sk])\nVAR LWDates = SELECTCOLUMNS(\n    FILTER(ALL('Daily Financial Transform'),\n        'Daily Financial Transform'[dim_date_sk] IN SelectedDates),\n    \"dim_date_sk\", 'Daily Financial Transform'[Dim Date Sk Last Week]\n)\nRETURN IF(ISEMPTY(LWDates), BLANK(),\n    CALCULATE([Wholesale Partner RRP Value],\n        REMOVEFILTERS('Date'),\n        REMOVEFILTERS('Time Period'),\n        TREATAS(LWDates, 'Date'[dim_date_sk])\n    )\n)",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "01 - Transformations\\LW",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Partner RRP Value",
+          "expression": "SUM('Wholesale Sale'[Wholesale Partner Recommended Retail Price Value])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Partner Sales Value LW",
+          "expression": "VAR SelectedDates = VALUES('Date'[dim_date_sk])\nVAR LWDates = SELECTCOLUMNS(\n    FILTER(ALL('Daily Financial Transform'),\n        'Daily Financial Transform'[dim_date_sk] IN SelectedDates),\n    \"dim_date_sk\", 'Daily Financial Transform'[Dim Date Sk Last Week]\n)\nRETURN IF(ISEMPTY(LWDates), BLANK(),\n    CALCULATE([Wholesale Partner Sales Value],\n        REMOVEFILTERS('Date'),\n        REMOVEFILTERS('Time Period'),\n        TREATAS(LWDates, 'Date'[dim_date_sk])\n    )\n)",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "01 - Transformations\\LW",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Partner Sales Value",
+          "expression": "SUM('Wholesale Sale'[Wholesale Partner Sales Value])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale RRP Margin Exc Tax LW",
+          "expression": "VAR SelectedDates = VALUES('Date'[dim_date_sk])\nVAR LWDates = SELECTCOLUMNS(\n    FILTER(ALL('Daily Financial Transform'),\n        'Daily Financial Transform'[dim_date_sk] IN SelectedDates),\n    \"dim_date_sk\", 'Daily Financial Transform'[Dim Date Sk Last Week]\n)\nRETURN IF(ISEMPTY(LWDates), BLANK(),\n    CALCULATE([Wholesale RRP Margin Exc Tax],\n        REMOVEFILTERS('Date'),\n        REMOVEFILTERS('Time Period'),\n        TREATAS(LWDates, 'Date'[dim_date_sk])\n    )\n)",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "01 - Transformations\\LW",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale RRP Margin Exc Tax",
+          "expression": "SUM('Wholesale Sale'[Wholesale Recommended Retail Price Margin Exc Tax])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Sales Margin Value Inc Tax LW",
+          "expression": "VAR SelectedDates = VALUES('Date'[dim_date_sk])\nVAR LWDates = SELECTCOLUMNS(\n    FILTER(ALL('Daily Financial Transform'),\n        'Daily Financial Transform'[dim_date_sk] IN SelectedDates),\n    \"dim_date_sk\", 'Daily Financial Transform'[Dim Date Sk Last Week]\n)\nRETURN IF(ISEMPTY(LWDates), BLANK(),\n    CALCULATE([Wholesale Sales Margin Value Inc Tax],\n        REMOVEFILTERS('Date'),\n        REMOVEFILTERS('Time Period'),\n        TREATAS(LWDates, 'Date'[dim_date_sk])\n    )\n)",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "01 - Transformations\\LW",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Sales Margin Value Inc Tax",
+          "expression": "SUM('Wholesale Sale'[Wholesale Sales Margin Value Inc Tax])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        }
+      ],
+      "classification": "metadata"
+    },
+    {
+      "name": "Collection Date",
+      "storageMode": "dual",
+      "columnCount": 9,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_date_v2",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"dim_date_v2\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Calendar Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Year Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Year Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Year Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Quarter Short",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "dim_date_sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Country",
+      "storageMode": "dual",
+      "columnCount": 19,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_country_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"dim_country_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Asos Continent",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Continent Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Continent",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Country Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Country Top 16 Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Country Top 4 Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Country Top 6 Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Country Top 60 Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Country",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Global Territory Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Deleted Flag",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Is Eu",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Europe",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Top 11 Country",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Iso2d3166 Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Iso3d3166 Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Nominal Store Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Sub Continent",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "dim_country_sk",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Currency",
+      "storageMode": "dual",
+      "columnCount": 4,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "finance_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_currency_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"finance_dev\", \"serve\", \"dim_currency_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Currency Alphabetic Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Currency Numeric Code",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Currency",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "dim_currency_sk",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Daily Financial Half to Date",
+      "storageMode": "dual",
+      "columnCount": 2,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": true,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "financial_half_to_date_daily_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"financial_half_to_date_daily_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Dim Date Sk Htd",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "dim_date_sk",
+          "dataType": "dateTime",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "fact"
+    },
+    {
+      "name": "Daily Financial Month to Date",
+      "storageMode": "dual",
+      "columnCount": 2,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": true,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "financial_month_to_date_daily_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"financial_month_to_date_daily_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Dim Date Sk Mtd",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "dim_date_sk",
+          "dataType": "dateTime",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "fact"
+    },
+    {
+      "name": "Daily Financial Transform",
+      "storageMode": "dual",
+      "columnCount": 5,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": true,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "financial_transform_daily_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"financial_transform_daily_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Dim Date Sk Last Week",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Date Sk Last Year Minus 1",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Date Sk Last Year",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Date Sk Yesterday",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "dim_date_sk",
+          "dataType": "dateTime",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "fact"
+    },
+    {
+      "name": "Daily Financial Year to Date",
+      "storageMode": "dual",
+      "columnCount": 2,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": true,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "financial_year_to_date_daily_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"financial_year_to_date_daily_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Dim Date Sk Ytd",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "dim_date_sk",
+          "dataType": "dateTime",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "fact"
+    },
+    {
+      "name": "Date",
+      "storageMode": "dual",
+      "columnCount": 48,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_date_v2",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"dim_date_v2\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Calendar Date Cleaned",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Date Full",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Date Short",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Day Of Month Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Day Of Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Day Of Week Short",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Day Of Week",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Day Of Year Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Month Days Quantity",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Month Full",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Month Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Month Short",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Week Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Week Start Date",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Year Days Quantity",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Year Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Year Month Full",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Year Month Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Year Month",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Year Week Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Date Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Day Of Year Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Half",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Full",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Period Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Month Period",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Month Short",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Year Calendar Range Long",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Month Year Calendar Range Short",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Quarter Full",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Quarter Short",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Calendar Range",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Days Quantity",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Year First Week Start Date Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Half Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Half",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Number Of Days Past Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Year Quarter Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Quarter",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Is A Leap Year",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Deleted Flag",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "dim_date_sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Delivery Date",
+      "storageMode": "dual",
+      "columnCount": 9,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_date_v2",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"dim_date_v2\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Calendar Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Year Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Year Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Year Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Quarter Short",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "dim_date_sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Despatch Date",
+      "storageMode": "dual",
+      "columnCount": 9,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_date_v2",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"dim_date_v2\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Calendar Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Year Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Year Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Year Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Quarter Short",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "dim_date_sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Earliest Global Available To Sell Date",
+      "storageMode": "dual",
+      "columnCount": 5,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": true,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_date_v2",
+      "partitionExpressions": [
+        "let\n    DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"dim_date_v2\"),\n    #\"Renamed Columns\" = Table.TransformColumnNames(DatabricksTable, each _ & \"_tosell\")\nin\n    #\"Renamed Columns\""
+      ],
+      "columns": [
+        {
+          "name": "Earliest Global Available To Sell Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Earliest Global Available To Sell Year Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Earliest Global Available To Sell Year Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Earliest Global Available To Sell Year",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "dim_date_sk",
+          "dataType": "int64",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Earliest Global Go Live Date",
+      "storageMode": "dual",
+      "columnCount": 5,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": true,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_date_v2",
+      "partitionExpressions": [
+        "let\n    DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"dim_date_v2\"),\n    #\"Renamed Columns\" = Table.TransformColumnNames(DatabricksTable, each _ & \"_golive\")\nin\n    #\"Renamed Columns\""
+      ],
+      "columns": [
+        {
+          "name": "Earliest Global Go Live Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Earliest Global Go Live Year Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Earliest Global Go Live Year Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Earliest Global Go Live Year",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "dim_date_sk",
+          "dataType": "int64",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Fx Rate Type",
+      "storageMode": "dual",
+      "columnCount": 4,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "finance_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_fx_rate_type_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"finance_dev\", \"serve\", \"dim_fx_rate_type_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Fx Rate Type Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Fx Rate Type System",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Fx Rate Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "dim_fx_rate_type_sk",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Option",
+      "storageMode": "dual",
+      "columnCount": 61,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "product_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_product_option_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"product_dev\", \"serve\", \"dim_product_option_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Ade Source Last Updated",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Asset Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Asset Image Url",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Asset Name",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Asset Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Event Classification Published Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Event Media Complete Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Event Sample Received Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Model Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Model Last Updated Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Model Name",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Commodity Code DE",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Commodity Code UK",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Commodity Code US",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Current Uk Partner Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Current Uk Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Go Live Month - Year",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Image URL",
+          "dataType": "",
+          "isHidden": true
+        },
+        {
+          "name": "Is Colourway Primary Colour",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Last Known Uk Full Partner Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Option Colour Group Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Option Colour Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Option Colour",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Option Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Option Earliest Global Available To Sell Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Option Earliest Global Go Live Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Option Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Option Size Group Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Option Size Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Original Uk Partner Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Original Uk Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Brand Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Brand",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Business Model",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Buying Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Buying Set",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Buying Subgroup",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Division",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Parent Buying Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Parent Buying Subgroup",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Care Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Event Copy Published Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Product Event Created Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Product Hierarchy Category",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Hierarchy Division",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Hierarchy Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Hierarchy Product Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Hierarchy Subcategory",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Style Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Supplier Colour",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Supplier Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Supplier Origin Country",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Supplier Reference Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Supplier Unit Cost Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "dim_product_option_sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "dim_supplier_sk",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Product",
+      "storageMode": "directQuery",
+      "columnCount": 83,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "product_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_product_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"product_dev\", \"serve\", \"dim_product_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Ade Source Last Updated",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Colourway Asset Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Asset Image Url",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Asset Name",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Asset Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Event Classification Published Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Event Media Complete Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Event Sample Received Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Model Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Model Last Updated Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Model Name",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Current Uk Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Image URL",
+          "dataType": "",
+          "isHidden": true
+        },
+        {
+          "name": "Is Colourway Primary Colour",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Sku At Gold Seal",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Sku Hazardous Material",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Sku Non Stock Product",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Sku Pre Studios",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Sku Production Complete",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Sku Valid Primary Ean",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Option Colour Group Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Option Colour Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Option Colour",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Option Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Option Earliest Global Available To Sell Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Option Earliest Global Go Live Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Option Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Option Size Group Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Option Size Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Original Uk Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Brand Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Brand",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Business Model",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Buying Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Buying Set",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Buying Subgroup",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Division",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Care Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Event Copy Published Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Product Event Created Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Product Hierarchy Category",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Hierarchy Division",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Hierarchy Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Hierarchy Product Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Hierarchy Subcategory",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Colour",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Commodity De Code Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Commodity De Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Commodity Uk Code Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Commodity Uk Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Commodity Us Code Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Commodity Us Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Fc01 Weighted Average Landed Cost Price Gbp",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Gold Seal Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Hazardous Material",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Primary Ean Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Size",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Colour",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Currency Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Dimensions Unit Of Measurement",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Height",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Length",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Name",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Origin Country Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Origin Country",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Packaging Method",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Reference Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Unit Cost Local Currency",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Weight Unit Of Measurement",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Weight",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Width",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Uk Vat Rate",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Style Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Variant Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Variant Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "dim_product_sk",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Product In Store",
+      "storageMode": "directQuery",
+      "columnCount": 5,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "product_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_product_in_store_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"product_dev\", \"serve\", \"dim_product_in_store_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Available To Sell Date Store",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Go Live Date Store",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "dim_product_in_store_sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "dim_product_sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "dim_store_sk",
+          "dataType": "int64",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "fact"
+    },
+    {
+      "name": "Product Option In Store",
+      "storageMode": "directQuery",
+      "columnCount": 5,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "product_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_product_option_in_store_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"product_dev\", \"serve\", \"dim_product_option_in_store_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Available To Sell Date Store",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Go Live Date Store",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "dim_product_option_in_store_sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "dim_product_option_sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "dim_store_sk",
+          "dataType": "int64",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "fact"
+    },
+    {
+      "name": "Product Option Multi-Value UDA",
+      "storageMode": "directQuery",
+      "columnCount": 4,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "product_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_product_option_multi_valued_user_defined_attributes_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"product_dev\", \"serve\", \"dim_product_option_multi_valued_user_defined_attributes_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Dim Product Option Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Last Update Datetime",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Uda Name",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Uda Value",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "fact"
+    },
+    {
+      "name": "Product Option UDA",
+      "storageMode": "dual",
+      "columnCount": 134,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "product_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_product_option_single_valued_user_defined_attributes_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"product_dev\", \"serve\", \"dim_product_option_single_valued_user_defined_attributes_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Accessories Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Activewear",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Activity",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Animal Skin",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Apply Prop65 Warning",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Asos Jeans Style",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Atmd Cohort",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Back To School College",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Bestseller Noos",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Bhmd Cohort",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Big Deals",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Brand Lifecycle",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Business Model Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Buying Group Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Buying Set Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Buying Subgroup Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Candle Burning Hours",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Care Label",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Casual Formal",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Chemical Compliance Test Report",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Co Ordinate",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Collusion Unisex",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Commodity Code Construction",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Commodity Code Gender",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Commodity Code Product Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Coo Of Skin",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Counter Seasonal",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Customer Segmentation",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Denim Rip",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Denim Wash Colour",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Direct To Consumer",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dress Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dying Country Of Origin",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Eco Edit",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Ehmd Cohort",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Electrical Equipment",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Exclusive",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Fabric Construction Country Of Origin",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Fabric Metric",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Fabric Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Fc Ranging",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Finishing Country Of Origin",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Fit Info",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Fit",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Flow",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Fragmented Eufc",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Fragmented Ukfc",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Fragmented Usfc",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Garment Consumption",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Gifts",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Gold Seal Date",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Gold Seal Indicator",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Gold Seal",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Hazardous Substances Packaging",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Hazardous Substances",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Hazmat",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Heart",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Heel Height Measurements",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "High Risk Product",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Jewellery Analysis Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Jewellery Finish",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Korean Skincare",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Leather Non Leather",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Legacy Colour Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Legacy Style Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Length",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Main Shell Fabric",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Marketplace Condition",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Marketplace Vintage Brand",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Merch Season",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Modest Wear",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Multipack Size",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Multipacks",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Neckline",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Non Gifting Dept Gifts",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "On Query",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Outlet Brand Rating",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Outlet Stock Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Pattern",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Pf Product Status",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Pim Activity",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Pim Classification End Use",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Pim Design",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Pim Leather Non Leather",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Pim Product Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Planned Go Live Date",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Plm Option Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Power Source",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Precious Metals Weight",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Price Banding",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Price Establishment",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Printing Country Of Origin",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Priority",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Classification",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Detail",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Fit",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Length",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Selling Model",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Production End Use",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Range Shop By Fit",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Rare Earth Minerals Weight",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Recyclable Packaging",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Recyclable",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Recycled Content Packaging Percentage",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Recycled Content Percentage",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Responsible",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Return Action Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Returnable",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Reusable Packaging",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sale Buy",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sample End Destination",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Seasonal Event",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Seller Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Shirt Style",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sleeve Length",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Speed To Market Model",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Stitching Of The Upper Country Of Origin",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Style Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Styling Guide",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sub Categories",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sunglasses Filter Category",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sunglasses Lens Shade",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Super Style Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Trainer Style",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Transformable Item",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Trend Moment",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Trend Triangle",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Un Number",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Us Import Info Received",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Web Style",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Website Gender",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Weight",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "dim_product_option_sk",
+          "dataType": "int64",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Release Date",
+      "storageMode": "dual",
+      "columnCount": 9,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_date_v2",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"dim_date_v2\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Calendar Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Year Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Year Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Year Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Quarter Short",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "dim_date_sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Time Period",
+      "storageMode": "dual",
+      "columnCount": 3,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_financial_time_period_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"dim_financial_time_period_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Time Period",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "dim_date_sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "sort_order",
+          "dataType": "int64",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "fact"
+    },
+    {
+      "name": "Warehouse",
+      "storageMode": "dual",
+      "columnCount": 10,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "supplychain_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_warehouse_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"supplychain_dev\", \"serve\", \"dim_warehouse_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Parent Warehouse Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sales Channel Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Sales Channel",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Warehouse Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Warehouse Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Warehouse Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Warehouse",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "dim_currency_sk",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "dim_pricing_store_sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "dim_warehouse_sk",
+          "dataType": "int64",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Wholesale Cancel Reason",
+      "storageMode": "dual",
+      "columnCount": 2,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "sales_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_wholesale_cancel_reason_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"sales_dev\", \"serve\", \"dim_wholesale_cancel_reason_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Cancel Reason",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "dim_wholesale_cancel_reason_sk",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Wholesale Delivery Type",
+      "storageMode": "dual",
+      "columnCount": 3,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "supplychain_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_wholesale_delivery_type_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"supplychain_dev\", \"serve\", \"dim_wholesale_delivery_type_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Wholesale Delivery Type Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Delivery Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "dim_wholesale_delivery_type_sk",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Wholesale Distribution Centre",
+      "storageMode": "dual",
+      "columnCount": 4,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "supplychain_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_wholesale_distribution_centre_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"supplychain_dev\", \"serve\", \"dim_wholesale_distribution_centre_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Distribution Centre Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Distribution Centre",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "dim_country_sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "dim_wholesale_distribution_centre_sk",
+          "dataType": "int64",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Wholesale Freight Type",
+      "storageMode": "dual",
+      "columnCount": 3,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "supplychain_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_wholesale_freight_type_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"supplychain_dev\", \"serve\", \"dim_wholesale_freight_type_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Wholesale Freight Type Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Freight Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "dim_wholesale_freight_type_sk",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Wholesale Order Status",
+      "storageMode": "dual",
+      "columnCount": 3,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "sales_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_wholesale_order_status_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"sales_dev\", \"serve\", \"dim_wholesale_order_status_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Wholesale Order Status Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Order Status",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "dim_wholesale_order_status_sk",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Wholesale Order Type",
+      "storageMode": "dual",
+      "columnCount": 3,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "sales_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_wholesale_order_type_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"sales_dev\", \"serve\", \"dim_wholesale_order_type_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Wholesale Order Type Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Order Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "dim_wholesale_order_type_sk",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Wholesale Partner",
+      "storageMode": "dual",
+      "columnCount": 6,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "supplychain_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_wholesale_partner_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"supplychain_dev\", \"serve\", \"dim_wholesale_partner_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Wholesale Partner Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Partner",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Store",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "_created_date",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "_updated_date",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "dim_wholesale_partner_sk",
+          "dataType": "int64",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Wholesale Sale",
+      "storageMode": "directQuery",
+      "columnCount": 40,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "sales",
+      "sourceDatabase": "serve_dev",
+      "sourceTable": "fact_wholesale_sale_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"sales_dev\", \"serve\", \"fact_wholesale_sale_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Cancellation Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Creation Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Has Order Been Released",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Order On Hold",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Order Partner Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Order Purchase Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Order Sales Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Order Wholesale Transfer Stock Order Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Ordered Current Quantity",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Ordered Original Quantity",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Shipped Quantity",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Weighted Average Cost Value Warehouse Currency",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Weighted Average Cost Value",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Partner Recommended Retail Price Value Native Currency",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Partner Recommended Retail Price Value",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Partner Sales Value",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Recommended Retail Price Margin Exc Tax",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Recommended Retail Price Margin Inc Tax",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Sales Margin Value Exc Tax",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Wholesale Sales Margin Value Inc Tax",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "dim_collection_date_sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "dim_despatch_current_end_date_sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "dim_despatch_current_start_date_sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "dim_despatch_original_end_date_sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "dim_despatch_original_start_date_sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "dim_expected_delivery_date_sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "dim_fx_rate_type_sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "dim_product_sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "dim_release_date_sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "dim_shipment_date_sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "dim_transaction_currency_sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "dim_warehouse_sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "dim_wholesale_cancel_reason_sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "dim_wholesale_delivery_type_sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "dim_wholesale_distribution_centre_sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "dim_wholesale_freight_type_sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "dim_wholesale_order_status_sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "dim_wholesale_order_type_sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "dim_wholesale_partner_sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "fact_wholesale_sale_sk",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "fact"
+    }
+  ],
+  "relationships": [
+    {
+      "name": "16ab92d7-597d-4925-8dfb-569cc926689c",
+      "fromTable": "Option",
+      "fromColumn": "Option Earliest Global Go Live Date",
+      "toTable": "Earliest Global Go Live Date",
+      "toColumn": "dim_date_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "6b1541dc-c2c3-46cd-ac96-10001c601ada",
+      "fromTable": "Option",
+      "fromColumn": "Option Earliest Global Available To Sell Date",
+      "toTable": "Earliest Global Available To Sell Date",
+      "toColumn": "dim_date_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Daily Financial Half to Date to Date",
+      "fromTable": "Daily Financial Half to Date",
+      "fromColumn": "dim_date_sk",
+      "toTable": "Date",
+      "toColumn": "dim_date_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Daily Financial Month to Date to Date",
+      "fromTable": "Daily Financial Month to Date",
+      "fromColumn": "dim_date_sk",
+      "toTable": "Date",
+      "toColumn": "dim_date_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Daily Financial Transform to Date",
+      "fromTable": "Daily Financial Transform",
+      "fromColumn": "dim_date_sk",
+      "toTable": "Date",
+      "toColumn": "dim_date_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Daily Financial Year to Date to Date",
+      "fromTable": "Daily Financial Year to Date",
+      "fromColumn": "dim_date_sk",
+      "toTable": "Date",
+      "toColumn": "dim_date_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Date to Time Period",
+      "fromTable": "Time Period",
+      "fromColumn": "dim_date_sk",
+      "toTable": "Date",
+      "toColumn": "dim_date_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "bothDirections",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Option to Product Option Multi-Value UDA",
+      "fromTable": "Product Option Multi-Value UDA",
+      "fromColumn": "Dim Product Option Sk",
+      "toTable": "Option",
+      "toColumn": "dim_product_option_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Option to Product Option UDA",
+      "fromTable": "Option",
+      "fromColumn": "dim_product_option_sk",
+      "toTable": "Product Option UDA",
+      "toColumn": "dim_product_option_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "bothDirections",
+      "fromCardinality": "one",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Product to Option",
+      "fromTable": "Product",
+      "fromColumn": "Option Id",
+      "toTable": "Option",
+      "toColumn": "dim_product_option_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Wholesale Sale to Collection Date",
+      "fromTable": "Wholesale Sale",
+      "fromColumn": "dim_collection_date_sk",
+      "toTable": "Collection Date",
+      "toColumn": "dim_date_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Wholesale Sale to Currency",
+      "fromTable": "Wholesale Sale",
+      "fromColumn": "dim_transaction_currency_sk",
+      "toTable": "Currency",
+      "toColumn": "dim_currency_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Wholesale Sale to Date (Cancellation)",
+      "fromTable": "Wholesale Sale",
+      "fromColumn": "Cancellation Date",
+      "toTable": "Date",
+      "toColumn": "dim_date_sk",
+      "isActive": false,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Wholesale Sale to Date (Collection)",
+      "fromTable": "Wholesale Sale",
+      "fromColumn": "dim_collection_date_sk",
+      "toTable": "Date",
+      "toColumn": "dim_date_sk",
+      "isActive": false,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Wholesale Sale to Date (Creation)",
+      "fromTable": "Wholesale Sale",
+      "fromColumn": "Creation Date",
+      "toTable": "Date",
+      "toColumn": "dim_date_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Wholesale Sale to Date (Current Despatch Window End)",
+      "fromTable": "Wholesale Sale",
+      "fromColumn": "dim_despatch_current_end_date_sk",
+      "toTable": "Date",
+      "toColumn": "dim_date_sk",
+      "isActive": false,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Wholesale Sale to Date (Current Despatch Window)",
+      "fromTable": "Wholesale Sale",
+      "fromColumn": "dim_despatch_current_start_date_sk",
+      "toTable": "Date",
+      "toColumn": "dim_date_sk",
+      "isActive": false,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Wholesale Sale to Date (Expected Delivery)",
+      "fromTable": "Wholesale Sale",
+      "fromColumn": "dim_expected_delivery_date_sk",
+      "toTable": "Date",
+      "toColumn": "dim_date_sk",
+      "isActive": false,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Wholesale Sale to Date (Original Despatch Window End)",
+      "fromTable": "Wholesale Sale",
+      "fromColumn": "dim_despatch_original_end_date_sk",
+      "toTable": "Date",
+      "toColumn": "dim_date_sk",
+      "isActive": false,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Wholesale Sale to Date (Original Despatch Window)",
+      "fromTable": "Wholesale Sale",
+      "fromColumn": "dim_despatch_original_start_date_sk",
+      "toTable": "Date",
+      "toColumn": "dim_date_sk",
+      "isActive": false,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Wholesale Sale to Date (Release)",
+      "fromTable": "Wholesale Sale",
+      "fromColumn": "dim_release_date_sk",
+      "toTable": "Date",
+      "toColumn": "dim_date_sk",
+      "isActive": false,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Wholesale Sale to Date (Shipment)",
+      "fromTable": "Wholesale Sale",
+      "fromColumn": "dim_shipment_date_sk",
+      "toTable": "Date",
+      "toColumn": "dim_date_sk",
+      "isActive": false,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Wholesale Sale to Delivery Date",
+      "fromTable": "Wholesale Sale",
+      "fromColumn": "dim_expected_delivery_date_sk",
+      "toTable": "Delivery Date",
+      "toColumn": "dim_date_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Wholesale Sale to Despatch Date",
+      "fromTable": "Wholesale Sale",
+      "fromColumn": "dim_shipment_date_sk",
+      "toTable": "Despatch Date",
+      "toColumn": "dim_date_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Wholesale Sale to Fx Rate Type",
+      "fromTable": "Wholesale Sale",
+      "fromColumn": "dim_fx_rate_type_sk",
+      "toTable": "Fx Rate Type",
+      "toColumn": "dim_fx_rate_type_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Wholesale Sale to Product",
+      "fromTable": "Wholesale Sale",
+      "fromColumn": "dim_product_sk",
+      "toTable": "Product",
+      "toColumn": "dim_product_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Wholesale Sale to Release Date",
+      "fromTable": "Wholesale Sale",
+      "fromColumn": "dim_release_date_sk",
+      "toTable": "Release Date",
+      "toColumn": "dim_date_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Wholesale Sale to Warehouse",
+      "fromTable": "Wholesale Sale",
+      "fromColumn": "dim_warehouse_sk",
+      "toTable": "Warehouse",
+      "toColumn": "dim_warehouse_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Wholesale Sale to Wholesale Cancel Reason",
+      "fromTable": "Wholesale Sale",
+      "fromColumn": "dim_wholesale_cancel_reason_sk",
+      "toTable": "Wholesale Cancel Reason",
+      "toColumn": "dim_wholesale_cancel_reason_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Wholesale Sale to Wholesale Delivery Type",
+      "fromTable": "Wholesale Sale",
+      "fromColumn": "dim_wholesale_delivery_type_sk",
+      "toTable": "Wholesale Delivery Type",
+      "toColumn": "dim_wholesale_delivery_type_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Wholesale Sale to Wholesale Distribution Centre",
+      "fromTable": "Wholesale Sale",
+      "fromColumn": "dim_wholesale_distribution_centre_sk",
+      "toTable": "Wholesale Distribution Centre",
+      "toColumn": "dim_wholesale_distribution_centre_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Wholesale Sale to Wholesale Freight Type",
+      "fromTable": "Wholesale Sale",
+      "fromColumn": "dim_wholesale_freight_type_sk",
+      "toTable": "Wholesale Freight Type",
+      "toColumn": "dim_wholesale_freight_type_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Wholesale Sale to Wholesale Order Status",
+      "fromTable": "Wholesale Sale",
+      "fromColumn": "dim_wholesale_order_status_sk",
+      "toTable": "Wholesale Order Status",
+      "toColumn": "dim_wholesale_order_status_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Wholesale Sale to Wholesale Order Type",
+      "fromTable": "Wholesale Sale",
+      "fromColumn": "dim_wholesale_order_type_sk",
+      "toTable": "Wholesale Order Type",
+      "toColumn": "dim_wholesale_order_type_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "Wholesale Sale to Wholesale Partner",
+      "fromTable": "Wholesale Sale",
+      "fromColumn": "dim_wholesale_partner_sk",
+      "toTable": "Wholesale Partner",
+      "toColumn": "dim_wholesale_partner_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "a1b2c3d4-3001-4000-8001-000000000099",
+      "fromTable": "Product Option In Store",
+      "fromColumn": "dim_product_option_sk",
+      "toTable": "Option",
+      "toColumn": "dim_product_option_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "b1c2d3e4-2001-4000-9001-000000000099",
+      "fromTable": "Product In Store",
+      "fromColumn": "dim_product_sk",
+      "toTable": "Product",
+      "toColumn": "dim_product_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    }
+  ],
+  "sourceMapping": [
+    {
+      "pbiTable": "Collection Date",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_date_v2"
+    },
+    {
+      "pbiTable": "Country",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_country_v1"
+    },
+    {
+      "pbiTable": "Currency",
+      "storageMode": "dual",
+      "databricksCatalog": "finance_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_currency_v1"
+    },
+    {
+      "pbiTable": "Daily Financial Half to Date",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "financial_half_to_date_daily_v1"
+    },
+    {
+      "pbiTable": "Daily Financial Month to Date",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "financial_month_to_date_daily_v1"
+    },
+    {
+      "pbiTable": "Daily Financial Transform",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "financial_transform_daily_v1"
+    },
+    {
+      "pbiTable": "Daily Financial Year to Date",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "financial_year_to_date_daily_v1"
+    },
+    {
+      "pbiTable": "Date",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_date_v2"
+    },
+    {
+      "pbiTable": "Delivery Date",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_date_v2"
+    },
+    {
+      "pbiTable": "Despatch Date",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_date_v2"
+    },
+    {
+      "pbiTable": "Earliest Global Available To Sell Date",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_date_v2"
+    },
+    {
+      "pbiTable": "Earliest Global Go Live Date",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_date_v2"
+    },
+    {
+      "pbiTable": "Fx Rate Type",
+      "storageMode": "dual",
+      "databricksCatalog": "finance_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_fx_rate_type_v1"
+    },
+    {
+      "pbiTable": "Option",
+      "storageMode": "dual",
+      "databricksCatalog": "product_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_product_option_v1"
+    },
+    {
+      "pbiTable": "Product",
+      "storageMode": "directQuery",
+      "databricksCatalog": "product_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_product_v1"
+    },
+    {
+      "pbiTable": "Product In Store",
+      "storageMode": "directQuery",
+      "databricksCatalog": "product_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_product_in_store_v1"
+    },
+    {
+      "pbiTable": "Product Option In Store",
+      "storageMode": "directQuery",
+      "databricksCatalog": "product_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_product_option_in_store_v1"
+    },
+    {
+      "pbiTable": "Product Option Multi-Value UDA",
+      "storageMode": "directQuery",
+      "databricksCatalog": "product_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_product_option_multi_valued_user_defined_attributes_v1"
+    },
+    {
+      "pbiTable": "Product Option UDA",
+      "storageMode": "dual",
+      "databricksCatalog": "product_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_product_option_single_valued_user_defined_attributes_v1"
+    },
+    {
+      "pbiTable": "Release Date",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_date_v2"
+    },
+    {
+      "pbiTable": "Time Period",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_financial_time_period_v1"
+    },
+    {
+      "pbiTable": "Warehouse",
+      "storageMode": "dual",
+      "databricksCatalog": "supplychain_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_warehouse_v1"
+    },
+    {
+      "pbiTable": "Wholesale Cancel Reason",
+      "storageMode": "dual",
+      "databricksCatalog": "sales_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_wholesale_cancel_reason_v1"
+    },
+    {
+      "pbiTable": "Wholesale Delivery Type",
+      "storageMode": "dual",
+      "databricksCatalog": "supplychain_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_wholesale_delivery_type_v1"
+    },
+    {
+      "pbiTable": "Wholesale Distribution Centre",
+      "storageMode": "dual",
+      "databricksCatalog": "supplychain_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_wholesale_distribution_centre_v1"
+    },
+    {
+      "pbiTable": "Wholesale Freight Type",
+      "storageMode": "dual",
+      "databricksCatalog": "supplychain_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_wholesale_freight_type_v1"
+    },
+    {
+      "pbiTable": "Wholesale Order Status",
+      "storageMode": "dual",
+      "databricksCatalog": "sales_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_wholesale_order_status_v1"
+    },
+    {
+      "pbiTable": "Wholesale Order Type",
+      "storageMode": "dual",
+      "databricksCatalog": "sales_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_wholesale_order_type_v1"
+    },
+    {
+      "pbiTable": "Wholesale Partner",
+      "storageMode": "dual",
+      "databricksCatalog": "supplychain_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_wholesale_partner_v1"
+    },
+    {
+      "pbiTable": "Wholesale Sale",
+      "storageMode": "directQuery",
+      "databricksCatalog": "sales",
+      "databricksSchema": "serve_dev",
+      "databricksTable": "fact_wholesale_sale_v1"
+    }
+  ],
+  "graphAnalysis": {
+    "maxSnowflakeDepth": 5,
+    "avgDegree": 2.3,
+    "hubTables": [
+      {
+        "name": "Wholesale Sale",
+        "degree": 25,
+        "classification": "fact",
+        "storageMode": "directQuery",
+        "sizeGB": null,
+        "rowCount": null
+      },
+      {
+        "name": "Date",
+        "degree": 15,
+        "classification": "dimension",
+        "storageMode": "dual",
+        "sizeGB": null,
+        "rowCount": null
+      },
+      {
+        "name": "Option",
+        "degree": 6,
+        "classification": "dimension",
+        "storageMode": "dual",
+        "sizeGB": null,
+        "rowCount": null
+      }
+    ],
+    "tables": [
+      {
+        "name": "@Dataset Metadata",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      },
+      {
+        "name": "@Measures",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      },
+      {
+        "name": "Collection Date",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Country",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Currency",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Daily Financial Half to Date",
+        "degree": 1,
+        "inDegree": 0,
+        "outDegree": 1,
+        "isHub": false,
+        "classification": "fact",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Daily Financial Month to Date",
+        "degree": 1,
+        "inDegree": 0,
+        "outDegree": 1,
+        "isHub": false,
+        "classification": "fact",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Daily Financial Transform",
+        "degree": 1,
+        "inDegree": 0,
+        "outDegree": 1,
+        "isHub": false,
+        "classification": "fact",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Daily Financial Year to Date",
+        "degree": 1,
+        "inDegree": 0,
+        "outDegree": 1,
+        "isHub": false,
+        "classification": "fact",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Date",
+        "degree": 15,
+        "inDegree": 15,
+        "outDegree": 0,
+        "isHub": true,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Delivery Date",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Despatch Date",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Earliest Global Available To Sell Date",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Earliest Global Go Live Date",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Fx Rate Type",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Option",
+        "degree": 6,
+        "inDegree": 3,
+        "outDegree": 3,
+        "isHub": true,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Product",
+        "degree": 3,
+        "inDegree": 2,
+        "outDegree": 1,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "directQuery"
+      },
+      {
+        "name": "Product In Store",
+        "degree": 1,
+        "inDegree": 0,
+        "outDegree": 1,
+        "isHub": false,
+        "classification": "fact",
+        "storageMode": "directQuery"
+      },
+      {
+        "name": "Product Option In Store",
+        "degree": 1,
+        "inDegree": 0,
+        "outDegree": 1,
+        "isHub": false,
+        "classification": "fact",
+        "storageMode": "directQuery"
+      },
+      {
+        "name": "Product Option Multi-Value UDA",
+        "degree": 1,
+        "inDegree": 0,
+        "outDegree": 1,
+        "isHub": false,
+        "classification": "fact",
+        "storageMode": "directQuery"
+      },
+      {
+        "name": "Product Option UDA",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Release Date",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Time Period",
+        "degree": 1,
+        "inDegree": 0,
+        "outDegree": 1,
+        "isHub": false,
+        "classification": "fact",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Warehouse",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Wholesale Cancel Reason",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Wholesale Delivery Type",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Wholesale Distribution Centre",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Wholesale Freight Type",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Wholesale Order Status",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Wholesale Order Type",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Wholesale Partner",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Wholesale Sale",
+        "degree": 25,
+        "inDegree": 0,
+        "outDegree": 25,
+        "isHub": true,
+        "classification": "fact",
+        "storageMode": "directQuery"
+      }
+    ]
+  }
+}

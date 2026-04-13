@@ -1,0 +1,4524 @@
+{
+  "modelName": "ADE - Parcel Tracking",
+  "modelPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/asos-data-ade-powerbi/powerbi/models/Sourcing and Buying/ADE - Parcel Tracking",
+  "statistics": {
+    "totalTables": 36,
+    "directQueryTables": 10,
+    "dualTables": 24,
+    "importTables": 2,
+    "totalColumns": 560,
+    "totalMeasures": 17,
+    "totalRelationships": 28,
+    "bidirectionalRelationships": 2,
+    "manyToManyRelationships": 0,
+    "inactiveRelationships": 0
+  },
+  "bpaConfig": {
+    "externalRuleFiles": "[\"..\\\\..\\\\..\\\\bestpracticeanalyser\\\\BPARules.json\"]",
+    "ignoredRules": []
+  },
+  "expressions": [
+    {
+      "name": "_BuildNumber",
+      "kind": "m",
+      "expression": "\"0\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_DbxEndpoint",
+      "kind": "m",
+      "expression": "\"/sql/1.0/warehouses/b409f694c828e99e\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_DbxEnvironmentSuffix",
+      "kind": "m",
+      "expression": "\"_dev\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_DbxServer",
+      "kind": "m",
+      "expression": "\"adb-1450006829160224.4.azuredatabricks.net\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_Environment",
+      "kind": "m",
+      "expression": "\"Development\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+    },
+    {
+      "name": "_fn_ConvertCatalog",
+      "kind": "m",
+      "expression": "let \n    Source = (catalog as any) => let \n    Source = catalog, \n    ConvertToTable = #table(1, {{Source}}), \n    Split = Table.SplitColumn(ConvertToTable, \"Column1\", Splitter.SplitTextByEachDelimiter({\"_\"}, QuoteStyle.Csv, true), {\"Catalog\"}), \n    AddEnv = Table.ReplaceValue(Split, each [Catalog], each [Catalog] & _DbxEnvironmentSuffix,Replacer.ReplaceText,{\"Catalog\"}), \n    ConvertToValue = List.Max(AddEnv[Catalog]) \nin \n    ConvertToValue \nin \nSource"
+    },
+    {
+      "name": "_fn_GetDataFromDBX",
+      "kind": "m",
+      "expression": "let \n    func = (_DbxCatalog as text, _DbxDatabase as text, _DbxTable as text) => let \n        Source = Databricks.Catalogs(_DbxServer, _DbxEndpoint, []), \n        catalog_Database = Source{[Name=_fn_ConvertCatalog(_DbxCatalog),Kind=\"Database\"]}[Data], \n        default_Schema = catalog_Database{[Name=_DbxDatabase,Kind=\"Schema\"]}[Data], \n        Table = default_Schema{[Name=_DbxTable,Kind=\"Table\"]}[Data] \n    in \n        Table \nin \n    func"
+    }
+  ],
+  "tables": [
+    {
+      "name": "@Dataset Metadata",
+      "storageMode": "import",
+      "columnCount": 3,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": true,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [
+        "let\n Refresh = Table.TransformColumnTypes(Table.FromList(List.DateTimes(DateTime.From(DateTimeZone.UtcNow()), 1, #duration(0, 0, 0, 0)), Splitter.SplitByNothing(), {\"Last Data Refresh (UTC)\"}, null, ExtraValues.Error), {{\"Last Data Refresh (UTC)\", type datetime}}),\n#\"Added Environment\" = Table.AddColumn(Refresh, \"Environment\", each _Environment),\n#\"Added BuildNumber\" = Table.AddColumn(#\"Added Environment\", \"Build Number\", each _BuildNumber)\n\n in\n#\"Added BuildNumber\""
+      ],
+      "columns": [
+        {
+          "name": "Build Number",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Environment",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Last Data Refresh (UTC)",
+          "dataType": "dateTime",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "metadata"
+    },
+    {
+      "name": "@Measures",
+      "storageMode": "import",
+      "columnCount": 0,
+      "measureCount": 17,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "",
+      "sourceDatabase": "",
+      "sourceTable": "",
+      "partitionExpressions": [
+        "let\n Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText(\"i44FAA==\", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t])\n\n in\nSource"
+      ],
+      "columns": [],
+      "measures": [
+        {
+          "name": "Shipped Number Of Weeks On Site",
+          "expression": "MAX('Parcel Tracking'[Shipped Number Of Weeks On Site])",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Shipped Sale Buy Value Exc Tax",
+          "expression": "SUM('Parcel Tracking'[Shipped Sale Buy Value Exc Tax])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Shipped Sale Buy Value Tax Value",
+          "expression": "SUM('Parcel Tracking'[Shipped Sale Buy Value Tax Value])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Shipped Sale Buy Value",
+          "expression": "SUM('Parcel Tracking'[Shipped Sale Buy Value])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Shipped Sale Checkout Tax Value",
+          "expression": "SUM('Parcel Tracking'[Shipped Sale Checkout Tax Value])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Shipped Sale Pricing Store Full Price Value Exc Tax",
+          "expression": "SUM('Parcel Tracking'[Shipped Sale Pricing Store Full Price Value Exc Tax])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Shipped Sale Pricing Store Full Price Value Tax Value",
+          "expression": "SUM('Parcel Tracking'[Shipped Sale Pricing Store Full Price Value Tax Value])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Shipped Sale Pricing Store Full Price Value",
+          "expression": "SUM('Parcel Tracking'[Shipped Sale Pricing Store Full Price Value])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Shipped Sale Quantity",
+          "expression": "SUM('Parcel Tracking'[Shipped Sale Quantity])",
+          "formatString": "#,##0;-#,##0",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Shipped Sale Tax Value",
+          "expression": "SUM('Parcel Tracking'[Shipped Sale Tax Value])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Shipped Sale Unit Cost Value",
+          "expression": "AVERAGE('Parcel Tracking'[Shipped Sale Unit Cost Value])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Shipped Sale Value Exc Tax",
+          "expression": "SUM('Parcel Tracking'[Shipped Sale Value Exc Tax])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Shipped Sale Value Inc Tax",
+          "expression": "SUM('Parcel Tracking'[Shipped Sale Value Inc Tax])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Shipped Sale Value",
+          "expression": "SUM('Parcel Tracking'[Shipped Sale Value])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Shipped Sale Website Full Price Value Exc Tax",
+          "expression": "SUM('Parcel Tracking'[Shipped Sale Website Full Price Value Exc Tax])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Shipped Sale Website Full Price Value",
+          "expression": "SUM('Parcel Tracking'[Shipped Sale Website Full Price Value])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        },
+        {
+          "name": "Shipped Sale Weighted Average Cost Value",
+          "expression": "SUM('Parcel Tracking'[Shipped Sale Weighted Average Cost Value])",
+          "formatString": "£#,##0.00;-£#,##0.00",
+          "displayFolder": "",
+          "isHidden": false
+        }
+      ],
+      "classification": "metadata"
+    },
+    {
+      "name": "Actual Delivery Date",
+      "storageMode": "dual",
+      "columnCount": 6,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_date_v2",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"dim_date_v2\"),\n#\"Renamed Columns\" = Table.TransformColumnNames(DatabricksTable, each _ & \"_actual\")\nin #\"Renamed Columns\" \n\n\n"
+      ],
+      "columns": [
+        {
+          "name": "Actual Delivery Calendar Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Actual Delivery Calendar Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Actual Delivery Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Actual Delivery Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Actual Delivery Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "dim_date_sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Customer Account",
+      "storageMode": "directQuery",
+      "columnCount": 23,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "customer_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_customer_account_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"customer_dev\", \"serve\", \"dim_customer_account_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Account Shop",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Account Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Billing Address Default Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Blocked Reason",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Customer Created Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Customer Guid",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Customer Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Customer Primary Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Customer Sex",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Date Of Birth",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Delivery Address Default Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Customer Account Primary Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Customer Account Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Email Hash",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Erasure Reason",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "First Name Hash",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Home Country",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Blocked",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is First Time Buyer",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Language",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Last Name Hash",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Latest Registration Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Postcode Hash",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Customer Billing Address",
+      "storageMode": "directQuery",
+      "columnCount": 8,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "customer_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_customer_billing_address_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"customer_dev\", \"serve\", \"dim_customer_billing_address_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Billing Address Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "City",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Country",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Postcode Hash",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Updated Date",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "dim_country_sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "dim_customer_account_sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "dim_customer_billing_address_sk",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "fact"
+    },
+    {
+      "name": "Customer Delivery Address",
+      "storageMode": "directQuery",
+      "columnCount": 8,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "customer_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_customer_delivery_address_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"customer_dev\", \"serve\", \"dim_customer_delivery_address_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "City",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Country",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Delivery Address Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Postcode Hash",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Updated Date",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "dim_country_sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "dim_customer_account_sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "dim_customer_delivery_address_sk",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "fact"
+    },
+    {
+      "name": "Daily Financial Half to Date",
+      "storageMode": "dual",
+      "columnCount": 2,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": true,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "ref_financial_half_to_date_daily_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"ref_financial_half_to_date_daily_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Dim Date Sk Htd",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Date Sk",
+          "dataType": "dateTime",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Daily Financial Month to Date",
+      "storageMode": "dual",
+      "columnCount": 2,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": true,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "ref_financial_month_to_date_daily_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"ref_financial_month_to_date_daily_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Dim Date Sk Mtd",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Date Sk",
+          "dataType": "dateTime",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Daily Financial Transform",
+      "storageMode": "dual",
+      "columnCount": 5,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": true,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "ref_financial_transform_daily_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"ref_financial_transform_daily_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Dim Date Sk Last Week",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Date Sk Last Year Minus 1",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Date Sk Last Year",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Date Sk Yesterday",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Date Sk",
+          "dataType": "dateTime",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Daily Financial Year to Date",
+      "storageMode": "dual",
+      "columnCount": 2,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": true,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "ref_financial_year_to_date_daily_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"ref_financial_year_to_date_daily_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Dim Date Sk Ytd",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Date Sk",
+          "dataType": "dateTime",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Date",
+      "storageMode": "dual",
+      "columnCount": 47,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_date_v2",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"dim_date_v2\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Calendar Date Full",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Date Short",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Calendar Day Of Month Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Day Of Week Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Day Of Week Short",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Day Of Week",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Day Of Year Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Month Days Quantity",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Month Full",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Month Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Month Short",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Week Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Week Start Date",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Year Days Quantity",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Year Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Year Month Full",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Year Month Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Year Month",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Calendar Year Week Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Date Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Day Of Year Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Half",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Full",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Period Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Month Period",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Month Short",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Month Year Calendar Range Long",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Month Year Calendar Range Short",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Quarter Full",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Quarter Short",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Calendar Range",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Days Quantity",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Year First Week Start Date Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Half Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Half",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Number Of Days Past Id",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Financial Year Quarter Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Quarter",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Financial Year",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Is A Leap Year",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "_is_deleted_flag",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "dim_date_sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Delivery Option",
+      "storageMode": "dual",
+      "columnCount": 4,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "supplychain_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_delivery_option_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"supplychain_dev\", \"serve\", \"dim_delivery_option_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Ade Source Last Updated",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Delivery Option Name",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Delivery Option Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Language Code",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Dispatched Date",
+      "storageMode": "dual",
+      "columnCount": 6,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_date_v2",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"dim_date_v2\"),\n#\"Renamed Columns\" = Table.TransformColumnNames(DatabricksTable, each _ & \"_dispatched\")\nin #\"Renamed Columns\" \n\n\n"
+      ],
+      "columns": [
+        {
+          "name": "Dispatched Calendar Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Dispatched Calendar Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Dispatched Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Dispatched Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Dispatched Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "dim_date_sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Earliest Global Available To Sell Date",
+      "storageMode": "dual",
+      "columnCount": 5,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": true,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_date_v2",
+      "partitionExpressions": [
+        "let\n    DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"dim_date_v2\"),\n    #\"Renamed Columns\" = Table.TransformColumnNames(DatabricksTable, each _ & \"_tosell\")\nin\n    #\"Renamed Columns\""
+      ],
+      "columns": [
+        {
+          "name": "Earliest Global Available To Sell Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Earliest Global Available To Sell Year Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Earliest Global Available To Sell Year Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Earliest Global Available To Sell Year",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "dim_date_sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Earliest Global Go Live Date",
+      "storageMode": "dual",
+      "columnCount": 5,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": true,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_date_v2",
+      "partitionExpressions": [
+        "let\n    DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"dim_date_v2\"),\n    #\"Renamed Columns\" = Table.TransformColumnNames(DatabricksTable, each _ & \"_golive\")\nin\n    #\"Renamed Columns\""
+      ],
+      "columns": [
+        {
+          "name": "Earliest Global Go Live Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Earliest Global Go Live Year Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Earliest Global Go Live Year Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Earliest Global Go Live Year",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "dim_date_sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Multi Value UDA",
+      "storageMode": "directQuery",
+      "columnCount": 4,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "product_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_product_option_multi_valued_user_defined_attributes_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"product_dev\", \"serve\", \"dim_product_option_multi_valued_user_defined_attributes_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Dim Product Option Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Last Update Datetime",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Uda Name",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Uda Value",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "fact"
+    },
+    {
+      "name": "Option",
+      "storageMode": "dual",
+      "columnCount": 66,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "product_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_product_option_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"product_dev\", \"serve\", \"dim_product_option_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Ade Source Last Updated",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Colour Group Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Colour Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Colour Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Asset Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Asset Image Url",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Asset Name",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Asset Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Event Classification Published Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Event Media Complete Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Event Sample Received Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Model Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Model Last Updated Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Model Name",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Commodity De Code Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Commodity Uk Code Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Commodity Us Code Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Current Uk Partner Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Current Uk Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Product Option Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Supplier Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Is Colourway Primary Colour",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Last Known Uk Full Partner Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Last Known Uk Full Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Option Colour Group Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Option Colour Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Option Colour Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Option Colour",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Option Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Option Earliest Global Available To Sell Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Option Earliest Global Go Live Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Option Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Option Size Group Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Option Size Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Original Uk Partner Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Original Uk Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Brand Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Brand",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Business Model",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Buying Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Buying Set",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Buying Subgroup",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Division",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Parent Buying Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Parent Buying Subgroup",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Care Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Event Copy Published Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Product Event Created Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Product Hierarchy Category",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Hierarchy Division",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Hierarchy Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Hierarchy Product Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Hierarchy Subcategory",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Style Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Supplier Colour",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Supplier Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Supplier Origin Country",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Supplier Packaging Method",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Supplier Reference Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Supplier Unit Cost Local Currency",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Colour",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Parcel Carrier",
+      "storageMode": "dual",
+      "columnCount": 4,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "supplychain_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_parcel_carrier_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"supplychain_dev\", \"serve\", \"dim_parcel_carrier_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Ade Source Last Updated",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Parcel Carrier Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Parcel Carrier Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Parcel Carrier Name",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Parcel Carrier Service",
+      "storageMode": "dual",
+      "columnCount": 4,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "supplychain_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_parcel_carrier_service_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"supplychain_dev\", \"serve\", \"dim_parcel_carrier_service_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Ade Source Last Updated",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Parcel Carrier Service Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Parcel Carrier Service Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Parcel Carrier Service Name",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Parcel Status Actual Delivery",
+      "storageMode": "dual",
+      "columnCount": 3,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "supplychain_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_parcel_status_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"supplychain_dev\", \"serve\", \"dim_parcel_status_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Ade Source Last Updated",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Parcel Status Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Parcel Status Description",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Parcel Status First Attempted",
+      "storageMode": "dual",
+      "columnCount": 3,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "supplychain_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_parcel_status_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"supplychain_dev\", \"serve\", \"dim_parcel_status_v1\"), \n#\"Renamed Columns\" = Table.TransformColumnNames(DatabricksTable, each _ & \"_firstattempted\")\nin #\"Renamed Columns\"\n"
+      ],
+      "columns": [
+        {
+          "name": "Ade Source Last Updated",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Parcel Status Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Parcel Status Description",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Parcel Status Latest Tracking",
+      "storageMode": "dual",
+      "columnCount": 3,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "supplychain_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_parcel_status_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"supplychain_dev\", \"serve\", \"dim_parcel_status_v1\"),\n#\"Renamed Columns\" = Table.TransformColumnNames(DatabricksTable, each _ & \"_latesttracking\")\nin #\"Renamed Columns\"\n\n\n"
+      ],
+      "columns": [
+        {
+          "name": "Ade Source Last Updated",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Parcel Status Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Parcel Status Description",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Parcel Tracking",
+      "storageMode": "directQuery",
+      "columnCount": 62,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "supplychain_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "fact_parcel_delivery_tracking_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"supplychain_dev\", \"serve\", \"fact_parcel_delivery_tracking_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Actual Delivery Date Time",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Billed Transaction Date Time",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Consignment Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Created Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Actual Delivery Date Sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Actual Delivery Event Status Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Billed Transaction Date Sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Customer Account Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Delivery Country Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Delivery Option Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Dispatched Date Sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Estimated Delivery Date Sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Dim First Attempted Delivery Date Sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Dim First Attempted Delivery Event Status Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Fx Rate Type Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Latest Tracking Event Date Sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Latest Tracking Event Status Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Nominated Delivery Date Sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Order Date Sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Parcel Carrier Service Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Parcel Carrier Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Price Status Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Pricing Store Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Product Option Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Product Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Seller Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Selling Channel Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Shipped Lifecycle Price Status Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Shipped Product Lifecycle Status Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Shipped Stock Age Band Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Shipped Transaction Date Sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Shipped Warehouse Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Shop Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Transaction Currency Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Web Store Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dispatched Date Time",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Estimated Delivery Date Time",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "First Attempted Delivery Date Time",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Latest Tracking Event Date Time",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Nominated Delivery Date Time",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Order Date Time",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Order Line Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Order Reference",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Parcel Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Shipped Number Of Weeks On Site",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Shipped Sale Buy Value Exc Tax",
+          "dataType": "decimal",
+          "isHidden": true
+        },
+        {
+          "name": "Shipped Sale Buy Value Tax Value",
+          "dataType": "decimal",
+          "isHidden": true
+        },
+        {
+          "name": "Shipped Sale Buy Value",
+          "dataType": "decimal",
+          "isHidden": true
+        },
+        {
+          "name": "Shipped Sale Checkout Tax Value",
+          "dataType": "decimal",
+          "isHidden": true
+        },
+        {
+          "name": "Shipped Sale Pricing Store Full Price Value Exc Tax",
+          "dataType": "decimal",
+          "isHidden": true
+        },
+        {
+          "name": "Shipped Sale Pricing Store Full Price Value Tax Value",
+          "dataType": "decimal",
+          "isHidden": true
+        },
+        {
+          "name": "Shipped Sale Pricing Store Full Price Value",
+          "dataType": "decimal",
+          "isHidden": true
+        },
+        {
+          "name": "Shipped Sale Quantity",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Shipped Sale Tax Value",
+          "dataType": "decimal",
+          "isHidden": true
+        },
+        {
+          "name": "Shipped Sale Unit Cost Value",
+          "dataType": "decimal",
+          "isHidden": true
+        },
+        {
+          "name": "Shipped Sale Value Exc Tax",
+          "dataType": "decimal",
+          "isHidden": true
+        },
+        {
+          "name": "Shipped Sale Value Inc Tax",
+          "dataType": "decimal",
+          "isHidden": true
+        },
+        {
+          "name": "Shipped Sale Value",
+          "dataType": "decimal",
+          "isHidden": true
+        },
+        {
+          "name": "Shipped Sale Website Full Price Value Exc Tax",
+          "dataType": "decimal",
+          "isHidden": true
+        },
+        {
+          "name": "Shipped Sale Website Full Price Value",
+          "dataType": "decimal",
+          "isHidden": true
+        },
+        {
+          "name": "Shipped Sale Weighted Average Cost Value",
+          "dataType": "decimal",
+          "isHidden": true
+        },
+        {
+          "name": "Shipped Transaction Date Time",
+          "dataType": "dateTime",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "fact"
+    },
+    {
+      "name": "Price Status",
+      "storageMode": "dual",
+      "columnCount": 4,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "sales_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_price_status_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"sales_dev\", \"serve\", \"dim_price_status_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Dim Price Status Group Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Price Status Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Price Status Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Price Status",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Product",
+      "storageMode": "directQuery",
+      "columnCount": 97,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "product_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_product_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"product_dev\", \"serve\", \"dim_product_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Ade Source Last Updated",
+          "dataType": "dateTime",
+          "isHidden": true
+        },
+        {
+          "name": "Colour Group Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Colour Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Colour Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Asset Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Asset Image Url",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Asset Name",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Asset Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Event Classification Published Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Event Media Complete Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Event Sample Received Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Model Height",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Model Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Model Last Updated Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Colourway Model Name",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Current Uk Partner Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Current Uk Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Product Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Is Colourway Primary Colour",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Sku At Gold Seal",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Sku Hazardous Material",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Sku Non Stock Product",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Sku Pre Studios",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Sku Production Complete",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Is Sku Valid Primary Ean",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Last Known Uk Full Partner Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Last Known Uk Full Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Option Colour Group Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Option Colour Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Option Colour Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Option Colour",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Option Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Option Earliest Global Available To Sell Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Option Earliest Global Go Live Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Option Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Option Size Group Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Option Size Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Original Uk Partner Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Original Uk Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Brand Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Brand",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Business Model",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Buying Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Buying Set",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Buying Subgroup",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Division",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Parent Buying Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Buyrarchy Parent Buying Subgroup",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Care Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Event Copy Published Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Product Event Created Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Product Hierarchy Category",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Hierarchy Division",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Hierarchy Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Hierarchy Product Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Hierarchy Subcategory",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Colour Group Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Colour Group",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Colour Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Colour",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Commodity De Code Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Commodity De Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Commodity Uk Code Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Commodity Uk Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Commodity Us Code Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Commodity Us Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Fc01 Weighted Average Landed Cost Price Gbp",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Gold Seal Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Hazardous Material",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Primary Ean Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Size",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Colour",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Currency Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Dimensions Unit Of Measurement",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Height",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Length",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Name",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Origin Country Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Origin Country",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Packaging Method",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Reference Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Unit Cost Local Currency",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Weight Unit Of Measurement",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Weight",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Supplier Width",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Sku Uk Vat Rate",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Style Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Variant Description",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Variant Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Colour",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Product In Store",
+      "storageMode": "directQuery",
+      "columnCount": 5,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "product_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_product_in_store_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"product_dev\", \"serve\", \"dim_product_in_store_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Available To Sell Date Store",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Product Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Store Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Go Live Date Store",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "dim_product_in_store_sk",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "fact"
+    },
+    {
+      "name": "Product Option In Store",
+      "storageMode": "directQuery",
+      "columnCount": 5,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "product_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_product_option_in_store_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"product_dev\", \"serve\", \"dim_product_option_in_store_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Available To Sell Date Store",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Product Option Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Store Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Go Live Date Store",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "dim_product_option_in_store_sk",
+          "dataType": "string",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "fact"
+    },
+    {
+      "name": "Product Pricing Store",
+      "storageMode": "directQuery",
+      "columnCount": 9,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "product_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_product_in_pricing_store_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"product_dev\", \"serve\", \"dim_product_in_pricing_store_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Current Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Currency Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Pricing Store Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Product In Pricing Store Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Product Option Sk",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Dim Product Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Original Price",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Pricing Store Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Pricing Store",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Seller",
+      "storageMode": "dual",
+      "columnCount": 3,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "sales_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_seller_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"sales_dev\", \"serve\", \"dim_seller_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Dim Seller Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Seller Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Seller",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Selling Channel",
+      "storageMode": "dual",
+      "columnCount": 3,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "sales_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_selling_channel_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"sales_dev\", \"serve\", \"dim_selling_channel_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Dim Selling Channel Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Selling Channel Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Selling Channel",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Shipped Transaction Date",
+      "storageMode": "dual",
+      "columnCount": 6,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_date_v2",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"dim_date_v2\"),\n#\"Renamed Columns\" = Table.TransformColumnNames(DatabricksTable, each _ & \"_shipped\")\nin #\"Renamed Columns\" \n\n\n"
+      ],
+      "columns": [
+        {
+          "name": "Shipped Transaction Calendar Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Shipped Transaction Calendar Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Shipped Transaction Date",
+          "dataType": "dateTime",
+          "isHidden": false
+        },
+        {
+          "name": "Shipped Transaction Month Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Shipped Transaction Week Id",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "dim_date_sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Shop",
+      "storageMode": "dual",
+      "columnCount": 3,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "sales_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_shop_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"sales_dev\", \"serve\", \"dim_shop_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Dim Shop Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Shop Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Shop",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Supplier",
+      "storageMode": "directQuery",
+      "columnCount": 10,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": true,
+      "sourceCatalog": "sourcingandbuying_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_supplier_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"sourcingandbuying_dev\", \"serve\", \"dim_supplier_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Currency Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Parent Supplier Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Parent Supplier",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Primary Country Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Primary State",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Shipped Quantity Tolerance Cycle",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Shipped Quantity Tolerance Percentage",
+          "dataType": "decimal",
+          "isHidden": false
+        },
+        {
+          "name": "Supplier Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "dim_supplier_sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Supplier",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "fact"
+    },
+    {
+      "name": "Time Period",
+      "storageMode": "dual",
+      "columnCount": 3,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "technology_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_financial_time_period_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"technology_dev\", \"serve\", \"dim_financial_time_period_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Sort Order",
+          "dataType": "int64",
+          "isHidden": true
+        },
+        {
+          "name": "Time Period",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "dim_date_sk",
+          "dataType": "dateTime",
+          "isHidden": true
+        }
+      ],
+      "measures": [],
+      "classification": "fact"
+    },
+    {
+      "name": "UDA",
+      "storageMode": "dual",
+      "columnCount": 134,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "product_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_product_option_single_valued_user_defined_attributes_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"product_dev\", \"serve\", \"dim_product_option_single_valued_user_defined_attributes_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Accessories Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Activewear",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Activity",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Animal Skin",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Apply Prop65 Warning",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Asos Jeans Style",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Atmd Cohort",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Back To School College",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Bestseller Noos",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Bhmd Cohort",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Big Deals",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Brand Lifecycle",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Business Model Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Buying Group Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Buying Set Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Buying Subgroup Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Candle Burning Hours",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Care Label",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Casual Formal",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Chemical Compliance Test Report",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Co Ordinate",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Collusion Unisex",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Commodity Code Construction",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Commodity Code Gender",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Commodity Code Product Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Coo Of Skin",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Counter Seasonal",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Customer Segmentation",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Denim Rip",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Denim Wash Colour",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dim Product Option Sk",
+          "dataType": "int64",
+          "isHidden": false
+        },
+        {
+          "name": "Direct To Consumer",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dress Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Dying Country Of Origin",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Eco Edit",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Ehmd Cohort",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Electrical Equipment",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Exclusive",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Fabric Construction Country Of Origin",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Fabric Metric",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Fabric Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Fc Ranging",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Finishing Country Of Origin",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Fit Info",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Fit",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Flow",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Fragmented Eufc",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Fragmented Ukfc",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Fragmented Usfc",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Garment Consumption",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Gifts",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Gold Seal Date",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Gold Seal Indicator",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Gold Seal",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Hazardous Substances Packaging",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Hazardous Substances",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Hazmat",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Heart",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Heel Height Measurements",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "High Risk Product",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Jewellery Analysis Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Jewellery Finish",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Korean Skincare",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Leather Non Leather",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Legacy Colour Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Legacy Style Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Length",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Main Shell Fabric",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Marketplace Condition",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Marketplace Vintage Brand",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Merch Season",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Modest Wear",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Multipack Size",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Multipacks",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Neckline",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Non Gifting Dept Gifts",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "On Query",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Outlet Brand Rating",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Outlet Stock Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Pattern",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Pf Product Status",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Pim Activity",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Pim Classification End Use",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Pim Design",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Pim Leather Non Leather",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Pim Product Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Planned Go Live Date",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Plm Option Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Power Source",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Precious Metals Weight",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Price Banding",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Price Establishment",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Printing Country Of Origin",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Priority",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Classification",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Detail",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Fit",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Length",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Selling Model",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Product Type",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Production End Use",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Range Shop By Fit",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Rare Earth Minerals Weight",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Recyclable Packaging",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Recyclable",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Recycled Content Packaging Percentage",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Recycled Content Percentage",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Responsible",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Return Action Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Returnable",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Reusable Packaging",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sale Buy",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sample End Destination",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Seasonal Event",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Seller Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Shirt Style",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sleeve Length",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Speed To Market Model",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Stitching Of The Upper Country Of Origin",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Style Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Styling Guide",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sub Categories",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sunglasses Filter Category",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Sunglasses Lens Shade",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Super Style Id",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Trainer Style",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Transformable Item",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Trend Moment",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Trend Triangle",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Un Number",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Us Import Info Received",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Web Style",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Website Gender",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Weight",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    },
+    {
+      "name": "Web Store",
+      "storageMode": "dual",
+      "columnCount": 3,
+      "measureCount": 0,
+      "partitionCount": 1,
+      "isHidden": false,
+      "sourceCatalog": "sales_dev",
+      "sourceDatabase": "serve",
+      "sourceTable": "dim_web_store_v1",
+      "partitionExpressions": [
+        "let DatabricksTable = _fn_GetDataFromDBX(\"sales_dev\", \"serve\", \"dim_web_store_v1\") in DatabricksTable"
+      ],
+      "columns": [
+        {
+          "name": "Dim Web Store Sk",
+          "dataType": "string",
+          "isHidden": true
+        },
+        {
+          "name": "Web Store Code",
+          "dataType": "string",
+          "isHidden": false
+        },
+        {
+          "name": "Web Store",
+          "dataType": "string",
+          "isHidden": false
+        }
+      ],
+      "measures": [],
+      "classification": "dimension"
+    }
+  ],
+  "relationships": [
+    {
+      "name": "0191351b-62e9-4a6a-97b7-f4d4cf7570e6",
+      "fromTable": "Option",
+      "fromColumn": "Option Earliest Global Go Live Date",
+      "toTable": "Earliest Global Go Live Date",
+      "toColumn": "dim_date_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "03c9f5cc-bf58-42f0-8fe6-977d92627fae",
+      "fromTable": "Parcel Tracking",
+      "fromColumn": "Dim Billed Transaction Date Sk",
+      "toTable": "Date",
+      "toColumn": "dim_date_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "03e6913c-c744-4cb8-866d-fe7a3fd351dc",
+      "fromTable": "Parcel Tracking",
+      "fromColumn": "Dim Parcel Carrier Service Sk",
+      "toTable": "Parcel Carrier Service",
+      "toColumn": "Dim Parcel Carrier Service Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "0d587f9e-80b1-464c-9096-f92427fca91e",
+      "fromTable": "Parcel Tracking",
+      "fromColumn": "Dim Parcel Carrier Sk",
+      "toTable": "Parcel Carrier",
+      "toColumn": "Dim Parcel Carrier Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "0e714511-91ce-4408-a6cd-b6a1729374cf",
+      "fromTable": "Parcel Tracking",
+      "fromColumn": "Dim Delivery Option Sk",
+      "toTable": "Delivery Option",
+      "toColumn": "Dim Delivery Option Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "0f3257ac-3f2b-46a6-b95d-e428956781fb",
+      "fromTable": "Parcel Tracking",
+      "fromColumn": "Dim Seller Sk",
+      "toTable": "Seller",
+      "toColumn": "Dim Seller Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "179caa1b-1e80-4906-b81e-802c072d2557",
+      "fromTable": "Parcel Tracking",
+      "fromColumn": "Dim Shipped Transaction Date Sk",
+      "toTable": "Shipped Transaction Date",
+      "toColumn": "dim_date_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "36a8c01f-caa6-4a32-8c44-adb017ae748f",
+      "fromTable": "Multi Value UDA",
+      "fromColumn": "Dim Product Option Sk",
+      "toTable": "Option",
+      "toColumn": "Dim Product Option Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "bothDirections",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "3f5c013b-c85e-4683-af00-158039aae344",
+      "fromTable": "Parcel Tracking",
+      "fromColumn": "Dim Dispatched Date Sk",
+      "toTable": "Dispatched Date",
+      "toColumn": "dim_date_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "4e1c7273-fed5-4885-844f-54c75b455c31",
+      "fromTable": "Parcel Tracking",
+      "fromColumn": "Dim Product Option Sk",
+      "toTable": "Option",
+      "toColumn": "Dim Product Option Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "55ece37a-2f71-49f7-98eb-88b6bb9115bf",
+      "fromTable": "Parcel Tracking",
+      "fromColumn": "Dim Latest Tracking Event Status Sk",
+      "toTable": "Parcel Status Latest Tracking",
+      "toColumn": "Dim Parcel Status Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "5b668bf7-6082-4626-90d4-28dbb7f08f4e",
+      "fromTable": "Parcel Tracking",
+      "fromColumn": "Dim Price Status Sk",
+      "toTable": "Price Status",
+      "toColumn": "Dim Price Status Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "759b08d3-442e-437c-a511-94a908ebcd29",
+      "fromTable": "Parcel Tracking",
+      "fromColumn": "Dim Shop Sk",
+      "toTable": "Shop",
+      "toColumn": "Dim Shop Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "79df9db2-1a94-4084-be26-e4d2d7a80583",
+      "fromTable": "Parcel Tracking",
+      "fromColumn": "Dim Pricing Store Sk",
+      "toTable": "Product Pricing Store",
+      "toColumn": "Dim Pricing Store Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "7bbd5863-3a1b-4c42-8e72-fc8cd4bd9c47",
+      "fromTable": "Parcel Tracking",
+      "fromColumn": "Dim First Attempted Delivery Event Status Sk",
+      "toTable": "Parcel Status First Attempted",
+      "toColumn": "Dim Parcel Status Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "995c18e1-aef7-4a9d-a935-004541933e3f",
+      "fromTable": "Parcel Tracking",
+      "fromColumn": "Dim Customer Account Sk",
+      "toTable": "Customer Account",
+      "toColumn": "Dim Customer Account Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "a1b2c3d4-5001-4000-8001-000000000099",
+      "fromTable": "Product Option In Store",
+      "fromColumn": "Dim Product Option Sk",
+      "toTable": "Option",
+      "toColumn": "Dim Product Option Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "b1c2d3e4-3001-4000-9001-000000000099",
+      "fromTable": "Product In Store",
+      "fromColumn": "Dim Product Sk",
+      "toTable": "Product",
+      "toColumn": "Dim Product Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "c231f20d-96c2-4e60-a616-1d8c76622483",
+      "fromTable": "Parcel Tracking",
+      "fromColumn": "Dim Selling Channel Sk",
+      "toTable": "Selling Channel",
+      "toColumn": "Dim Selling Channel Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "c4a0f1b2-3c4d-4e5f-6a7b-8c9d0e1f2a3b",
+      "fromTable": "Customer Delivery Address",
+      "fromColumn": "dim_customer_account_sk",
+      "toTable": "Customer Account",
+      "toColumn": "Dim Customer Account Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "d03f2ed8-e8d9-4822-8d81-084879281ac1",
+      "fromTable": "Time Period",
+      "fromColumn": "dim_date_sk",
+      "toTable": "Date",
+      "toColumn": "dim_date_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "bothDirections",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "d2a638fa-8eea-4a5e-bb5b-4e0a1a1349de",
+      "fromTable": "Parcel Tracking",
+      "fromColumn": "Dim Web Store Sk",
+      "toTable": "Web Store",
+      "toColumn": "Dim Web Store Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "d5b1a2c3-4d5e-4f6a-7b8c-9d0e1f2a3b4c",
+      "fromTable": "Customer Billing Address",
+      "fromColumn": "dim_customer_account_sk",
+      "toTable": "Customer Account",
+      "toColumn": "Dim Customer Account Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "dd70e888-e1e9-492c-85b4-c999daf7f272",
+      "fromTable": "Parcel Tracking",
+      "fromColumn": "Dim Actual Delivery Date Sk",
+      "toTable": "Actual Delivery Date",
+      "toColumn": "dim_date_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "ee408945-fada-4c33-b4ac-c29bb5a6c8ee",
+      "fromTable": "Parcel Tracking",
+      "fromColumn": "Dim Product Sk",
+      "toTable": "Product",
+      "toColumn": "Dim Product Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "eeae58ca-de70-4869-b794-393e9f831831",
+      "fromTable": "Parcel Tracking",
+      "fromColumn": "Dim Product Option Sk",
+      "toTable": "UDA",
+      "toColumn": "Dim Product Option Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "f35f7f1f-cb4b-4490-9ffa-687a395fc6a4",
+      "fromTable": "Parcel Tracking",
+      "fromColumn": "Dim Actual Delivery Event Status Sk",
+      "toTable": "Parcel Status Actual Delivery",
+      "toColumn": "Dim Parcel Status Sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "name": "f365b4bc-6467-429e-a2f3-7883792ee8cf",
+      "fromTable": "Option",
+      "fromColumn": "Option Earliest Global Available To Sell Date",
+      "toTable": "Earliest Global Available To Sell Date",
+      "toColumn": "dim_date_sk",
+      "isActive": true,
+      "crossFilteringBehavior": "oneDirection",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    }
+  ],
+  "sourceMapping": [
+    {
+      "pbiTable": "Actual Delivery Date",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_date_v2"
+    },
+    {
+      "pbiTable": "Customer Account",
+      "storageMode": "directQuery",
+      "databricksCatalog": "customer_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_customer_account_v1"
+    },
+    {
+      "pbiTable": "Customer Billing Address",
+      "storageMode": "directQuery",
+      "databricksCatalog": "customer_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_customer_billing_address_v1"
+    },
+    {
+      "pbiTable": "Customer Delivery Address",
+      "storageMode": "directQuery",
+      "databricksCatalog": "customer_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_customer_delivery_address_v1"
+    },
+    {
+      "pbiTable": "Daily Financial Half to Date",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "ref_financial_half_to_date_daily_v1"
+    },
+    {
+      "pbiTable": "Daily Financial Month to Date",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "ref_financial_month_to_date_daily_v1"
+    },
+    {
+      "pbiTable": "Daily Financial Transform",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "ref_financial_transform_daily_v1"
+    },
+    {
+      "pbiTable": "Daily Financial Year to Date",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "ref_financial_year_to_date_daily_v1"
+    },
+    {
+      "pbiTable": "Date",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_date_v2"
+    },
+    {
+      "pbiTable": "Delivery Option",
+      "storageMode": "dual",
+      "databricksCatalog": "supplychain_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_delivery_option_v1"
+    },
+    {
+      "pbiTable": "Dispatched Date",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_date_v2"
+    },
+    {
+      "pbiTable": "Earliest Global Available To Sell Date",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_date_v2"
+    },
+    {
+      "pbiTable": "Earliest Global Go Live Date",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_date_v2"
+    },
+    {
+      "pbiTable": "Multi Value UDA",
+      "storageMode": "directQuery",
+      "databricksCatalog": "product_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_product_option_multi_valued_user_defined_attributes_v1"
+    },
+    {
+      "pbiTable": "Option",
+      "storageMode": "dual",
+      "databricksCatalog": "product_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_product_option_v1"
+    },
+    {
+      "pbiTable": "Parcel Carrier",
+      "storageMode": "dual",
+      "databricksCatalog": "supplychain_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_parcel_carrier_v1"
+    },
+    {
+      "pbiTable": "Parcel Carrier Service",
+      "storageMode": "dual",
+      "databricksCatalog": "supplychain_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_parcel_carrier_service_v1"
+    },
+    {
+      "pbiTable": "Parcel Status Actual Delivery",
+      "storageMode": "dual",
+      "databricksCatalog": "supplychain_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_parcel_status_v1"
+    },
+    {
+      "pbiTable": "Parcel Status First Attempted",
+      "storageMode": "dual",
+      "databricksCatalog": "supplychain_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_parcel_status_v1"
+    },
+    {
+      "pbiTable": "Parcel Status Latest Tracking",
+      "storageMode": "dual",
+      "databricksCatalog": "supplychain_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_parcel_status_v1"
+    },
+    {
+      "pbiTable": "Parcel Tracking",
+      "storageMode": "directQuery",
+      "databricksCatalog": "supplychain_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "fact_parcel_delivery_tracking_v1"
+    },
+    {
+      "pbiTable": "Price Status",
+      "storageMode": "dual",
+      "databricksCatalog": "sales_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_price_status_v1"
+    },
+    {
+      "pbiTable": "Product",
+      "storageMode": "directQuery",
+      "databricksCatalog": "product_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_product_v1"
+    },
+    {
+      "pbiTable": "Product In Store",
+      "storageMode": "directQuery",
+      "databricksCatalog": "product_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_product_in_store_v1"
+    },
+    {
+      "pbiTable": "Product Option In Store",
+      "storageMode": "directQuery",
+      "databricksCatalog": "product_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_product_option_in_store_v1"
+    },
+    {
+      "pbiTable": "Product Pricing Store",
+      "storageMode": "directQuery",
+      "databricksCatalog": "product_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_product_in_pricing_store_v1"
+    },
+    {
+      "pbiTable": "Seller",
+      "storageMode": "dual",
+      "databricksCatalog": "sales_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_seller_v1"
+    },
+    {
+      "pbiTable": "Selling Channel",
+      "storageMode": "dual",
+      "databricksCatalog": "sales_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_selling_channel_v1"
+    },
+    {
+      "pbiTable": "Shipped Transaction Date",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_date_v2"
+    },
+    {
+      "pbiTable": "Shop",
+      "storageMode": "dual",
+      "databricksCatalog": "sales_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_shop_v1"
+    },
+    {
+      "pbiTable": "Supplier",
+      "storageMode": "directQuery",
+      "databricksCatalog": "sourcingandbuying_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_supplier_v1"
+    },
+    {
+      "pbiTable": "Time Period",
+      "storageMode": "dual",
+      "databricksCatalog": "technology_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_financial_time_period_v1"
+    },
+    {
+      "pbiTable": "UDA",
+      "storageMode": "dual",
+      "databricksCatalog": "product_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_product_option_single_valued_user_defined_attributes_v1"
+    },
+    {
+      "pbiTable": "Web Store",
+      "storageMode": "dual",
+      "databricksCatalog": "sales_dev",
+      "databricksSchema": "serve",
+      "databricksTable": "dim_web_store_v1"
+    }
+  ],
+  "graphAnalysis": {
+    "maxSnowflakeDepth": 4,
+    "avgDegree": 1.6,
+    "hubTables": [
+      {
+        "name": "Parcel Tracking",
+        "degree": 20,
+        "classification": "fact",
+        "storageMode": "directQuery",
+        "sizeGB": null,
+        "rowCount": null
+      },
+      {
+        "name": "Option",
+        "degree": 5,
+        "classification": "dimension",
+        "storageMode": "dual",
+        "sizeGB": null,
+        "rowCount": null
+      }
+    ],
+    "tables": [
+      {
+        "name": "@Dataset Metadata",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      },
+      {
+        "name": "@Measures",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "metadata",
+        "storageMode": "import"
+      },
+      {
+        "name": "Actual Delivery Date",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Customer Account",
+        "degree": 3,
+        "inDegree": 3,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "directQuery"
+      },
+      {
+        "name": "Customer Billing Address",
+        "degree": 1,
+        "inDegree": 0,
+        "outDegree": 1,
+        "isHub": false,
+        "classification": "fact",
+        "storageMode": "directQuery"
+      },
+      {
+        "name": "Customer Delivery Address",
+        "degree": 1,
+        "inDegree": 0,
+        "outDegree": 1,
+        "isHub": false,
+        "classification": "fact",
+        "storageMode": "directQuery"
+      },
+      {
+        "name": "Daily Financial Half to Date",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Daily Financial Month to Date",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Daily Financial Transform",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Daily Financial Year to Date",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Date",
+        "degree": 2,
+        "inDegree": 2,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Delivery Option",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Dispatched Date",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Earliest Global Available To Sell Date",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Earliest Global Go Live Date",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Multi Value UDA",
+        "degree": 1,
+        "inDegree": 0,
+        "outDegree": 1,
+        "isHub": false,
+        "classification": "fact",
+        "storageMode": "directQuery"
+      },
+      {
+        "name": "Option",
+        "degree": 5,
+        "inDegree": 3,
+        "outDegree": 2,
+        "isHub": true,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Parcel Carrier",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Parcel Carrier Service",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Parcel Status Actual Delivery",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Parcel Status First Attempted",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Parcel Status Latest Tracking",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Parcel Tracking",
+        "degree": 20,
+        "inDegree": 0,
+        "outDegree": 20,
+        "isHub": true,
+        "classification": "fact",
+        "storageMode": "directQuery"
+      },
+      {
+        "name": "Price Status",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Product",
+        "degree": 2,
+        "inDegree": 2,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "directQuery"
+      },
+      {
+        "name": "Product In Store",
+        "degree": 1,
+        "inDegree": 0,
+        "outDegree": 1,
+        "isHub": false,
+        "classification": "fact",
+        "storageMode": "directQuery"
+      },
+      {
+        "name": "Product Option In Store",
+        "degree": 1,
+        "inDegree": 0,
+        "outDegree": 1,
+        "isHub": false,
+        "classification": "fact",
+        "storageMode": "directQuery"
+      },
+      {
+        "name": "Product Pricing Store",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "directQuery"
+      },
+      {
+        "name": "Seller",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Selling Channel",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Shipped Transaction Date",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Shop",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Supplier",
+        "degree": 0,
+        "inDegree": 0,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "fact",
+        "storageMode": "directQuery"
+      },
+      {
+        "name": "Time Period",
+        "degree": 1,
+        "inDegree": 0,
+        "outDegree": 1,
+        "isHub": false,
+        "classification": "fact",
+        "storageMode": "dual"
+      },
+      {
+        "name": "UDA",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      },
+      {
+        "name": "Web Store",
+        "degree": 1,
+        "inDegree": 1,
+        "outDegree": 0,
+        "isHub": false,
+        "classification": "dimension",
+        "storageMode": "dual"
+      }
+    ]
+  }
+}

@@ -1,0 +1,1147 @@
+{
+  "version": "2.0.0",
+  "analysedAt": "2026-04-10T16:59:45.052926+00:00",
+  "modelPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/asos-data-ade-powerbi/powerbi/models/supplychain/ADE - SCH Origin",
+  "modelName": "ADE - SCH Origin",
+  "tables": {
+    "total": 13,
+    "importMode": 11,
+    "dualMode": 0,
+    "directQueryMode": 0,
+    "calculated": 2
+  },
+  "measures": {
+    "total": 21,
+    "withFormatString": 21,
+    "withoutFormatString": 0
+  },
+  "relationships": {
+    "total": 14,
+    "bidirectional": 1,
+    "manyToMany": 0
+  },
+  "findings": [
+    {
+      "rule": "AVOID_BIDIRECTIONAL_RELATIONSHIPS",
+      "severity": "High",
+      "category": "Performance",
+      "table": "Time Period",
+      "object": "Time Period.Dim Date Sk -> Date.Dim Date Sk",
+      "objectType": "relationship",
+      "message": "Relationship 'Time Period.Dim Date Sk -> Date.Dim Date Sk' uses bidirectional cross-filtering. This creates ambiguous filter paths and can degrade query performance.",
+      "fix": "Change crossFilteringBehavior to 'oneDirection' unless bidirectional is explicitly required."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "_Booking Measure Selector",
+      "object": "% Inside Carrier KPI",
+      "objectType": "measure",
+      "message": "Measure '% Inside Carrier KPI' references columns without table qualifier: [All Bookings], [Confirmation Inside KPI]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "_Booking Measure Selector",
+      "object": "% Inside KPI",
+      "objectType": "measure",
+      "message": "Measure '% Inside KPI' references columns without table qualifier: [All Bookings], [Bookings Inside KPI]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "_Booking Measure Selector",
+      "object": "% Outside Carrier KPI",
+      "objectType": "measure",
+      "message": "Measure '% Outside Carrier KPI' references columns without table qualifier: [All Bookings], [Confirmation Outside KPI]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "_Booking Measure Selector",
+      "object": "% Outside KPI",
+      "objectType": "measure",
+      "message": "Measure '% Outside KPI' references columns without table qualifier: [All Bookings], [Bookings Outside KPI]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "_Booking Measure Selector",
+      "object": "All Bookings",
+      "objectType": "measure",
+      "message": "Measure 'All Bookings' references columns without table qualifier: [ChosenMeasureValue]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "_Booking Measure Selector",
+      "object": "Bookings Inside KPI",
+      "objectType": "measure",
+      "message": "Measure 'Bookings Inside KPI' references columns without table qualifier: [All Bookings], [Bookings Outside KPI]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "_Booking Measure Selector",
+      "object": "Bookings Outside KPI",
+      "objectType": "measure",
+      "message": "Measure 'Bookings Outside KPI' references columns without table qualifier: [ChosenMeasureValue]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "_Booking Measure Selector",
+      "object": "Confirmation Inside KPI",
+      "objectType": "measure",
+      "message": "Measure 'Confirmation Inside KPI' references columns without table qualifier: [All Bookings], [Confirmation Outside KPI]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "_Booking Measure Selector",
+      "object": "Confirmation Outside KPI",
+      "objectType": "measure",
+      "message": "Measure 'Confirmation Outside KPI' references columns without table qualifier: [ChosenMeasureValue]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "@Dataset Metadata",
+      "object": "Build Number",
+      "objectType": "column",
+      "message": "Column 'Build Number' in table '@Dataset Metadata' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "@Dataset Metadata",
+      "object": "Environment",
+      "objectType": "column",
+      "message": "Column 'Environment' in table '@Dataset Metadata' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "@Dataset Metadata",
+      "object": "Last Data Refresh (UTC)",
+      "objectType": "column",
+      "message": "Column 'Last Data Refresh (UTC)' in table '@Dataset Metadata' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier",
+      "object": "Carrier Name",
+      "objectType": "column",
+      "message": "Column 'Carrier Name' in table 'Carrier' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier",
+      "object": "Dim Carrier Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Carrier Sk' in table 'Carrier' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Asn Id",
+      "objectType": "column",
+      "message": "Column 'Asn Id' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Commitment Buy Value Gbp",
+      "objectType": "column",
+      "message": "Column 'Commitment Buy Value Gbp' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Dim Actual Handover Date Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Actual Handover Date Sk' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Dim Advanced Shipment Notice Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Advanced Shipment Notice Sk' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Dim Carrier Booking Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Carrier Booking Sk' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Dim Carrier Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Carrier Sk' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Dim Factory Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Factory Sk' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Dim Final Destination Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Final Destination Sk' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Dim First Destination Sk",
+      "objectType": "column",
+      "message": "Column 'Dim First Destination Sk' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Dim Handover Point Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Handover Point Sk' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Dim Inbound Carrier Booking Confirmation Date Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Inbound Carrier Booking Confirmation Date Sk' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Dim Original Purchase Order Handover Date Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Original Purchase Order Handover Date Sk' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Dim Planned Handover Date Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Planned Handover Date Sk' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Dim Planned Shipment Arrival Date Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Planned Shipment Arrival Date Sk' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Dim Planned Shipment Departure Date Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Planned Shipment Departure Date Sk' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Dim Purchase Order Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Purchase Order Sk' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Dim Requested Intake First Destination Date Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Requested Intake First Destination Date Sk' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Dim Requested Intake First Destination Week End Date Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Requested Intake First Destination Week End Date Sk' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Dim Shipping Point Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Shipping Point Sk' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Dim Supplier Booked Date Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Supplier Booked Date Sk' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Dim Supplier Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Supplier Sk' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Dim Transportation Mode Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Transportation Mode Sk' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Distance To Handover Point Miles",
+      "objectType": "column",
+      "message": "Column 'Distance To Handover Point Miles' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Goods Cost Value First Destination Currency",
+      "objectType": "column",
+      "message": "Column 'Goods Cost Value First Destination Currency' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Product Option Original Retail Price Gbp",
+      "objectType": "column",
+      "message": "Column 'Product Option Original Retail Price Gbp' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Supplier Booked Asn Sku Quantity",
+      "objectType": "column",
+      "message": "Column 'Supplier Booked Asn Sku Quantity' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Carrier Booking",
+      "object": "Target Booking Confirmation Days",
+      "objectType": "column",
+      "message": "Column 'Target Booking Confirmation Days' in table 'Carrier Booking' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Calendar Date Full",
+      "objectType": "column",
+      "message": "Column 'Calendar Date Full' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Calendar Date Of Month Id",
+      "objectType": "column",
+      "message": "Column 'Calendar Date Of Month Id' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Calendar Date Short",
+      "objectType": "column",
+      "message": "Column 'Calendar Date Short' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Calendar Date",
+      "objectType": "column",
+      "message": "Column 'Calendar Date' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Calendar Day Of Week Id",
+      "objectType": "column",
+      "message": "Column 'Calendar Day Of Week Id' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Calendar Day Of Week Short",
+      "objectType": "column",
+      "message": "Column 'Calendar Day Of Week Short' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Calendar Day Of Week",
+      "objectType": "column",
+      "message": "Column 'Calendar Day Of Week' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Calendar Day Of Year Id",
+      "objectType": "column",
+      "message": "Column 'Calendar Day Of Year Id' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Calendar Month Days Quantity",
+      "objectType": "column",
+      "message": "Column 'Calendar Month Days Quantity' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Calendar Month Full",
+      "objectType": "column",
+      "message": "Column 'Calendar Month Full' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Calendar Month Id",
+      "objectType": "column",
+      "message": "Column 'Calendar Month Id' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Calendar Month Short",
+      "objectType": "column",
+      "message": "Column 'Calendar Month Short' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Calendar Week Id",
+      "objectType": "column",
+      "message": "Column 'Calendar Week Id' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Calendar Week Start Date",
+      "objectType": "column",
+      "message": "Column 'Calendar Week Start Date' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Calendar Year Days Quantity",
+      "objectType": "column",
+      "message": "Column 'Calendar Year Days Quantity' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Calendar Year Id",
+      "objectType": "column",
+      "message": "Column 'Calendar Year Id' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Calendar Year Month Full",
+      "objectType": "column",
+      "message": "Column 'Calendar Year Month Full' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Calendar Year Month Id",
+      "objectType": "column",
+      "message": "Column 'Calendar Year Month Id' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Calendar Year Month",
+      "objectType": "column",
+      "message": "Column 'Calendar Year Month' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Calendar Year Week Id",
+      "objectType": "column",
+      "message": "Column 'Calendar Year Week Id' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Dim Date Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Date Sk' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Financial Day Of Year Id",
+      "objectType": "column",
+      "message": "Column 'Financial Day Of Year Id' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Financial Half",
+      "objectType": "column",
+      "message": "Column 'Financial Half' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Financial Month Full",
+      "objectType": "column",
+      "message": "Column 'Financial Month Full' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Financial Month Id",
+      "objectType": "column",
+      "message": "Column 'Financial Month Id' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Financial Month Period Id",
+      "objectType": "column",
+      "message": "Column 'Financial Month Period Id' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Financial Month Period",
+      "objectType": "column",
+      "message": "Column 'Financial Month Period' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Financial Month Short",
+      "objectType": "column",
+      "message": "Column 'Financial Month Short' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Financial Month Year Calendar Range Long",
+      "objectType": "column",
+      "message": "Column 'Financial Month Year Calendar Range Long' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Financial Month Year Calendar Range Short",
+      "objectType": "column",
+      "message": "Column 'Financial Month Year Calendar Range Short' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Financial Quarter Full",
+      "objectType": "column",
+      "message": "Column 'Financial Quarter Full' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Financial Quarter Short",
+      "objectType": "column",
+      "message": "Column 'Financial Quarter Short' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Financial Week Id",
+      "objectType": "column",
+      "message": "Column 'Financial Week Id' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Financial Year Calendar Range",
+      "objectType": "column",
+      "message": "Column 'Financial Year Calendar Range' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Financial Year Days Quantity",
+      "objectType": "column",
+      "message": "Column 'Financial Year Days Quantity' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Financial Year First Week Start Date Id",
+      "objectType": "column",
+      "message": "Column 'Financial Year First Week Start Date Id' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Financial Year Half Id",
+      "objectType": "column",
+      "message": "Column 'Financial Year Half Id' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Financial Year Half",
+      "objectType": "column",
+      "message": "Column 'Financial Year Half' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Financial Year Month Id",
+      "objectType": "column",
+      "message": "Column 'Financial Year Month Id' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Financial Year Number Of Days Past Id",
+      "objectType": "column",
+      "message": "Column 'Financial Year Number Of Days Past Id' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Financial Year Quarter Id",
+      "objectType": "column",
+      "message": "Column 'Financial Year Quarter Id' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Financial Year Quarter",
+      "objectType": "column",
+      "message": "Column 'Financial Year Quarter' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Financial Year Week Id",
+      "objectType": "column",
+      "message": "Column 'Financial Year Week Id' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Financial Year",
+      "objectType": "column",
+      "message": "Column 'Financial Year' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Date",
+      "object": "Is A Leap Year",
+      "objectType": "column",
+      "message": "Column 'Is A Leap Year' in table 'Date' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Shipping Point",
+      "object": "Shipping Point Continent",
+      "objectType": "column",
+      "message": "Column 'Shipping Point Continent' in table 'Shipping Point' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Shipping Point",
+      "object": "Shipping Point Country",
+      "objectType": "column",
+      "message": "Column 'Shipping Point Country' in table 'Shipping Point' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Shipping Point",
+      "object": "Shipping Point Port",
+      "objectType": "column",
+      "message": "Column 'Shipping Point Port' in table 'Shipping Point' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Shipping Point",
+      "object": "Shipping Point Sk",
+      "objectType": "column",
+      "message": "Column 'Shipping Point Sk' in table 'Shipping Point' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Shipping Point",
+      "object": "Shipping Point Sub Continent",
+      "objectType": "column",
+      "message": "Column 'Shipping Point Sub Continent' in table 'Shipping Point' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Supplier",
+      "object": "Currency Code",
+      "objectType": "column",
+      "message": "Column 'Currency Code' in table 'Supplier' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Supplier",
+      "object": "Dim Supplier Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Supplier Sk' in table 'Supplier' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Supplier",
+      "object": "Parent Supplier",
+      "objectType": "column",
+      "message": "Column 'Parent Supplier' in table 'Supplier' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Supplier",
+      "object": "Primary Country Code",
+      "objectType": "column",
+      "message": "Column 'Primary Country Code' in table 'Supplier' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Supplier",
+      "object": "Primary State",
+      "objectType": "column",
+      "message": "Column 'Primary State' in table 'Supplier' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Supplier",
+      "object": "Shipped Quantity Tolerance Cycle",
+      "objectType": "column",
+      "message": "Column 'Shipped Quantity Tolerance Cycle' in table 'Supplier' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Supplier",
+      "object": "Shipped Quantity Tolerance Percentage",
+      "objectType": "column",
+      "message": "Column 'Shipped Quantity Tolerance Percentage' in table 'Supplier' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Time Period",
+      "object": "Dim Date Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Date Sk' in table 'Time Period' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Time Period",
+      "object": "Sort Order",
+      "objectType": "column",
+      "message": "Column 'Sort Order' in table 'Time Period' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Time Period",
+      "object": "Time Period",
+      "objectType": "column",
+      "message": "Column 'Time Period' in table 'Time Period' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Transportation Mode",
+      "object": "Dim Transportation Mode Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Transportation Mode Sk' in table 'Transportation Mode' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Transportation Mode",
+      "object": "Transportation Mode Load Type",
+      "objectType": "column",
+      "message": "Column 'Transportation Mode Load Type' in table 'Transportation Mode' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Transportation Mode",
+      "object": "Transportation Mode Sub Type",
+      "objectType": "column",
+      "message": "Column 'Transportation Mode Sub Type' in table 'Transportation Mode' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Transportation Mode",
+      "object": "Transportation Mode Type",
+      "objectType": "column",
+      "message": "Column 'Transportation Mode Type' in table 'Transportation Mode' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "_Booking Measure Selector",
+      "object": "Measure Selection",
+      "objectType": "column",
+      "message": "Column 'Measure Selection' in table '_Booking Measure Selector' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "_Date Filter",
+      "object": "Date to Filter",
+      "objectType": "column",
+      "message": "Column 'Date to Filter' in table '_Date Filter' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    }
+  ],
+  "summary": {
+    "high": 1,
+    "medium": 0,
+    "low": 107,
+    "totalFindings": 108,
+    "rulesChecked": 12,
+    "rulesPassed": 9
+  },
+  "ruleResults": [
+    {
+      "rule": "AVOID_BIDIRECTIONAL_RELATIONSHIPS",
+      "status": "FAIL",
+      "count": 1,
+      "performanceImpact": "latency",
+      "impactDescription": "Generates additional SQL round-trips for bidirectional filter propagation. Can double the number of queries per visual."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "status": "FAIL",
+      "count": 9,
+      "performanceImpact": "quality",
+      "impactDescription": "Readability and maintenance issue. No performance impact but increases risk of errors when columns are renamed."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "status": "FAIL",
+      "count": 98,
+      "performanceImpact": "cost",
+      "impactDescription": "Hidden/unused columns are still included in DirectQuery SQL. Increases read bytes and cost per query."
+    }
+  ],
+  "passingRules": [
+    "AVOID_FLOATING_POINT_DATA_TYPES",
+    "DUAL_MODE_TABLES",
+    "FILTER_ALL_ANTIPATTERN",
+    "AVOID_IFERROR",
+    "WIDE_TABLES",
+    "MISSING_FORMAT_STRING",
+    "MANY_TO_MANY_RELATIONSHIPS",
+    "BARE_DIVISION",
+    "AUTO_DATE_TABLES"
+  ]
+}

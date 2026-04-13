@@ -1,0 +1,703 @@
+{
+  "version": "2.0.0",
+  "analysedAt": "2026-04-10T16:59:33.324938+00:00",
+  "modelPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/asos-data-ade-powerbi/powerbi/models/customer/ADE - Loyalty",
+  "measures": [
+    {
+      "name": "Count of Customer Accounts Opted In LTD",
+      "hostTable": "@Measures",
+      "complexityScore": 14,
+      "complexityLevel": "high",
+      "complexityFactors": [
+        "3 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 3,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 5,
+      "lineCount": 24,
+      "referencedTables": [
+        "Customer Loyalty",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;[Red]-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Count of Customer Accounts Opted Out LTD",
+      "hostTable": "@Measures",
+      "complexityScore": 14,
+      "complexityLevel": "high",
+      "complexityFactors": [
+        "3 CALCULATE",
+        "2 table hops",
+        "1 FILTER(ALL)"
+      ],
+      "contextTransitions": 3,
+      "relationshipHops": 2,
+      "filterAllCount": 1,
+      "estimatedSQLSubqueries": 5,
+      "lineCount": 24,
+      "referencedTables": [
+        "Customer Loyalty",
+        "Date"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Date"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;[Red]-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Count of Customer Accounts Opted In (As Today)",
+      "hostTable": "@Measures",
+      "complexityScore": 5,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 13,
+      "referencedTables": [
+        "Customer Loyalty"
+      ],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;[Red]-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Count of Customer Accounts Opted Out (As Today)",
+      "hostTable": "@Measures",
+      "complexityScore": 5,
+      "complexityLevel": "medium",
+      "complexityFactors": [
+        "2 CALCULATE"
+      ],
+      "contextTransitions": 2,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 3,
+      "lineCount": 13,
+      "referencedTables": [
+        "Customer Loyalty"
+      ],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;[Red]-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Count of Customer Accounts opted In",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 3,
+      "referencedTables": [
+        "Customer Loyalty"
+      ],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;[Red]-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Count of Unique Customers Enrolled",
+      "hostTable": "@Measures",
+      "complexityScore": 3,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 3,
+      "referencedTables": [
+        "Customer Loyalty"
+      ],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;[Red]-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Tier 1 Adoption Rate %",
+      "hostTable": "@Measures",
+      "complexityScore": 2,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 11,
+      "referencedTables": [
+        "Customer Loyalty"
+      ],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "0.0\\%;[Red]-0.0\\%",
+      "isHidden": false
+    },
+    {
+      "name": "Tier 2 Adoption Rate %",
+      "hostTable": "@Measures",
+      "complexityScore": 2,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 10,
+      "referencedTables": [
+        "Customer Loyalty"
+      ],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "0.0\\%;[Red]-0.0\\%",
+      "isHidden": false
+    },
+    {
+      "name": "Tier 3 Adoption Rate %",
+      "hostTable": "@Measures",
+      "complexityScore": 2,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 10,
+      "referencedTables": [
+        "Customer Loyalty"
+      ],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "0.0\\%;[Red]-0.0\\%",
+      "isHidden": false
+    },
+    {
+      "name": "Tier 4 Adoption Rate %",
+      "hostTable": "@Measures",
+      "complexityScore": 2,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "1 CALCULATE"
+      ],
+      "contextTransitions": 1,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 2,
+      "lineCount": 10,
+      "referencedTables": [
+        "Customer Loyalty"
+      ],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "0.0\\%;[Red]-0.0\\%",
+      "isHidden": false
+    },
+    {
+      "name": "Count of Customers Downgraded (As Today)",
+      "hostTable": "@Measures",
+      "complexityScore": 1,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "2 table hops"
+      ],
+      "contextTransitions": 0,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 29,
+      "referencedTables": [
+        "Customer Loyalty",
+        "Customer Loyalty Tier"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Customer Loyalty Tier"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;[Red]-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Count of Customers Downgraded LTD",
+      "hostTable": "@Measures",
+      "complexityScore": 1,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "2 table hops"
+      ],
+      "contextTransitions": 0,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 29,
+      "referencedTables": [
+        "Customer Loyalty",
+        "Customer Loyalty Tier"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Customer Loyalty Tier"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;[Red]-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Count of Customers Upgraded (As Today)",
+      "hostTable": "@Measures",
+      "complexityScore": 1,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "2 table hops"
+      ],
+      "contextTransitions": 0,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 29,
+      "referencedTables": [
+        "Customer Loyalty",
+        "Customer Loyalty Tier"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Customer Loyalty Tier"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;[Red]-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Count of Customers Upgraded LTD",
+      "hostTable": "@Measures",
+      "complexityScore": 1,
+      "complexityLevel": "low",
+      "complexityFactors": [
+        "2 table hops"
+      ],
+      "contextTransitions": 0,
+      "relationshipHops": 2,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 29,
+      "referencedTables": [
+        "Customer Loyalty",
+        "Customer Loyalty Tier"
+      ],
+      "directQueryTables": [],
+      "dualTables": [
+        "Customer Loyalty Tier"
+      ],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;[Red]-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Count of Invites Sent for All Tiers",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "#,##0;[Red]-#,##0",
+      "isHidden": false
+    },
+    {
+      "name": "Tier 1 KPI Colour",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "KPI Colours",
+      "isHidden": true
+    },
+    {
+      "name": "Tier 2 KPI Colour",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "",
+      "isHidden": true
+    },
+    {
+      "name": "Tier 3 KPI Colour",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "",
+      "isHidden": true
+    },
+    {
+      "name": "Tier 4 KPI Colour",
+      "hostTable": "@Measures",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 0,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 5,
+      "referencedTables": [],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "",
+      "isHidden": true
+    },
+    {
+      "name": "Tier 1 Target Count",
+      "hostTable": "Tier 1 Target",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Tier 1 Target"
+      ],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "####",
+      "isHidden": false
+    },
+    {
+      "name": "Tier 2 Target Count",
+      "hostTable": "Tier 2 Target",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Tier 2 Target"
+      ],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "####",
+      "isHidden": false
+    },
+    {
+      "name": "Tier 3 Target Count",
+      "hostTable": "Tier 3 Target",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Tier 3 Target"
+      ],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "####",
+      "isHidden": false
+    },
+    {
+      "name": "Tier 4 Target Count",
+      "hostTable": "Tier 4 Target",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Tier 4 Target"
+      ],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "####",
+      "isHidden": false
+    },
+    {
+      "name": "Total Requests Sent Tier 1 Count",
+      "hostTable": "Total Invites Sent for Tier 1",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Total Invites Sent for Tier 1"
+      ],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "####",
+      "isHidden": false
+    },
+    {
+      "name": "Total Requests Sent Tier 2 Count",
+      "hostTable": "Total Invites Sent for Tier 2",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Total Invites Sent for Tier 2"
+      ],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "####",
+      "isHidden": false
+    },
+    {
+      "name": "Total Requests Sent Tier 3 Count",
+      "hostTable": "Total Invites Sent for Tier 3",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Total Invites Sent for Tier 3"
+      ],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "####",
+      "isHidden": false
+    },
+    {
+      "name": "Total Requests Sent Tier 4 Count",
+      "hostTable": "Total Invites Sent for Tier 4",
+      "complexityScore": 0,
+      "complexityLevel": "low",
+      "complexityFactors": [],
+      "contextTransitions": 0,
+      "relationshipHops": 1,
+      "filterAllCount": 0,
+      "estimatedSQLSubqueries": 0,
+      "lineCount": 1,
+      "referencedTables": [
+        "Total Invites Sent for Tier 4"
+      ],
+      "directQueryTables": [],
+      "dualTables": [],
+      "crossesMultipleDQ": false,
+      "formatString": "####",
+      "isHidden": false
+    }
+  ],
+  "hotTables": [
+    {
+      "table": "Customer Loyalty",
+      "referenceCount": 14,
+      "storageMode": "import",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 15,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Customer Loyalty Tier",
+      "referenceCount": 4,
+      "storageMode": "dual",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 3,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Date",
+      "referenceCount": 2,
+      "storageMode": "dual",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 2,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Tier 1 Target",
+      "referenceCount": 1,
+      "storageMode": "import",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 0,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Tier 2 Target",
+      "referenceCount": 1,
+      "storageMode": "import",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 0,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Tier 3 Target",
+      "referenceCount": 1,
+      "storageMode": "import",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 0,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Tier 4 Target",
+      "referenceCount": 1,
+      "storageMode": "import",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 0,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Total Invites Sent for Tier 1",
+      "referenceCount": 1,
+      "storageMode": "import",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 0,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Total Invites Sent for Tier 2",
+      "referenceCount": 1,
+      "storageMode": "import",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 0,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Total Invites Sent for Tier 3",
+      "referenceCount": 1,
+      "storageMode": "import",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 0,
+      "optimizationPriority": "low"
+    },
+    {
+      "table": "Total Invites Sent for Tier 4",
+      "referenceCount": 1,
+      "storageMode": "import",
+      "rowCount": null,
+      "sizeGB": null,
+      "degree": 0,
+      "optimizationPriority": "low"
+    }
+  ],
+  "statistics": {
+    "totalMeasures": 27,
+    "byComplexity": {
+      "low": 23,
+      "medium": 2,
+      "high": 2,
+      "critical": 0
+    },
+    "crossMultipleDQ": 0,
+    "avgComplexityScore": 2.1,
+    "avgContextTransitions": 0.6,
+    "avgRelationshipHops": 1.0,
+    "measuresWithFilterAll": 2,
+    "measuresWithHighSubqueries": 2
+  }
+}

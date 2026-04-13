@@ -1,0 +1,4011 @@
+{
+  "version": "1.0.0",
+  "analysedAt": "2026-04-10T16:59:30.510669+00:00",
+  "modelPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/asos-data-ade-powerbi/powerbi/models/Sourcing and Buying/ADE - Purchase, Commitment, Stock and Intake",
+  "modelName": "ADE - Purchase, Commitment, Stock and Intake",
+  "format": "json",
+  "totalMeasures": 235,
+  "measuresWithIssues": 120,
+  "measures": [
+    {
+      "name": "Earliest Go Live Date Final FC (Selected Period)",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": false,
+      "expressionLength": 244,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (3x): 'ct Option In Final Warehouse'[' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "Saleable Stock Buy Value vs LY %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 109,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ' [Saleable Stock Buy Value LY]' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Saleable Stock Buy Value], [Saleable Stock Buy Value LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 3
+    },
+    {
+      "name": "ASN FC Booked Units",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 373,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "ASN FC Outstanding Units",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 385,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Average Days Factory to Handover",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 364,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ' 'Purchase Order Intake'[Expec' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Average Days Factory to Intake",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 340,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ' 'Purchase Order Intake'[Expec' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Average Days Handover Start to Shipment",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 348,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ' 'Purchase Order Intake'[Hando' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Average Days Handover Window",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 370,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ', 'Purchase Order Intake'[Hand' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Average Days Planned Intake Deviation",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 374,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ' 'Purchase Order Intake'[Expec' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Average Days Planned Shipment Deviation",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 340,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ' 'Purchase Order Intake'[Expec' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Average Days Shipment to Intake",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 324,
+      "lineCount": 12,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ' 'Purchase Order Intake'[Shipm' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 12 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Average Line Buy Final Destination",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 215,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ' 'Purchase Order Intake'[Recei' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 7 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment ASP Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 77,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Commitment Buy Value Final Warehouse], [Commitment Units] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Buy ELC Margin % Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 126,
+      "lineCount": 5,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Commitment Buy ELC Margin Value Final Destination], [Commitment Buy Value Ex Tax Final Warehouse] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 5 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Buy Value Ex Tax Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 423,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Buy Value Ex Tax First Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 422,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Buy Value First Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 409,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Cost Value Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 411,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Cost Value First Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 410,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Duty Cost Value Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 398,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Duty Cost Value First Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 399,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment ELC Price Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 85,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Commitment Landed Cost Value Final Warehouse], [Commitment Units] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Expense Cost Value Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 405,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Expense Cost Value First Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 404,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Extra Duty Off Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 386,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Extra Duty On Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 385,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Freight Cost Value Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 405,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Freight Cost Value First Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 405,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Handling Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 374,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Labelling Cost Value Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 409,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Labelling Cost Value First Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 409,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Landed Cost Value Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 425,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Landed Cost Value First Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 425,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Landed Prediscount Cost Value Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 449,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment PO Pre Discount Unit Cost Value Supplier Currency",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 446,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Prediscount Cost Value First Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 435,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Reprocessing Cost Value Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 415,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Reprocessing Cost Value First Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 415,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Terms Discount Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 397,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Transformation Cost Value Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 419,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Transformation Cost Value First Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 419,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Transportation Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 387,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Unit Cost Price Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 78,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Commitment Cost Value Final Warehouse], [Commitment Units] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Units_InScope",
+      "table": "@Measures",
+      "isHidden": true,
+      "hasFormatString": true,
+      "expressionLength": 1131,
+      "lineCount": 28,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ' ISINSCOPE ( 'Date'[Calendar D' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 28 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Upcharge Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 375,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "In Transit Allocation Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 401,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "In Transit Allocation Units",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 391,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "In Transit Buy Value Ex Tax Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 423,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "In Transit Buy Value Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 409,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "In Transit Landed Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 393,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Intake Buy ELC Margin % Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 116,
+      "lineCount": 5,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Intake Buy Value ELC Margin Final Warehouse], [Intake Buy Value Ex Tax Final Warehouse] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 5 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Intake ELC Price Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 105,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Estimated Landed Cost Value Final Warehouse], [Intake Received Units Final Warehouse] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Intake Unit Cost Price Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 95,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Intake Cost Value Final Warehouse], [Intake Received Units Final Warehouse] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Intake Unit Cost Price First Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 95,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Intake Cost Value First Warehouse], [Intake Received Units First Warehouse] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Intake Units On Time % (Final Warehouse)",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 415,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ' 'Purchase Order Intake'[Intak' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 13 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Intake Units On Time % (First Warehouse)",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 415,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ' 'Purchase Order Intake'[Intak' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 13 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Intake Value On Time % (Final Warehouse)",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 419,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (3x): ' 'Purchase Order Intake'[Intak' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 13 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Intake Value On Time % (First Warehouse)",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 419,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (3x): ' 'Purchase Order Intake'[Intak' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 13 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "On-Time Arrivals %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 408,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ' 'Purchase Order Intake'[PO In' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Pending Allocation In Buy Value Ex Tax",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 413,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Pending Allocation In Buy Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 399,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Pending Allocation In Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 401,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Pending Allocation In Landed Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 415,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Pending Allocation In Units",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 391,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Pending Allocation Out Buy Value Ex Tax",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 415,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Pending Allocation Out Buy Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 401,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Pending Allocation Out Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 403,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Pending Allocation Out Landed Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 417,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Pending Allocation Out Units",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 393,
+      "lineCount": 14,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 14 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Permanent Markdown Spend Value - Saleable",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 109,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Permanent Markdown Spend Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Saleable Stock Buy Value LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 858,
+      "lineCount": 38,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Saleable Stock Buy Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 33
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Saleable Stock Opening Buy Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 87,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Saleable Stock Buy Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Saleable Stock Units (In Transit)",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 184,
+      "lineCount": 5,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ', 'Inventory Status'[Inventory' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 5 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Shipments Delayed %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 335,
+      "lineCount": 13,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ' 'Purchase Order Intake'[Intak' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 13 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Tradeable Stock Buy Value LW",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 860,
+      "lineCount": 38,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        },
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Tradeable Stock Buy Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 33
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "WMS Saleable Average Cost",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 97,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [WMS Average Cost] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "WMS Saleable Buy Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 94,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [WMS Buy Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "WMS Saleable Retail Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 97,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [WMS Retail Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "WMS Saleable Units",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 90,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [WMS Units] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "WMS Saleable Weighted Average Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 112,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [WMS Weighted Average Cost Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "WMS Tradeable Average Cost",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 96,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [WMS Average Cost] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "WMS Tradeable Buy Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 93,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [WMS Buy Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "WMS Tradeable Retail Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 96,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [WMS Retail Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "WMS Tradeable Units",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 88,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [WMS Units] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "WMS Tradeable Weighted Average Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 111,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [WMS Weighted Average Cost Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Weeks Since Earliest Go Live Date Final FC",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": false,
+      "expressionLength": 279,
+      "lineCount": 11,
+      "issues": [
+        {
+          "rule": "BARE_DIVISION",
+          "severity": "Medium",
+          "message": "Uses '/' operator instead of DIVIDE() -- risk of division by zero",
+          "fix": "Wrap in DIVIDE(numerator, denominator) for safe division",
+          "line": 9
+        },
+        {
+          "rule": "MISSING_FORMAT_STRING",
+          "severity": "Medium",
+          "message": "Measure has no formatString -- values may display with inconsistent formatting",
+          "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Go Live Option Count vs LY %",
+      "table": "Product",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 95,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Go Live Option Count], [Go Live Option Count LY] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 2
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Go Live Option Count",
+      "table": "Product",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 208,
+      "lineCount": 5,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): ''Option'[Option Earliest Globa' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        },
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 5 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 2
+    },
+    {
+      "name": "Commitment Buy ELC Margin Value Final Destination",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 87,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Commitment Buy Value Ex Tax Final Warehouse], [Commitment Cost Value Final Warehouse] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Commitment Buy Value Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 1229,
+      "lineCount": 32,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Commitment Unit Margin % Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 193,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Commitment Buy Value Ex Tax Final Warehouse], [Commitment Cost Value Final Warehouse] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Commitment Units",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 1156,
+      "lineCount": 36,
+      "issues": [
+        {
+          "rule": "REPEATED_SUBEXPRESSION",
+          "severity": "Medium",
+          "message": "Repeated subexpression found (2x): '), CALCULATE ( SUM ( 'Purchase' -- extract to a VAR",
+          "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Intake Buy Value ELC Margin Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 89,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Estimated Landed Cost Value Final Warehouse], [Intake Buy Value Ex Tax Final Warehouse] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Intake Unit Cost Value (Supplier Currency) First Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 167,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Intake Unit Margin % Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 181,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Intake Buy Value Ex Tax Final Warehouse], [Intake Cost Value Final Warehouse] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Intake Unit Margin % First Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 181,
+      "lineCount": 7,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Intake Buy Value Ex Tax First Warehouse], [Intake Cost Value First Warehouse] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Intake Unit Margin Value Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 79,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Intake Buy Value Ex Tax Final Warehouse], [Intake Cost Value Final Warehouse] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Intake Unit Margin Value First Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 79,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Intake Buy Value Ex Tax First Warehouse], [Intake Cost Value First Warehouse] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Permanent Markdown Spend Value - Saleable LY",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 876,
+      "lineCount": 38,
+      "issues": [
+        {
+          "rule": "FILTER_ALL",
+          "severity": "High",
+          "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
+          "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Prime Stock to Reduced Buy Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 316,
+      "lineCount": 11,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 11 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Saleable SKU Count",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 98,
+      "lineCount": 2,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [SKU Count] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Saleable Stock Buy Value Ex Tax",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 111,
+      "lineCount": 2,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Stock Buy Value Ex Tax] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Saleable Stock Buy Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 104,
+      "lineCount": 2,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Stock Buy Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Saleable Stock Retail Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 107,
+      "lineCount": 2,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Stock Retail Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Saleable Stock Supplier Unit Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 138,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Saleable Stock Units",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 100,
+      "lineCount": 2,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Stock Units] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Saleable Stock WAC Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 127,
+      "lineCount": 2,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Stock Weighted Average Unit Cost Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total Intake Buy Value Final Warehouse by PO",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 141,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total Intake Received Units Final Warehouse by PO",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 139,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Total PO Value by PO",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 149,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Tradeable Stock Buy Value Ex Tax",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 135,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Tradeable Stock Buy Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 106,
+      "lineCount": 2,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Stock Buy Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Tradeable Stock Retail Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 109,
+      "lineCount": 2,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Stock Retail Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Tradeable Stock Supplier Unit Cost Price",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 138,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Tradeable Stock Supplier Unit Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 134,
+      "lineCount": 4,
+      "issues": [
+        {
+          "rule": "NO_VARIABLES",
+          "severity": "Low",
+          "message": "Measure has 4 lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
+          "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+          "line": 0
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Tradeable Stock Units",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 102,
+      "lineCount": 2,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Stock Units] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Tradeable Stock WAC Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 129,
+      "lineCount": 2,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Stock Weighted Average Unit Cost Value] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Transfer Receipted Units %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 71,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Transfer Receipted Quantity], [Transfer Requested Quantity] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Transfer Shipped Units %",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 66,
+      "lineCount": 1,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Transfer Requested Quantity], [Transfer Shipped Quantity] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 1
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Go Live Option Count LY",
+      "table": "Product",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 444,
+      "lineCount": 20,
+      "issues": [
+        {
+          "rule": "UNQUALIFIED_COLUMNS",
+          "severity": "Low",
+          "message": "Unqualified column references: [Go Live Option Count] -- prefix with table name for clarity",
+          "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+          "line": 15
+        }
+      ],
+      "issueCount": 1
+    },
+    {
+      "name": "Allocation In Buy Value Ex Tax",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 63,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Allocation In Buy Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 56,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Allocation In Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 57,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Allocation In Estimated Landed Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 74,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Allocation In Weighted Average Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 74,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Allocation Out Buy Value Ex Tax",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 64,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Allocation Out Buy Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 57,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Allocation Out Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 58,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Allocation Out Estimated Landed Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 75,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Allocation Out Weighted Average Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 75,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Average Days Intake Delay (Delayed Deliveries Only)",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 716,
+      "lineCount": 23,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Average Days Intake Delay",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 622,
+      "lineCount": 21,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Estimated Landed Cost Value Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 76,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Estimated Landed Cost Value First Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 76,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Estimated Landed Pre Discount Cost Value Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 89,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Estimated Landed Pre Discount Cost Value First Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 89,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Intake Buy Value Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 65,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Intake Buy Value First Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 65,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Intake Buy Value Ex Tax Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 72,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Intake Buy Value Ex Tax First Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 72,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Intake Cost Value Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 66,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Intake Cost Value First Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 66,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Intake Duty Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 48,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Intake Expense Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 51,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Intake Extra Duty Off Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 58,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Intake Extra Duty On Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 57,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Intake Freight Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 51,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Intake Handling Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 52,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Intake Labelling Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 53,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Intake PO Pre Discount Unit Cost Value Supplier Currency",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 88,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Intake Pre Discount Cost Value Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 79,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Intake Pre Discount Cost Value First Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 79,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Intake Received Units Final Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 63,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Intake Received Units First Warehouse",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 63,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Intake Reprocessing Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 56,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Intake Terms Discount Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 60,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Intake Transformation Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 58,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Intake Transportation Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 58,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Intake Upcharge Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 52,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Latest Data Available Commitment",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 191,
+      "lineCount": 7,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Latest Data Available Intake",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 191,
+      "lineCount": 7,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Option Count (Commitment > 0)",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 704,
+      "lineCount": 23,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Option Count (Intake > 0)",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 131,
+      "lineCount": 3,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Option Count (Stock > 0)",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 701,
+      "lineCount": 23,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "PO Count(Commitment)",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 65,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "PO Unit Cost Value Supplier Currency",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 75,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Permanent Markdown Spend Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 802,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "SKU Count",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 786,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Stock Adjustment Buy Value Exc Tax",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 44,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Stock Adjustment Buy Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 36,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Stock Adjustment Estimated Landed Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 54,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Stock Adjustment Number of weeks On Site",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 49,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Stock Adjustment Quantity",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 35,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Stock Adjustment Retail Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 39,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Stock Adjustment Unit Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 42,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Stock Adjustment Unit Cost",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 36,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Stock Adjustment Weighted Average Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 54,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Stock Adjustment Weighted Average Cost",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 48,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Stock Buy Price",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 781,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Stock Buy Value Ex Tax",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 788,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Stock Buy Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 781,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Stock Clearance Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 787,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Stock Reprice Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 785,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Stock Retail Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 786,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Stock Unit Cost Price",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 787,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Stock Unit Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 787,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Stock Units",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 777,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Stock Unrealised Markdown Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 797,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Stock Weighted Average Unit Cost Price",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 804,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Stock Weighted Average Unit Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 804,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Transfer Receipt Count",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 47,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Transfer Receipted Buy Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 53,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Transfer Receipted Quantity",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 52,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Transfer Receipted Retail Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 56,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Transfer Receipted Unit Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 59,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Transfer Receipted Units Extra Duty Off Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 59,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Transfer Receipted Units Extra Duty On Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 58,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Transfer Receipted Units Handling Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 53,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Transfer Receipted Units Transportation Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 59,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Transfer Receipted Weighted Average Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 71,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Transfer Requested Buy Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 53,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Transfer Requested Quantity",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 52,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Transfer Requested Retail Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 56,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Transfer Requested Unit Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 59,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Transfer Requested Units Not Shipped",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 61,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Transfer Requested Units Unreceipted",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 61,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Transfer Requested Weighted Average Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 71,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Transfer Shipment Count",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 46,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Transfer Shipped Buy Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 49,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Transfer Shipped Quantity In Transit",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 59,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Transfer Shipped Quantity",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 48,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Transfer Shipped Retail Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 52,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Transfer Shipped Unit Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 55,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "Transfer Shipped Weighted Average Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 67,
+      "lineCount": 1,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "WMS Average Cost",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 778,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "WMS Buy Price",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 775,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "WMS Buy Value Exc Vat",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 783,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "WMS Buy Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 775,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "WMS Clearance Price",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 781,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "WMS Clearance Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 781,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "WMS Number of Weeks On Site",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 789,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "WMS Permanent Markdown Spend Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 796,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "WMS Permanent Markdown Spend",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 790,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "WMS Quantity",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 774,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "WMS Retail Price",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 778,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "WMS Retail Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 778,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "WMS Unit Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 781,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "WMS Unit Cost",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 775,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "WMS Unit Reprice Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 784,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "WMS Unit Reprice",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 778,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "WMS Units",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 771,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "WMS Unrealised Markdown Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 791,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "WMS Unrealised Markdown",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 785,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "WMS Weighted Average Cost Value",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 793,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    },
+    {
+      "name": "WMS Weighted Average Cost",
+      "table": "@Measures",
+      "isHidden": false,
+      "hasFormatString": true,
+      "expressionLength": 787,
+      "lineCount": 25,
+      "issues": [],
+      "issueCount": 0
+    }
+  ],
+  "antiPatternSummary": [
+    {
+      "rule": "FILTER_ALL",
+      "severity": "High",
+      "count": 3
+    },
+    {
+      "rule": "IFERROR_ISERROR",
+      "severity": "High",
+      "count": 0
+    },
+    {
+      "rule": "NESTED_CALCULATE",
+      "severity": "High",
+      "count": 0
+    },
+    {
+      "rule": "REPEATED_SUBEXPRESSION",
+      "severity": "Medium",
+      "count": 66
+    },
+    {
+      "rule": "BARE_DIVISION",
+      "severity": "Medium",
+      "count": 1
+    },
+    {
+      "rule": "COUNT_VS_COUNTROWS",
+      "severity": "Medium",
+      "count": 0
+    },
+    {
+      "rule": "MISSING_FORMAT_STRING",
+      "severity": "Medium",
+      "count": 2
+    },
+    {
+      "rule": "UNQUALIFIED_COLUMNS",
+      "severity": "Low",
+      "count": 44
+    },
+    {
+      "rule": "NO_VARIABLES",
+      "severity": "Low",
+      "count": 94
+    },
+    {
+      "rule": "HARDCODED_VALUES",
+      "severity": "Low",
+      "count": 0
+    }
+  ],
+  "summary": {
+    "high": 3,
+    "medium": 69,
+    "low": 138,
+    "totalIssues": 210,
+    "rulesChecked": 10,
+    "cleanMeasures": 115
+  }
+}

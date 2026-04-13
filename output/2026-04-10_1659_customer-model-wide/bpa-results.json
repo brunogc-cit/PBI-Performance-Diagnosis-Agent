@@ -1,0 +1,2073 @@
+{
+  "version": "2.0.0",
+  "analysedAt": "2026-04-10T16:59:32.688963+00:00",
+  "modelPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/asos-data-ade-powerbi/powerbi/models/customer/ADE - Customer",
+  "modelName": "ADE - Customer",
+  "tables": {
+    "total": 12,
+    "importMode": 3,
+    "dualMode": 7,
+    "directQueryMode": 1,
+    "calculated": 1
+  },
+  "measures": {
+    "total": 103,
+    "withFormatString": 100,
+    "withoutFormatString": 3
+  },
+  "relationships": {
+    "total": 14,
+    "bidirectional": 0,
+    "manyToMany": 0
+  },
+  "findings": [
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Average Basket Size LM",
+      "objectType": "measure",
+      "message": "Measure 'Average Basket Size LM' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Average Basket Size LY",
+      "objectType": "measure",
+      "message": "Measure 'Average Basket Size LY' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Average Customer Value LM",
+      "objectType": "measure",
+      "message": "Measure 'Average Customer Value LM' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Average Customer Value LY",
+      "objectType": "measure",
+      "message": "Measure 'Average Customer Value LY' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Average Order Frequency LM",
+      "objectType": "measure",
+      "message": "Measure 'Average Order Frequency LM' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Average Order Frequency LY",
+      "objectType": "measure",
+      "message": "Measure 'Average Order Frequency LY' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Average Selling Price LM",
+      "objectType": "measure",
+      "message": "Measure 'Average Selling Price LM' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Average Selling Price LY",
+      "objectType": "measure",
+      "message": "Measure 'Average Selling Price LY' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Churned MAC LM",
+      "objectType": "measure",
+      "message": "Measure 'Churned MAC LM' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Churned MAC LY",
+      "objectType": "measure",
+      "message": "Measure 'Churned MAC LY' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Churned YAC LM",
+      "objectType": "measure",
+      "message": "Measure 'Churned YAC LM' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Churned YAC LY",
+      "objectType": "measure",
+      "message": "Measure 'Churned YAC LY' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Existing MAC LM",
+      "objectType": "measure",
+      "message": "Measure 'Existing MAC LM' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Existing MAC LY",
+      "objectType": "measure",
+      "message": "Measure 'Existing MAC LY' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Existing YAC LM",
+      "objectType": "measure",
+      "message": "Measure 'Existing YAC LM' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Existing YAC LY",
+      "objectType": "measure",
+      "message": "Measure 'Existing YAC LY' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "First YAC LM",
+      "objectType": "measure",
+      "message": "Measure 'First YAC LM' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "First YAC LY",
+      "objectType": "measure",
+      "message": "Measure 'First YAC LY' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "New MAC LM",
+      "objectType": "measure",
+      "message": "Measure 'New MAC LM' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "New MAC LY",
+      "objectType": "measure",
+      "message": "Measure 'New MAC LY' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "New YAC LM",
+      "objectType": "measure",
+      "message": "Measure 'New YAC LM' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "New YAC LY",
+      "objectType": "measure",
+      "message": "Measure 'New YAC LY' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Quick Ratio MAC LM %",
+      "objectType": "measure",
+      "message": "Measure 'Quick Ratio MAC LM %' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Quick Ratio YAC LM %",
+      "objectType": "measure",
+      "message": "Measure 'Quick Ratio YAC LM %' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Reactivated MAC LM",
+      "objectType": "measure",
+      "message": "Measure 'Reactivated MAC LM' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Reactivated MAC LY",
+      "objectType": "measure",
+      "message": "Measure 'Reactivated MAC LY' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Reactivated YAC LM",
+      "objectType": "measure",
+      "message": "Measure 'Reactivated YAC LM' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Reactivated YAC LY",
+      "objectType": "measure",
+      "message": "Measure 'Reactivated YAC LY' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Retail Quantity LM",
+      "objectType": "measure",
+      "message": "Measure 'Retail Quantity LM' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Retail Sales Quantity LY",
+      "objectType": "measure",
+      "message": "Measure 'Retail Sales Quantity LY' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Retail Sales Value LY",
+      "objectType": "measure",
+      "message": "Measure 'Retail Sales Value LY' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Retail Value LM",
+      "objectType": "measure",
+      "message": "Measure 'Retail Value LM' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Total Customers LM",
+      "objectType": "measure",
+      "message": "Measure 'Total Customers LM' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Total Customers LY",
+      "objectType": "measure",
+      "message": "Measure 'Total Customers LY' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Total MAC LM",
+      "objectType": "measure",
+      "message": "Measure 'Total MAC LM' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Total MAC LY",
+      "objectType": "measure",
+      "message": "Measure 'Total MAC LY' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Total Orders LM",
+      "objectType": "measure",
+      "message": "Measure 'Total Orders LM' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Total Orders LY",
+      "objectType": "measure",
+      "message": "Measure 'Total Orders LY' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Total YAC LM",
+      "objectType": "measure",
+      "message": "Measure 'Total YAC LM' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "severity": "Medium",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Total YAC LY",
+      "objectType": "measure",
+      "message": "Measure 'Total YAC LY' uses FILTER(ALL(…)) anti-pattern. Use REMOVEFILTERS or direct predicate pushdown.",
+      "fix": "Replace FILTER(ALL(…)) with REMOVEFILTERS or CALCULATE with predicates."
+    },
+    {
+      "rule": "BARE_DIVISION",
+      "severity": "Low",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Churned MAC %",
+      "objectType": "measure",
+      "message": "Measure 'Churned MAC %' uses bare '/' division without DIVIDE(). Risk of division-by-zero errors.",
+      "fix": "Wrap division in DIVIDE(numerator, denominator) for safe division."
+    },
+    {
+      "rule": "BARE_DIVISION",
+      "severity": "Low",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Churned YAC %",
+      "objectType": "measure",
+      "message": "Measure 'Churned YAC %' uses bare '/' division without DIVIDE(). Risk of division-by-zero errors.",
+      "fix": "Wrap division in DIVIDE(numerator, denominator) for safe division."
+    },
+    {
+      "rule": "BARE_DIVISION",
+      "severity": "Low",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Existing MAC %",
+      "objectType": "measure",
+      "message": "Measure 'Existing MAC %' uses bare '/' division without DIVIDE(). Risk of division-by-zero errors.",
+      "fix": "Wrap division in DIVIDE(numerator, denominator) for safe division."
+    },
+    {
+      "rule": "BARE_DIVISION",
+      "severity": "Low",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Existing YAC %",
+      "objectType": "measure",
+      "message": "Measure 'Existing YAC %' uses bare '/' division without DIVIDE(). Risk of division-by-zero errors.",
+      "fix": "Wrap division in DIVIDE(numerator, denominator) for safe division."
+    },
+    {
+      "rule": "BARE_DIVISION",
+      "severity": "Low",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "New MAC %",
+      "objectType": "measure",
+      "message": "Measure 'New MAC %' uses bare '/' division without DIVIDE(). Risk of division-by-zero errors.",
+      "fix": "Wrap division in DIVIDE(numerator, denominator) for safe division."
+    },
+    {
+      "rule": "BARE_DIVISION",
+      "severity": "Low",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "New YAC %",
+      "objectType": "measure",
+      "message": "Measure 'New YAC %' uses bare '/' division without DIVIDE(). Risk of division-by-zero errors.",
+      "fix": "Wrap division in DIVIDE(numerator, denominator) for safe division."
+    },
+    {
+      "rule": "BARE_DIVISION",
+      "severity": "Low",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Reactivated MAC %",
+      "objectType": "measure",
+      "message": "Measure 'Reactivated MAC %' uses bare '/' division without DIVIDE(). Risk of division-by-zero errors.",
+      "fix": "Wrap division in DIVIDE(numerator, denominator) for safe division."
+    },
+    {
+      "rule": "BARE_DIVISION",
+      "severity": "Low",
+      "category": "Performance",
+      "table": "@Measures",
+      "object": "Reactivated YAC %",
+      "objectType": "measure",
+      "message": "Measure 'Reactivated YAC %' uses bare '/' division without DIVIDE(). Risk of division-by-zero errors.",
+      "fix": "Wrap division in DIVIDE(numerator, denominator) for safe division."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Average Basket Size LM",
+      "objectType": "measure",
+      "message": "Measure 'Average Basket Size LM' references columns without table qualifier: [Average Basket Size]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Average Basket Size LY",
+      "objectType": "measure",
+      "message": "Measure 'Average Basket Size LY' references columns without table qualifier: [Average Basket Size]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Average Basket Size YOY %",
+      "objectType": "measure",
+      "message": "Measure 'Average Basket Size YOY %' references columns without table qualifier: [Average Basket Size], [Average Basket Size LY]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Average Basket Size",
+      "objectType": "measure",
+      "message": "Measure 'Average Basket Size' references columns without table qualifier: [Retail Sales Quantity], [Total Orders]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Average Customer Value LM",
+      "objectType": "measure",
+      "message": "Measure 'Average Customer Value LM' references columns without table qualifier: [Average Customer Value]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Average Customer Value LY",
+      "objectType": "measure",
+      "message": "Measure 'Average Customer Value LY' references columns without table qualifier: [Average Customer Value]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Average Customer Value YOY %",
+      "objectType": "measure",
+      "message": "Measure 'Average Customer Value YOY %' references columns without table qualifier: [Average Customer Value], [Average Customer Value LY]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Average Customer Value",
+      "objectType": "measure",
+      "message": "Measure 'Average Customer Value' references columns without table qualifier: [Retail Sales Value], [Total Customers]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Average Order Frequency LM",
+      "objectType": "measure",
+      "message": "Measure 'Average Order Frequency LM' references columns without table qualifier: [Average Order Frequency]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Average Order Frequency LY",
+      "objectType": "measure",
+      "message": "Measure 'Average Order Frequency LY' references columns without table qualifier: [Average Order Frequency]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Average Order Frequency YOY %",
+      "objectType": "measure",
+      "message": "Measure 'Average Order Frequency YOY %' references columns without table qualifier: [Average Order Frequency], [Average Order Frequency LY]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Average Order Frequency",
+      "objectType": "measure",
+      "message": "Measure 'Average Order Frequency' references columns without table qualifier: [Total Customers], [Total Orders]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Average Selling Price LM",
+      "objectType": "measure",
+      "message": "Measure 'Average Selling Price LM' references columns without table qualifier: [Average Selling Price]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Average Selling Price LY",
+      "objectType": "measure",
+      "message": "Measure 'Average Selling Price LY' references columns without table qualifier: [Average Selling Price]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Average Selling Price YOY %",
+      "objectType": "measure",
+      "message": "Measure 'Average Selling Price YOY %' references columns without table qualifier: [Average Selling Price], [Average Selling Price LY]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Average Selling Price",
+      "objectType": "measure",
+      "message": "Measure 'Average Selling Price' references columns without table qualifier: [Retail Sales Quantity], [Retail Sales Value]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Churned MAC %",
+      "objectType": "measure",
+      "message": "Measure 'Churned MAC %' references columns without table qualifier: [Churned MAC], [Total Customers]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Churned MAC LM",
+      "objectType": "measure",
+      "message": "Measure 'Churned MAC LM' references columns without table qualifier: [Churned MAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Churned MAC LY",
+      "objectType": "measure",
+      "message": "Measure 'Churned MAC LY' references columns without table qualifier: [Churned MAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Churned MAC YOY %",
+      "objectType": "measure",
+      "message": "Measure 'Churned MAC YOY %' references columns without table qualifier: [Churned MAC], [Churned MAC LY]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Churned MAC",
+      "objectType": "measure",
+      "message": "Measure 'Churned MAC' references columns without table qualifier: [Total Customers]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Churned YAC %",
+      "objectType": "measure",
+      "message": "Measure 'Churned YAC %' references columns without table qualifier: [Churned YAC], [Total Customers]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Churned YAC LM",
+      "objectType": "measure",
+      "message": "Measure 'Churned YAC LM' references columns without table qualifier: [Churned YAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Churned YAC LY",
+      "objectType": "measure",
+      "message": "Measure 'Churned YAC LY' references columns without table qualifier: [Churned YAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Churned YAC YOY %",
+      "objectType": "measure",
+      "message": "Measure 'Churned YAC YOY %' references columns without table qualifier: [Churned YAC], [Churned YAC LY]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Churned YAC",
+      "objectType": "measure",
+      "message": "Measure 'Churned YAC' references columns without table qualifier: [Total Customers]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Existing MAC %",
+      "objectType": "measure",
+      "message": "Measure 'Existing MAC %' references columns without table qualifier: [Existing MAC], [Total Customers]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Existing MAC LM",
+      "objectType": "measure",
+      "message": "Measure 'Existing MAC LM' references columns without table qualifier: [Existing MAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Existing MAC LY",
+      "objectType": "measure",
+      "message": "Measure 'Existing MAC LY' references columns without table qualifier: [Existing MAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Existing MAC YOY %",
+      "objectType": "measure",
+      "message": "Measure 'Existing MAC YOY %' references columns without table qualifier: [Existing MAC], [Existing MAC LY]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Existing MAC",
+      "objectType": "measure",
+      "message": "Measure 'Existing MAC' references columns without table qualifier: [Total Customers]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Existing YAC %",
+      "objectType": "measure",
+      "message": "Measure 'Existing YAC %' references columns without table qualifier: [Existing YAC], [Total Customers]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Existing YAC LM",
+      "objectType": "measure",
+      "message": "Measure 'Existing YAC LM' references columns without table qualifier: [Existing YAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Existing YAC LY",
+      "objectType": "measure",
+      "message": "Measure 'Existing YAC LY' references columns without table qualifier: [Existing YAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Existing YAC YOY %",
+      "objectType": "measure",
+      "message": "Measure 'Existing YAC YOY %' references columns without table qualifier: [Existing YAC], [Existing YAC LY]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Existing YAC",
+      "objectType": "measure",
+      "message": "Measure 'Existing YAC' references columns without table qualifier: [Total Customers]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "First YAC LM",
+      "objectType": "measure",
+      "message": "Measure 'First YAC LM' references columns without table qualifier: [First YAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "First YAC LY",
+      "objectType": "measure",
+      "message": "Measure 'First YAC LY' references columns without table qualifier: [First YAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "First YAC YOY %",
+      "objectType": "measure",
+      "message": "Measure 'First YAC YOY %' references columns without table qualifier: [First YAC], [First YAC LY]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "First YAC",
+      "objectType": "measure",
+      "message": "Measure 'First YAC' references columns without table qualifier: [Total Customers]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Is In Last 12 Months",
+      "objectType": "measure",
+      "message": "Measure 'Is In Last 12 Months' references columns without table qualifier: [Selected FY Month]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "New MAC %",
+      "objectType": "measure",
+      "message": "Measure 'New MAC %' references columns without table qualifier: [New MAC], [Total Customers]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "New MAC LM",
+      "objectType": "measure",
+      "message": "Measure 'New MAC LM' references columns without table qualifier: [New MAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "New MAC LY",
+      "objectType": "measure",
+      "message": "Measure 'New MAC LY' references columns without table qualifier: [New MAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "New MAC YOY %",
+      "objectType": "measure",
+      "message": "Measure 'New MAC YOY %' references columns without table qualifier: [New MAC], [New MAC LY]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "New MAC",
+      "objectType": "measure",
+      "message": "Measure 'New MAC' references columns without table qualifier: [Total Customers]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "New YAC %",
+      "objectType": "measure",
+      "message": "Measure 'New YAC %' references columns without table qualifier: [New YAC], [Total Customers]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "New YAC LM",
+      "objectType": "measure",
+      "message": "Measure 'New YAC LM' references columns without table qualifier: [New YAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "New YAC LY",
+      "objectType": "measure",
+      "message": "Measure 'New YAC LY' references columns without table qualifier: [New YAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "New YAC YOY %",
+      "objectType": "measure",
+      "message": "Measure 'New YAC YOY %' references columns without table qualifier: [New YAC], [New YAC LY]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "New YAC",
+      "objectType": "measure",
+      "message": "Measure 'New YAC' references columns without table qualifier: [Total Customers]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Quick Ratio MAC %",
+      "objectType": "measure",
+      "message": "Measure 'Quick Ratio MAC %' references columns without table qualifier: [Churned MAC], [New MAC], [Reactivated MAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Quick Ratio MAC LY %",
+      "objectType": "measure",
+      "message": "Measure 'Quick Ratio MAC LY %' references columns without table qualifier: [Churned MAC LY], [New MAC LY], [Reactivated MAC LY]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Quick Ratio YAC %",
+      "objectType": "measure",
+      "message": "Measure 'Quick Ratio YAC %' references columns without table qualifier: [Churned YAC], [New YAC], [Reactivated YAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Quick Ratio YAC LY %",
+      "objectType": "measure",
+      "message": "Measure 'Quick Ratio YAC LY %' references columns without table qualifier: [Churned YAC LY], [New YAC LY], [Reactivated YAC LY]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Reactivated MAC %",
+      "objectType": "measure",
+      "message": "Measure 'Reactivated MAC %' references columns without table qualifier: [Reactivated MAC], [Total Customers]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Reactivated MAC LM",
+      "objectType": "measure",
+      "message": "Measure 'Reactivated MAC LM' references columns without table qualifier: [Reactivated MAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Reactivated MAC LY",
+      "objectType": "measure",
+      "message": "Measure 'Reactivated MAC LY' references columns without table qualifier: [Reactivated MAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Reactivated MAC YOY %",
+      "objectType": "measure",
+      "message": "Measure 'Reactivated MAC YOY %' references columns without table qualifier: [Reactivated MAC], [Reactivated MAC LY]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Reactivated MAC",
+      "objectType": "measure",
+      "message": "Measure 'Reactivated MAC' references columns without table qualifier: [Total Customers]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Reactivated YAC %",
+      "objectType": "measure",
+      "message": "Measure 'Reactivated YAC %' references columns without table qualifier: [Reactivated YAC], [Total Customers]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Reactivated YAC LM",
+      "objectType": "measure",
+      "message": "Measure 'Reactivated YAC LM' references columns without table qualifier: [Reactivated YAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Reactivated YAC LY",
+      "objectType": "measure",
+      "message": "Measure 'Reactivated YAC LY' references columns without table qualifier: [Reactivated YAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Reactivated YAC YOY %",
+      "objectType": "measure",
+      "message": "Measure 'Reactivated YAC YOY %' references columns without table qualifier: [Reactivated YAC], [Reactivated YAC LY]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Reactivated YAC",
+      "objectType": "measure",
+      "message": "Measure 'Reactivated YAC' references columns without table qualifier: [Total Customers]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Retail Quantity LM",
+      "objectType": "measure",
+      "message": "Measure 'Retail Quantity LM' references columns without table qualifier: [Retail Sales Quantity]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Retail Sales Quantity LY",
+      "objectType": "measure",
+      "message": "Measure 'Retail Sales Quantity LY' references columns without table qualifier: [Retail Sales Quantity]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Retail Sales Quantity YOY %",
+      "objectType": "measure",
+      "message": "Measure 'Retail Sales Quantity YOY %' references columns without table qualifier: [Retail Sales Quantity], [Retail Sales Quantity LY]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Retail Sales Value LY",
+      "objectType": "measure",
+      "message": "Measure 'Retail Sales Value LY' references columns without table qualifier: [Retail Sales Value]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Retail Sales Value YOY %",
+      "objectType": "measure",
+      "message": "Measure 'Retail Sales Value YOY %' references columns without table qualifier: [Retail Sales Value], [Retail Sales Value LY]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Retail Value LM",
+      "objectType": "measure",
+      "message": "Measure 'Retail Value LM' references columns without table qualifier: [Retail Sales Value]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Total Customers Dynamic",
+      "objectType": "measure",
+      "message": "Measure 'Total Customers Dynamic' references columns without table qualifier: [Total Customers]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Total Customers LM",
+      "objectType": "measure",
+      "message": "Measure 'Total Customers LM' references columns without table qualifier: [Total Customers]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Total Customers LY",
+      "objectType": "measure",
+      "message": "Measure 'Total Customers LY' references columns without table qualifier: [Total Customers]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Total Customers YOY %",
+      "objectType": "measure",
+      "message": "Measure 'Total Customers YOY %' references columns without table qualifier: [Total Customers], [Total Customers LY]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Total Customers",
+      "objectType": "measure",
+      "message": "Measure 'Total Customers' references columns without table qualifier: [Total Customers Agg], [Total Customers Fact], [Total Customers Forced Fact]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Total MAC Dynamic",
+      "objectType": "measure",
+      "message": "Measure 'Total MAC Dynamic' references columns without table qualifier: [Total MAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Total MAC LM",
+      "objectType": "measure",
+      "message": "Measure 'Total MAC LM' references columns without table qualifier: [Total MAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Total MAC LY Dynamic",
+      "objectType": "measure",
+      "message": "Measure 'Total MAC LY Dynamic' references columns without table qualifier: [Total MAC LY]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Total MAC LY",
+      "objectType": "measure",
+      "message": "Measure 'Total MAC LY' references columns without table qualifier: [Total MAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Total MAC YOY %",
+      "objectType": "measure",
+      "message": "Measure 'Total MAC YOY %' references columns without table qualifier: [Total MAC], [Total MAC LY]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Total MAC",
+      "objectType": "measure",
+      "message": "Measure 'Total MAC' references columns without table qualifier: [Total Customers]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Total Orders LM",
+      "objectType": "measure",
+      "message": "Measure 'Total Orders LM' references columns without table qualifier: [Total Orders]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Total Orders LY",
+      "objectType": "measure",
+      "message": "Measure 'Total Orders LY' references columns without table qualifier: [Total Orders]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Total Orders YOY %",
+      "objectType": "measure",
+      "message": "Measure 'Total Orders YOY %' references columns without table qualifier: [Total Orders], [Total Orders LY]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Total YAC Dynamic",
+      "objectType": "measure",
+      "message": "Measure 'Total YAC Dynamic' references columns without table qualifier: [Total YAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Total YAC LM",
+      "objectType": "measure",
+      "message": "Measure 'Total YAC LM' references columns without table qualifier: [Total YAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Total YAC LY Dynamic",
+      "objectType": "measure",
+      "message": "Measure 'Total YAC LY Dynamic' references columns without table qualifier: [Total YAC LY]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Total YAC LY",
+      "objectType": "measure",
+      "message": "Measure 'Total YAC LY' references columns without table qualifier: [Total YAC]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Total YAC YOY %",
+      "objectType": "measure",
+      "message": "Measure 'Total YAC YOY %' references columns without table qualifier: [Total YAC], [Total YAC LY]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "severity": "Low",
+      "category": "Best Practice",
+      "table": "@Measures",
+      "object": "Total YAC",
+      "objectType": "measure",
+      "message": "Measure 'Total YAC' references columns without table qualifier: [Total Customers]. Fully qualify column references for clarity.",
+      "fix": "Prefix column references with 'TableName'[ColumnName]."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "@Dataset Metadata",
+      "object": "Build Number",
+      "objectType": "column",
+      "message": "Column 'Build Number' in table '@Dataset Metadata' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "@Dataset Metadata",
+      "object": "Environment",
+      "objectType": "column",
+      "message": "Column 'Environment' in table '@Dataset Metadata' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "@Dataset Metadata",
+      "object": "Last Data Refresh (UTC)",
+      "objectType": "column",
+      "message": "Column 'Last Data Refresh (UTC)' in table '@Dataset Metadata' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Country",
+      "object": "Asos Continent",
+      "objectType": "column",
+      "message": "Column 'Asos Continent' in table 'Country' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Country",
+      "object": "Continent Code",
+      "objectType": "column",
+      "message": "Column 'Continent Code' in table 'Country' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Country",
+      "object": "Continent",
+      "objectType": "column",
+      "message": "Column 'Continent' in table 'Country' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Country",
+      "object": "Country Group",
+      "objectType": "column",
+      "message": "Column 'Country Group' in table 'Country' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Country",
+      "object": "Country Top 16 Group",
+      "objectType": "column",
+      "message": "Column 'Country Top 16 Group' in table 'Country' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Country",
+      "object": "Country Top 4 Group",
+      "objectType": "column",
+      "message": "Column 'Country Top 4 Group' in table 'Country' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Country",
+      "object": "Country Top 6 Group",
+      "objectType": "column",
+      "message": "Column 'Country Top 6 Group' in table 'Country' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Country",
+      "object": "Country Top 60 Group",
+      "objectType": "column",
+      "message": "Column 'Country Top 60 Group' in table 'Country' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Country",
+      "object": "Country",
+      "objectType": "column",
+      "message": "Column 'Country' in table 'Country' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Country",
+      "object": "Dim Country Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Country Sk' in table 'Country' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Country",
+      "object": "Global Territory Group",
+      "objectType": "column",
+      "message": "Column 'Global Territory Group' in table 'Country' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Country",
+      "object": "Is Deleted Flag",
+      "objectType": "column",
+      "message": "Column 'Is Deleted Flag' in table 'Country' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Country",
+      "object": "Is Eu",
+      "objectType": "column",
+      "message": "Column 'Is Eu' in table 'Country' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Country",
+      "object": "Is Europe",
+      "objectType": "column",
+      "message": "Column 'Is Europe' in table 'Country' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Country",
+      "object": "Is Top 11 Country",
+      "objectType": "column",
+      "message": "Column 'Is Top 11 Country' in table 'Country' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Country",
+      "object": "Iso2d3166 Code",
+      "objectType": "column",
+      "message": "Column 'Iso2d3166 Code' in table 'Country' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Country",
+      "object": "Iso3d3166 Code",
+      "objectType": "column",
+      "message": "Column 'Iso3d3166 Code' in table 'Country' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Country",
+      "object": "Nominal Store Id",
+      "objectType": "column",
+      "message": "Column 'Nominal Store Id' in table 'Country' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Country",
+      "object": "Sub Continent",
+      "objectType": "column",
+      "message": "Column 'Sub Continent' in table 'Country' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Activity Monthly",
+      "object": "Dim Billing Country Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Billing Country Sk' in table 'Customer Activity Monthly' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Activity Monthly",
+      "object": "Dim Billing Country Top Eleven Group Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Billing Country Top Eleven Group Sk' in table 'Customer Activity Monthly' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Activity Monthly",
+      "object": "Dim Customer Activity Status Monthly Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Customer Activity Status Monthly Sk' in table 'Customer Activity Monthly' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Activity Monthly",
+      "object": "Dim Customer Activity Status Yearly Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Customer Activity Status Yearly Sk' in table 'Customer Activity Monthly' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Activity Monthly",
+      "object": "Dim Customer Age Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Customer Age Sk' in table 'Customer Activity Monthly' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Activity Monthly",
+      "object": "Dim Customer Sex Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Customer Sex Sk' in table 'Customer Activity Monthly' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Activity Monthly",
+      "object": "Dim Customer Tenure Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Customer Tenure Sk' in table 'Customer Activity Monthly' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Activity Status Monthly",
+      "object": "Customer Activity Status Monthly Code",
+      "objectType": "column",
+      "message": "Column 'Customer Activity Status Monthly Code' in table 'Customer Activity Status Monthly' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Activity Status Monthly",
+      "object": "Customer Activity Status Monthly Description",
+      "objectType": "column",
+      "message": "Column 'Customer Activity Status Monthly Description' in table 'Customer Activity Status Monthly' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Activity Status Monthly",
+      "object": "Is Deleted Flag",
+      "objectType": "column",
+      "message": "Column 'Is Deleted Flag' in table 'Customer Activity Status Monthly' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Activity Status Yearly",
+      "object": "Customer Activity Status Yearly Code",
+      "objectType": "column",
+      "message": "Column 'Customer Activity Status Yearly Code' in table 'Customer Activity Status Yearly' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Activity Status Yearly",
+      "object": "Customer Activity Status Yearly Description",
+      "objectType": "column",
+      "message": "Column 'Customer Activity Status Yearly Description' in table 'Customer Activity Status Yearly' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Activity Status Yearly",
+      "object": "Is Deleted Flag",
+      "objectType": "column",
+      "message": "Column 'Is Deleted Flag' in table 'Customer Activity Status Yearly' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Age",
+      "object": "Customer Age Band",
+      "objectType": "column",
+      "message": "Column 'Customer Age Band' in table 'Customer Age' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Age",
+      "object": "Customer Age Bucket",
+      "objectType": "column",
+      "message": "Column 'Customer Age Bucket' in table 'Customer Age' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Age",
+      "object": "Customer Age Group",
+      "objectType": "column",
+      "message": "Column 'Customer Age Group' in table 'Customer Age' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Age",
+      "object": "Customer Age",
+      "objectType": "column",
+      "message": "Column 'Customer Age' in table 'Customer Age' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Age",
+      "object": "Dim Customer Age Group Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Customer Age Group Sk' in table 'Customer Age' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Age",
+      "object": "Dim Customer Age Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Customer Age Sk' in table 'Customer Age' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Age",
+      "object": "Is Deleted Flag",
+      "objectType": "column",
+      "message": "Column 'Is Deleted Flag' in table 'Customer Age' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Monthly Agg",
+      "object": "Dim Billing Country Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Billing Country Sk' in table 'Customer Monthly Agg' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Monthly Agg",
+      "object": "Dim Customer Activity Status Monthly Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Customer Activity Status Monthly Sk' in table 'Customer Monthly Agg' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Monthly Agg",
+      "object": "Dim Customer Activity Status Yearly Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Customer Activity Status Yearly Sk' in table 'Customer Monthly Agg' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Monthly Agg",
+      "object": "Dim Customer Age Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Customer Age Sk' in table 'Customer Monthly Agg' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Monthly Agg",
+      "object": "Dim Customer Sex Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Customer Sex Sk' in table 'Customer Monthly Agg' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Monthly Agg",
+      "object": "Dim Customer Tenure Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Customer Tenure Sk' in table 'Customer Monthly Agg' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Monthly Agg",
+      "object": "Total Retail Orders",
+      "objectType": "column",
+      "message": "Column 'Total Retail Orders' in table 'Customer Monthly Agg' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Monthly Agg",
+      "object": "Total Retail Quantity",
+      "objectType": "column",
+      "message": "Column 'Total Retail Quantity' in table 'Customer Monthly Agg' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Monthly Agg",
+      "object": "Total Retail Value",
+      "objectType": "column",
+      "message": "Column 'Total Retail Value' in table 'Customer Monthly Agg' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Sex",
+      "object": "Customer Sex Code",
+      "objectType": "column",
+      "message": "Column 'Customer Sex Code' in table 'Customer Sex' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Sex",
+      "object": "Customer Sex",
+      "objectType": "column",
+      "message": "Column 'Customer Sex' in table 'Customer Sex' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Sex",
+      "object": "Dim Customer Sex Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Customer Sex Sk' in table 'Customer Sex' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Sex",
+      "object": "Is Deleted Flag",
+      "objectType": "column",
+      "message": "Column 'Is Deleted Flag' in table 'Customer Sex' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Tenure",
+      "object": "Customer Tenure Id",
+      "objectType": "column",
+      "message": "Column 'Customer Tenure Id' in table 'Customer Tenure' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Tenure",
+      "object": "Customer Tenure Month From",
+      "objectType": "column",
+      "message": "Column 'Customer Tenure Month From' in table 'Customer Tenure' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Tenure",
+      "object": "Customer Tenure Month To",
+      "objectType": "column",
+      "message": "Column 'Customer Tenure Month To' in table 'Customer Tenure' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Tenure",
+      "object": "Customer Tenure",
+      "objectType": "column",
+      "message": "Column 'Customer Tenure' in table 'Customer Tenure' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Tenure",
+      "object": "Dim Customer Tenure Sk",
+      "objectType": "column",
+      "message": "Column 'Dim Customer Tenure Sk' in table 'Customer Tenure' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "severity": "Low",
+      "category": "Maintenance",
+      "table": "Customer Tenure",
+      "object": "Is Deleted Flag",
+      "objectType": "column",
+      "message": "Column 'Is Deleted Flag' in table 'Customer Tenure' is not referenced in any measure expression. Candidate for removal (verify it is not used in visuals or relationships).",
+      "fix": "If not used in visuals or relationships, remove the column to reduce model size."
+    }
+  ],
+  "summary": {
+    "high": 0,
+    "medium": 40,
+    "low": 160,
+    "totalFindings": 200,
+    "rulesChecked": 12,
+    "rulesPassed": 8
+  },
+  "ruleResults": [
+    {
+      "rule": "FILTER_ALL_ANTIPATTERN",
+      "status": "FAIL",
+      "count": 40,
+      "performanceImpact": "latency",
+      "impactDescription": "Forces full table scan in DirectQuery mode. Each FILTER(ALL) adds an unfiltered subquery to the generated SQL."
+    },
+    {
+      "rule": "BARE_DIVISION",
+      "status": "FAIL",
+      "count": 8,
+      "performanceImpact": "quality",
+      "impactDescription": "Risk of division-by-zero errors. No direct performance impact, but errors can cause visual rendering failures."
+    },
+    {
+      "rule": "DAX_COLUMNS_NOT_FULLY_QUALIFIED",
+      "status": "FAIL",
+      "count": 91,
+      "performanceImpact": "quality",
+      "impactDescription": "Readability and maintenance issue. No performance impact but increases risk of errors when columns are renamed."
+    },
+    {
+      "rule": "UNUSED_COLUMNS_CANDIDATE",
+      "status": "FAIL",
+      "count": 61,
+      "performanceImpact": "cost",
+      "impactDescription": "Hidden/unused columns are still included in DirectQuery SQL. Increases read bytes and cost per query."
+    }
+  ],
+  "passingRules": [
+    "AVOID_FLOATING_POINT_DATA_TYPES",
+    "AVOID_BIDIRECTIONAL_RELATIONSHIPS",
+    "DUAL_MODE_TABLES",
+    "AVOID_IFERROR",
+    "WIDE_TABLES",
+    "MISSING_FORMAT_STRING",
+    "MANY_TO_MANY_RELATIONSHIPS",
+    "AUTO_DATE_TABLES"
+  ]
+}

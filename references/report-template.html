@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Power BI Performance Report</title>
+  <style>
+    :root {
+      --dark: #2d2d2d;
+      --accent: #0770cf;
+      --green: #1a8754;
+      --amber: #d4a017;
+      --red: #c0392b;
+      --light-bg: #f8f9fa;
+      --border: #dee2e6;
+      --text: #333;
+      --muted: #6c757d;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: var(--text);
+      background: var(--light-bg);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    /* ── Header ────────────────────────────────────────── */
+    .report-header {
+      background: var(--dark);
+      color: #fff;
+      padding: 32px 40px 24px;
+    }
+    .report-header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .report-header .metadata {
+      font-size: 13px;
+      color: #adb5bd;
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .report-header .metadata span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ── Main Container ────────────────────────────────── */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 40px 60px;
+    }
+
+    /* ── Section Titles ────────────────────────────────── */
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--dark);
+      margin: 40px 0 20px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid var(--accent);
+    }
+    .section-title:first-child {
+      margin-top: 0;
+    }
+
+    /* ── Metric Card Grid ──────────────────────────────── */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .metric-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+    }
+    .metric-card .value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--dark);
+      line-height: 1.2;
+    }
+    .metric-card .label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+    .metric-card .sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .metric-card.green .value { color: var(--green); }
+    .metric-card.amber .value { color: var(--amber); }
+    .metric-card.red .value { color: var(--red); }
+
+    /* ── Cards ─────────────────────────────────────────── */
+    .card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .card h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--dark);
+    }
+
+    /* ── Tables ────────────────────────────────────────── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    thead th {
+      background: var(--light-bg);
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 2px solid var(--border);
+    }
+    tbody td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    tbody tr:nth-child(even) {
+      background: var(--light-bg);
+    }
+    tbody tr:hover {
+      background: #e9ecef;
+    }
+
+    /* ── Severity Badges ───────────────────────────────── */
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .badge-high {
+      background: rgba(192, 57, 43, 0.12);
+      color: var(--red);
+    }
+    .badge-medium {
+      background: rgba(212, 160, 23, 0.15);
+      color: var(--amber);
+    }
+    .badge-low {
+      background: rgba(26, 135, 84, 0.12);
+      color: var(--green);
+    }
+    .badge-info {
+      background: rgba(7, 112, 207, 0.12);
+      color: var(--accent);
+    }
+
+    /* ── Performance Bars ──────────────────────────────── */
+    .perf-bar-container {
+      margin-bottom: 12px;
+    }
+    .perf-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+    .perf-bar-label .name { font-weight: 600; }
+    .perf-bar-label .time { color: var(--muted); }
+    .perf-bar-track {
+      background: #e9ecef;
+      border-radius: 4px;
+      height: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+    .perf-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      padding-left: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #fff;
+      min-width: 30px;
+      transition: width 0.3s ease;
+    }
+    .perf-bar-fill.green { background: var(--green); }
+    .perf-bar-fill.amber { background: var(--amber); }
+    .perf-bar-fill.red { background: var(--red); }
+
+    /* ── Code Blocks ───────────────────────────────────── */
+    .code-block {
+      background: var(--light-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: 12.5px;
+      line-height: 1.7;
+      overflow-x: auto;
+      white-space: pre;
+      color: var(--dark);
+      margin: 10px 0;
+    }
+
+    /* ── Pros / Cons Grid ──────────────────────────────── */
+    .pros-cons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 12px 0;
+    }
+    .pros-col, .cons-col {
+      border-radius: 8px;
+      padding: 16px 20px;
+    }
+    .pros-col {
+      background: rgba(26, 135, 84, 0.06);
+      border: 1px solid rgba(26, 135, 84, 0.2);
+    }
+    .cons-col {
+      background: rgba(192, 57, 43, 0.06);
+      border: 1px solid rgba(192, 57, 43, 0.2);
+    }
+    .pros-col h4 { color: var(--green); margin-bottom: 8px; font-size: 13px; }
+    .cons-col h4 { color: var(--red); margin-bottom: 8px; font-size: 13px; }
+    .pros-col ul, .cons-col ul {
+      list-style: none;
+      padding: 0;
+    }
+    .pros-col li::before { content: "✓ "; color: var(--green); font-weight: 700; }
+    .cons-col li::before { content: "✗ "; color: var(--red); font-weight: 700; }
+    .pros-col li, .cons-col li {
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    /* ── Finding List (numbered circles) ───────────────── */
+    .finding-list {
+      list-style: none;
+      padding: 0;
+      counter-reset: finding;
+    }
+    .finding-list li {
+      counter-increment: finding;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .finding-list li::before {
+      content: counter(finding);
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      margin-top: 1px;
+    }
+
+    /* ── Note Box (warning) ────────────────────────────── */
+    .note-box {
+      background: #fff8e1;
+      border-left: 4px solid var(--amber);
+      border-radius: 0 6px 6px 0;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 13px;
+    }
+    .note-box strong {
+      color: var(--amber);
+    }
+
+    /* ── Recommendation Box ────────────────────────────── */
+    .recommendation-box {
+      background: linear-gradient(135deg, rgba(7,112,207,0.08), rgba(7,112,207,0.03));
+      border: 1px solid rgba(7,112,207,0.2);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 16px 0;
+    }
+    .recommendation-box h4 {
+      color: var(--accent);
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    .recommendation-box p, .recommendation-box li {
+      font-size: 13px;
+    }
+    .recommendation-box ol {
+      padding-left: 18px;
+    }
+    .recommendation-box li {
+      margin-bottom: 6px;
+    }
+
+    /* ── Footer ────────────────────────────────────────── */
+    .report-footer {
+      margin-top: 48px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* ── Print Styles ──────────────────────────────────── */
+    @media print {
+      body { background: #fff; font-size: 12px; }
+      .container { padding: 0 20px; max-width: none; }
+      .report-header { padding: 20px; }
+      .card { box-shadow: none; break-inside: avoid; }
+      .section-title { break-after: avoid; }
+      .metric-grid { grid-template-columns: repeat(4, 1fr); }
+      .perf-bar-fill { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      .badge { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      .note-box, .recommendation-box { break-inside: avoid; }
+      tbody tr:nth-child(even) { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    }
+
+    /* ── Responsive ────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .report-header { padding: 20px; }
+      .container { padding: 16px 20px 40px; }
+      .metric-grid { grid-template-columns: repeat(2, 1fr); }
+      .pros-cons { grid-template-columns: 1fr; }
+      .report-header .metadata { flex-direction: column; gap: 6px; }
+      table { font-size: 12px; }
+      thead th, tbody td { padding: 8px 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════
+       HEADER
+       Replace title, date, author, team, report as needed.
+       ═══════════════════════════════════════════════════ -->
+  <div class="report-header">
+    <h1><!-- REPORT_TITLE -->Power BI Performance Report<!-- /REPORT_TITLE --></h1>
+    <div class="metadata">
+      <span><!-- REPORT_DATE -->26 Mar 2026<!-- /REPORT_DATE --></span>
+      <span><!-- REPORT_AUTHOR -->Flow AI Performance Analyst<!-- /REPORT_AUTHOR --></span>
+      <span><!-- REPORT_TEAM -->Data Engineering<!-- /REPORT_TEAM --></span>
+      <span><!-- REPORT_ID -->report-id<!-- /REPORT_ID --></span>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 1: EXECUTIVE SUMMARY
+         Populate metric cards with headline numbers:
+         total visuals, avg render time, BPA findings, health score.
+         ═══════════════════════════════════════════════════ -->
+    <h2 class="section-title">1. Executive Summary</h2>
+
+    <div class="metric-grid">
+      <!-- METRIC_CARDS: Replace values, labels, sub-text, and colour class -->
+      <div class="metric-card green">
+        <div class="value"><!-- METRIC_1_VALUE -->42<!-- /METRIC_1_VALUE --></div>
+        <div class="label"><!-- METRIC_1_LABEL -->Total Visuals<!-- /METRIC_1_LABEL --></div>
+        <div class="sub"><!-- METRIC_1_SUB -->across 8 pages<!-- /METRIC_1_SUB --></div>
+      </div>
+      <div class="metric-card amber">
+        <div class="value"><!-- METRIC_2_VALUE -->1.8s<!-- /METRIC_2_VALUE --></div>
+        <div class="label"><!-- METRIC_2_LABEL -->Avg Render Time<!-- /METRIC_2_LABEL --></div>
+        <div class="sub"><!-- METRIC_2_SUB -->target: &lt;1.0s<!-- /METRIC_2_SUB --></div>
+      </div>
+      <div class="metric-card red">
+        <div class="value"><!-- METRIC_3_VALUE -->7<!-- /METRIC_3_VALUE --></div>
+        <div class="label"><!-- METRIC_3_LABEL -->BPA Findings<!-- /METRIC_3_LABEL --></div>
+        <div class="sub"><!-- METRIC_3_SUB -->3 high severity<!-- /METRIC_3_SUB --></div>
+      </div>
+      <div class="metric-card green">
+        <div class="value"><!-- METRIC_4_VALUE -->68%<!-- /METRIC_4_VALUE --></div>
+        <div class="label"><!-- METRIC_4_LABEL -->Health Score<!-- /METRIC_4_LABEL --></div>
+        <div class="sub"><!-- METRIC_4_SUB -->good<!-- /METRIC_4_SUB --></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <!-- EXECUTIVE_SUMMARY_TEXT: 2-3 paragraph summary of findings -->
+      <p>Placeholder for executive summary text. Describe the overall health of the report, key findings, and high-level recommendations.</p>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 2: VISUAL PERFORMANCE BREAKDOWN
+         Generated from Performance Analyzer JSON export.
+         Show per-visual timings as perf bars + summary table.
+         ═══════════════════════════════════════════════════ -->
+    <h2 class="section-title">2. Visual Performance Breakdown</h2>
+
+    <div class="card">
+      <h3>Slowest Visuals</h3>
+      <!-- PERF_BARS: Repeat this block for each visual, sorted by total time desc -->
+      <div class="perf-bar-container">
+        <div class="perf-bar-label">
+          <span class="name"><!-- VISUAL_NAME -->Matrix — Sales by Region<!-- /VISUAL_NAME --></span>
+          <span class="time"><!-- VISUAL_TIME -->3,240ms<!-- /VISUAL_TIME --></span>
+        </div>
+        <div class="perf-bar-track">
+          <div class="perf-bar-fill red" style="width: 85%;"><!-- VISUAL_PCT -->85%<!-- /VISUAL_PCT --></div>
+        </div>
+      </div>
+
+      <div class="perf-bar-container">
+        <div class="perf-bar-label">
+          <span class="name"><!-- VISUAL_NAME -->Card — YTD Revenue<!-- /VISUAL_NAME --></span>
+          <span class="time"><!-- VISUAL_TIME -->1,120ms<!-- /VISUAL_TIME --></span>
+        </div>
+        <div class="perf-bar-track">
+          <div class="perf-bar-fill amber" style="width: 45%;"><!-- VISUAL_PCT -->45%<!-- /VISUAL_PCT --></div>
+        </div>
+      </div>
+
+      <div class="perf-bar-container">
+        <div class="perf-bar-label">
+          <span class="name"><!-- VISUAL_NAME -->Slicer — Date Range<!-- /VISUAL_NAME --></span>
+          <span class="time"><!-- VISUAL_TIME -->320ms<!-- /VISUAL_TIME --></span>
+        </div>
+        <div class="perf-bar-track">
+          <div class="perf-bar-fill green" style="width: 12%;"><!-- VISUAL_PCT -->12%<!-- /VISUAL_PCT --></div>
+        </div>
+      </div>
+      <!-- /PERF_BARS -->
+    </div>
+
+    <div class="card">
+      <h3>Timing Summary</h3>
+      <!-- VISUAL_TABLE: Full table of all visuals with timing columns -->
+      <table>
+        <thead>
+          <tr>
+            <th>Visual</th>
+            <th>Page</th>
+            <th>Query (ms)</th>
+            <th>Render (ms)</th>
+            <th>DAX (ms)</th>
+            <th>Total (ms)</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- VISUAL_TABLE_ROWS -->
+          <tr>
+            <td>Matrix — Sales by Region</td>
+            <td>Overview</td>
+            <td>2,800</td>
+            <td>440</td>
+            <td>2,650</td>
+            <td>3,240</td>
+            <td><span class="badge badge-high">Slow</span></td>
+          </tr>
+          <tr>
+            <td>Card — YTD Revenue</td>
+            <td>Overview</td>
+            <td>980</td>
+            <td>140</td>
+            <td>920</td>
+            <td>1,120</td>
+            <td><span class="badge badge-medium">Warning</span></td>
+          </tr>
+          <tr>
+            <td>Slicer — Date Range</td>
+            <td>Overview</td>
+            <td>280</td>
+            <td>40</td>
+            <td>110</td>
+            <td>320</td>
+            <td><span class="badge badge-low">Good</span></td>
+          </tr>
+          <!-- /VISUAL_TABLE_ROWS -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 3: QUERY ANALYSIS
+         Slowest DAX queries, pattern analysis, optimisation
+         opportunities. Include DAX in code blocks.
+         ═══════════════════════════════════════════════════ -->
+    <h2 class="section-title">3. Query Analysis</h2>
+
+    <div class="card">
+      <h3>Slowest Queries</h3>
+      <!-- QUERY_ANALYSIS: For each slow query, show the DAX + analysis -->
+      <p><strong>Visual:</strong> Matrix — Sales by Region</p>
+      <div class="code-block"><!-- DAX_QUERY -->EVALUATE
+SUMMARIZECOLUMNS(
+    DimGeography[Region],
+    "Revenue", [Total Revenue],
+    "Units", [Total Units]
+)<!-- /DAX_QUERY --></div>
+      <p><!-- QUERY_EXPLANATION -->Placeholder: explain why this query is slow and what patterns contribute to the cost.<!-- /QUERY_EXPLANATION --></p>
+      <!-- /QUERY_ANALYSIS -->
+    </div>
+
+    <div class="note-box">
+      <strong>Note:</strong> <!-- QUERY_NOTE -->Placeholder for any caveats about the query analysis — e.g., cold-cache vs warm-cache timings, sample size, etc.<!-- /QUERY_NOTE -->
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 4: MODEL ARCHITECTURE
+         Tables, storage modes, relationship diagram summary,
+         column counts, data types.
+         ═══════════════════════════════════════════════════ -->
+    <h2 class="section-title">4. Model Architecture</h2>
+
+    <div class="card">
+      <h3>Tables &amp; Storage Modes</h3>
+      <!-- MODEL_TABLES: List all tables with storage mode, column count, row count -->
+      <table>
+        <thead>
+          <tr>
+            <th>Table</th>
+            <th>Storage Mode</th>
+            <th>Columns</th>
+            <th>Partitions</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- MODEL_TABLE_ROWS -->
+          <tr>
+            <td>FactSales</td>
+            <td><span class="badge badge-info">Import</span></td>
+            <td>24</td>
+            <td>1</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>DimDate</td>
+            <td><span class="badge badge-info">Import</span></td>
+            <td>18</td>
+            <td>1</td>
+            <td></td>
+          </tr>
+          <!-- /MODEL_TABLE_ROWS -->
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Relationships</h3>
+      <!-- MODEL_RELATIONSHIPS: Summary of relationship topology -->
+      <table>
+        <thead>
+          <tr>
+            <th>From</th>
+            <th>To</th>
+            <th>Cardinality</th>
+            <th>Cross-Filter</th>
+            <th>Active</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- MODEL_REL_ROWS -->
+          <tr>
+            <td>DimDate[DateKey]</td>
+            <td>FactSales[DateKey]</td>
+            <td>1:*</td>
+            <td>Single</td>
+            <td>Yes</td>
+          </tr>
+          <!-- /MODEL_REL_ROWS -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 5: ROOT CAUSE ANALYSIS
+         Ranked findings combining perf data + model issues.
+         Use finding-list with numbered circles.
+         ═══════════════════════════════════════════════════ -->
+    <h2 class="section-title">5. Root Cause Analysis</h2>
+
+    <div class="card">
+      <!-- ROOT_CAUSE_FINDINGS: Ordered list of findings, most impactful first -->
+      <ol class="finding-list">
+        <li><!-- FINDING_1 -->Placeholder finding 1: Describe the root cause, affected visuals/measures, estimated impact.<!-- /FINDING_1 --></li>
+        <li><!-- FINDING_2 -->Placeholder finding 2: Describe the root cause, affected visuals/measures, estimated impact.<!-- /FINDING_2 --></li>
+        <li><!-- FINDING_3 -->Placeholder finding 3: Describe the root cause, affected visuals/measures, estimated impact.<!-- /FINDING_3 --></li>
+      </ol>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 6: BPA FINDINGS
+         Rule compliance table from run_bpa.py output.
+         ═══════════════════════════════════════════════════ -->
+    <h2 class="section-title">6. BPA Findings</h2>
+
+    <div class="card">
+      <!-- BPA_TABLE: Rule ID, name, severity badge, object, detail -->
+      <table>
+        <thead>
+          <tr>
+            <th>Rule</th>
+            <th>Severity</th>
+            <th>Object</th>
+            <th>Detail</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- BPA_ROWS -->
+          <tr>
+            <td>AVOID_FLOATING_POINT_DATA_TYPES</td>
+            <td><span class="badge badge-high">High</span></td>
+            <td>FactSales[Revenue]</td>
+            <td>Column uses <code>double</code>; consider <code>decimal</code>.</td>
+          </tr>
+          <tr>
+            <td>FILTER_ALL_ANTIPATTERN</td>
+            <td><span class="badge badge-medium">Medium</span></td>
+            <td>[Sales UK]</td>
+            <td>Uses FILTER(ALL(...)) — replace with REMOVEFILTERS.</td>
+          </tr>
+          <tr>
+            <td>AUTO_DATE_TABLES</td>
+            <td><span class="badge badge-low">Low</span></td>
+            <td>Model</td>
+            <td>Auto date/time is enabled; disable for smaller model size.</td>
+          </tr>
+          <!-- /BPA_ROWS -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 7: IMPROVEMENT OPTIONS
+         Each option gets a card with pros/cons grid.
+         ═══════════════════════════════════════════════════ -->
+    <h2 class="section-title">7. Improvement Options</h2>
+
+    <!-- IMPROVEMENT_OPTIONS: Repeat this card block for each option -->
+    <div class="card">
+      <h3><!-- OPTION_TITLE -->Option A: Refactor FILTER(ALL()) measures<!-- /OPTION_TITLE --></h3>
+      <p><!-- OPTION_DESCRIPTION -->Replace all FILTER(ALL(...)) patterns with REMOVEFILTERS + direct predicates to eliminate materialisation overhead.<!-- /OPTION_DESCRIPTION --></p>
+      <div class="pros-cons">
+        <div class="pros-col">
+          <h4>Pros</h4>
+          <ul>
+            <!-- OPTION_PROS -->
+            <li>Reduces query time for affected measures by 40-60%</li>
+            <li>No data model changes required</li>
+            <li>Low risk — functionally equivalent</li>
+            <!-- /OPTION_PROS -->
+          </ul>
+        </div>
+        <div class="cons-col">
+          <h4>Cons</h4>
+          <ul>
+            <!-- OPTION_CONS -->
+            <li>Requires testing of each refactored measure</li>
+            <li>Edge cases with complex filter contexts</li>
+            <!-- /OPTION_CONS -->
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- /IMPROVEMENT_OPTIONS -->
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 8: RECOMMENDATIONS
+         Prioritised action items in recommendation boxes.
+         ═══════════════════════════════════════════════════ -->
+    <h2 class="section-title">8. Recommendations</h2>
+
+    <!-- RECOMMENDATIONS: Repeat this block for each recommendation, ordered by priority -->
+    <div class="recommendation-box">
+      <h4><!-- REC_TITLE -->Recommendation 1: Refactor DAX anti-patterns<!-- /REC_TITLE --></h4>
+      <p><!-- REC_DESCRIPTION -->Address the 3 high-severity BPA findings first. The FILTER(ALL()) and bidirectional relationship issues account for an estimated 60% of the observed query latency.<!-- /REC_DESCRIPTION --></p>
+      <ol>
+        <!-- REC_STEPS -->
+        <li>Replace FILTER(ALL()) with REMOVEFILTERS in measures [Sales UK], [Sales EU], [Sales US].</li>
+        <li>Remove bidirectional cross-filtering on DimProduct-FactSales relationship.</li>
+        <li>Change FactSales[Revenue] from double to decimal.</li>
+        <!-- /REC_STEPS -->
+      </ol>
+    </div>
+
+    <div class="recommendation-box">
+      <h4><!-- REC_TITLE -->Recommendation 2: Optimise model size<!-- /REC_TITLE --></h4>
+      <p><!-- REC_DESCRIPTION -->Remove unused columns and disable auto date/time to reduce memory footprint and refresh time.<!-- /REC_DESCRIPTION --></p>
+      <ol>
+        <!-- REC_STEPS -->
+        <li>Remove 30 unused columns from FactTransactions table.</li>
+        <li>Disable auto date/time in model settings.</li>
+        <li>Add format strings to all unformatted measures.</li>
+        <!-- /REC_STEPS -->
+      </ol>
+    </div>
+    <!-- /RECOMMENDATIONS -->
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 9: NEXT STEPS
+         Short numbered list of immediate actions.
+         ═══════════════════════════════════════════════════ -->
+    <h2 class="section-title">9. Next Steps</h2>
+
+    <div class="card">
+      <ol class="finding-list">
+        <!-- NEXT_STEPS -->
+        <li><!-- STEP_1 -->Placeholder: immediate action item 1.<!-- /STEP_1 --></li>
+        <li><!-- STEP_2 -->Placeholder: immediate action item 2.<!-- /STEP_2 --></li>
+        <li><!-- STEP_3 -->Placeholder: immediate action item 3.<!-- /STEP_3 --></li>
+        <!-- /NEXT_STEPS -->
+      </ol>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         FOOTER
+         ═══════════════════════════════════════════════════ -->
+    <div class="report-footer">
+      <!-- FOOTER_TEXT -->
+      Generated by Flow AI — Power BI Performance Analyst &middot; <!-- GENERATION_TIMESTAMP -->2026-03-26T12:00:00Z<!-- /GENERATION_TIMESTAMP -->
+      <!-- /FOOTER_TEXT -->
+    </div>
+
+  </div>
+
+</body>
+</html>

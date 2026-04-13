@@ -1,0 +1,176 @@
+{
+  "version": "1.0.0",
+  "synthesisedAt": "2026-04-09T13:00:00Z",
+  "modelName": "ADE - Sales",
+  "healthScore": 32,
+  "healthGrade": "D",
+  "executiveSummary": "The ADE - Sales semantic model has critical performance issues driven by DirectQuery over-selection, missing date filters, and pass-through serve views. A single visual returning 5,003 rows reads 8.6 billion rows (17.63 GB) from Databricks in 33 seconds. The model has 52 tables (11 DirectQuery, 33 Dual), 270 measures (24 critical complexity, 66 FILTER(ALL) anti-patterns), and 79 relationships (3 bidirectional). All 144 dbt serve models are materialised as views with no aggregation layer.",
+  "topFindings": [
+    {
+      "id": "F1",
+      "title": "No date filter on visual — scans entire 22-year history",
+      "severity": "critical",
+      "impact": "very_high",
+      "effort": "low",
+      "quadrant": "quick_win",
+      "layers": ["PBI Report"],
+      "description": "The analysed query has no active date slicer. The dim_date_v2 IN clause contains ~8,000 dates spanning 2004-2027, causing a full scan of fact_product_option_trade_daily_snapshot_v1 (8.6B rows, 17.63 GB). Adding a mandatory date slicer (e.g., last 13 weeks) would reduce rows scanned by ~90%.",
+      "recommendation": "Add a mandatory date slicer to every report page. Consider using SELECTEDVALUE or ISFILTERED in DAX to show a warning when no date filter is applied.",
+      "estimatedImprovement": "90% row reduction, query time from 33s to ~3-5s"
+    },
+    {
+      "id": "F2",
+      "title": "Extreme column over-selection (375+ cols for 8 needed)",
+      "severity": "high",
+      "impact": "high",
+      "effort": "medium",
+      "quadrant": "quick_win",
+      "layers": ["PBI DirectQuery Engine", "PBI Model"],
+      "description": "PBI DirectQuery selects ALL columns from every table in the model at each subquery level. The analysed query selects ~90 columns from the fact table, ~47 from dim_date, ~73 from dim_product_option, and ~160 from dim_product_option_user_defined_attributes — but only 8 columns appear in the output. The UDA table alone contributes 160 columns via LEFT OUTER JOIN for a single value (priority).",
+      "recommendation": "1) Create narrow serve views with only the columns PBI actually uses. 2) Hide unused columns in the PBI model. 3) Consider splitting the UDA table into a separate narrow table with only priority + SK.",
+      "estimatedImprovement": "40-60% I/O reduction"
+    },
+    {
+      "id": "F3",
+      "title": "66 measures use FILTER(ALL()) anti-pattern",
+      "severity": "high",
+      "impact": "high",
+      "effort": "medium",
+      "quadrant": "strategic",
+      "layers": ["PBI DAX"],
+      "description": "66 out of 270 measures (24.4%) use the FILTER(ALL(...)) anti-pattern, which forces materialisation of the full column in memory before filtering. This includes critical measures like Billed Sales Quantity LM/LY, Billed Sales Value LM/LY, and many return metrics. 24 measures have critical complexity scores (15+).",
+      "recommendation": "Replace FILTER(ALL(Table[Column]), condition) with CALCULATE(measure, REMOVEFILTERS(Table[Column]), condition). Prioritise the 24 critical-complexity measures first.",
+      "estimatedImprovement": "10-30% DAX evaluation time reduction"
+    },
+    {
+      "id": "F4",
+      "title": "All 144 serve views are pass-through (no materialisation)",
+      "severity": "high",
+      "impact": "very_high",
+      "effort": "medium",
+      "quadrant": "strategic",
+      "layers": ["dbt"],
+      "description": "Every serve model is SELECT * FROM curated_table (materialised as view). No aggregation tables, no column reduction, no pre-filtering. Every PBI query hits the raw curated Delta tables at full width. 19 serve models have 50+ columns.",
+      "recommendation": "1) Materialise the top-hit fact table (fact_product_option_trade_daily_snapshot_v1) as an incremental model or Databricks Materialized View with only the columns PBI needs. 2) Create pre-aggregated daily snapshot tables for common groupings. 3) Reduce wide serve views to only the columns referenced by PBI.",
+      "estimatedImprovement": "50-80% reduction in scan volume"
+    },
+    {
+      "id": "F5",
+      "title": "Date filter via JOIN prevents partition pruning",
+      "severity": "high",
+      "impact": "high",
+      "effort": "low_medium",
+      "quadrant": "quick_win",
+      "layers": ["PBI DirectQuery Engine", "dbt"],
+      "description": "Date predicates are applied to dim_date_v2 then JOINed to the fact table via dim_date_sk surrogate key. The fact table receives no direct date WHERE clause, preventing Databricks from using liquid clustering or Z-ordering for partition pruning.",
+      "recommendation": "1) Add date parameters to _fn_GetDataFromDBX for M-level filtering on the fact table. 2) Ensure liquid clustering on fact table includes dim_date_sk. 3) Consider adding a natural date key (calendar_date) to the fact table for direct predicate pushdown.",
+      "estimatedImprovement": "Major scan reduction when combined with date slicer"
+    },
+    {
+      "id": "F6",
+      "title": "3 bidirectional relationships create ambiguous filter paths",
+      "severity": "high",
+      "impact": "medium",
+      "effort": "low",
+      "quadrant": "quick_win",
+      "layers": ["PBI Model"],
+      "description": "Three relationships use bidirectional cross-filtering: Option→Product Option Fabric Composition, Option→Product Option Country Restriction, Time Period→Date. Bidirectional filtering creates ambiguous filter paths and can cause unexpected query fan-out.",
+      "recommendation": "Change to oneDirection cross-filtering unless bidirectional is explicitly required for specific visuals. Use CROSSFILTER() in DAX for the specific measures that need it.",
+      "estimatedImprovement": "Reduced query complexity and more predictable filter behaviour"
+    },
+    {
+      "id": "F7",
+      "title": "776 unused column candidates",
+      "severity": "medium",
+      "impact": "medium",
+      "effort": "medium",
+      "quadrant": "strategic",
+      "layers": ["PBI Model"],
+      "description": "BPA identified 776 columns that are not referenced by any measure, relationship, or sort-by property. These columns add width to every DirectQuery query generated by PBI, increasing I/O.",
+      "recommendation": "Hide or remove unused columns from the semantic model. Start with DirectQuery tables (Billed Sale, Return, Product, etc.) where column reduction directly reduces Databricks I/O.",
+      "estimatedImprovement": "15-30% I/O reduction per query"
+    },
+    {
+      "id": "F8",
+      "title": "Cross-catalog JOINs span 4 catalogs in single query",
+      "severity": "medium",
+      "impact": "medium",
+      "effort": "high",
+      "quadrant": "deprioritise",
+      "layers": ["Databricks", "PBI Model"],
+      "description": "A single PBI visual generates SQL that JOINs tables from sales, technology, product, and supplychain catalogs. Each serve view is a view-over-view chain resolved at query time.",
+      "recommendation": "This is an architectural constraint of the ADE model. Mitigate by materialising frequently-joined dimension data into the sales catalog, or by creating aggregation tables that pre-join the required dimensions.",
+      "estimatedImprovement": "Moderate — depends on Databricks cross-catalog optimisation"
+    },
+    {
+      "id": "F9",
+      "title": "Scan amplification ratio of 1,727,000:1",
+      "severity": "critical",
+      "impact": "very_high",
+      "effort": "medium",
+      "quadrant": "strategic",
+      "layers": ["Databricks"],
+      "description": "The analysed query reads 8.64 billion rows to return 5,003 rows. The Grouping Aggregate operator (#13) alone takes 10.49 minutes (65.9% of total task time) because it must aggregate over the massive result set from all JOINs before reducing to 5K rows.",
+      "recommendation": "Create Databricks Materialized Views or dbt aggregation models that pre-compute SUM(retail_return_value) by the common dimension groupings. This moves the aggregation from query-time to build-time.",
+      "estimatedImprovement": "99%+ row reduction for pre-aggregated queries"
+    },
+    {
+      "id": "F10",
+      "title": "Wide UDA dimension table (160+ cols) joined for single column",
+      "severity": "high",
+      "impact": "high",
+      "effort": "low",
+      "quadrant": "quick_win",
+      "layers": ["PBI Model", "dbt"],
+      "description": "dim_product_option_user_defined_attributes_v1 has 160+ columns but only 'priority' is used in the visual output. The LEFT OUTER JOIN scans the entire table for this single value.",
+      "recommendation": "1) Create a narrow serve view (e.g., serve_dim_product_option_priority_v1) with only dim_product_option_sk and priority. 2) Point the PBI relationship to this narrow view instead.",
+      "estimatedImprovement": "Significant I/O reduction — removes ~160 columns from every query touching this relationship"
+    }
+  ],
+  "modelProfile": {
+    "tables": {"total": 52, "directQuery": 11, "dual": 33, "import": 8, "calculated": 6},
+    "columns": {"total": 908, "unusedCandidates": 776},
+    "measures": {"total": 270, "withIssues": 202, "clean": 68},
+    "relationships": {"total": 79, "bidirectional": 3, "manyToMany": 5, "inactive": 2},
+    "daxComplexity": {"critical": 24, "high": 46, "medium": 18, "low": 182, "avgScore": 3.8},
+    "daxAntiPatterns": {"FILTER_ALL": 66, "NESTED_CALCULATE": 14, "REPEATED_SUBEXPRESSION": 46, "COUNT_VS_COUNTROWS": 3, "MISSING_FORMAT_STRING": 5, "UNQUALIFIED_COLUMNS": 168, "NO_VARIABLES": 94, "HARDCODED_VALUES": 14},
+    "bpaFindings": {"high": 3, "medium": 73, "low": 944},
+    "hotTables": [
+      {"name": "Date", "mode": "dual", "references": 66},
+      {"name": "Daily Financial Transform", "mode": "dual", "references": 40},
+      {"name": "Billed Sale", "mode": "directQuery", "references": 31},
+      {"name": "Return", "mode": "directQuery", "references": 31},
+      {"name": "Time Period", "mode": "dual", "references": 12}
+    ]
+  },
+  "dbtProfile": {
+    "domains": 10,
+    "serveModels": 144,
+    "allViews": true,
+    "wideModels": 19,
+    "modelsWithFilter": 31,
+    "modelsWithUnion": 10
+  },
+  "queryProfile": {
+    "duration_ms": 33350,
+    "rows_read": 8636448393,
+    "rows_returned": 5003,
+    "data_read_gb": 17.63,
+    "tables_joined": 6,
+    "catalogs_crossed": 4,
+    "columns_selected": 375,
+    "columns_needed": 8,
+    "scan_amplification": 1727000,
+    "top_operator": "Grouping Aggregate #13 — 10.49 min (65.9%)"
+  },
+  "recommendationQuadrant": {
+    "quickWins": ["F1", "F2", "F5", "F6", "F10"],
+    "strategic": ["F3", "F4", "F7", "F9"],
+    "deprioritise": ["F8"]
+  },
+  "implementationRoadmap": [
+    {"phase": "Immediate (this week)", "items": ["F1: Add mandatory date slicer", "F6: Fix bidirectional relationships", "F10: Create narrow UDA view"]},
+    {"phase": "Short-term (2-4 weeks)", "items": ["F2: Reduce column selection in serve views", "F5: Add M-level date filtering", "F7: Hide unused columns in PBI model"]},
+    {"phase": "Medium-term (1-2 months)", "items": ["F3: Refactor FILTER(ALL) measures to REMOVEFILTERS", "F4: Materialise key serve views", "F9: Create pre-aggregated tables"]}
+  ]
+}
