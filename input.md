@@ -26,10 +26,9 @@
 ## Databricks Connection
 - **Connection method**: MCP (Databricks MCP server via Claude Code)
 - **Workspace URL**: https://adb-2762816844316267.7.azuredatabricks.net
-- **SQL Warehouse (Production)**: Technology SQL Warehouse (`f0bdb929e2c1cf2d`) — used by PBI SPN
-- **SQL Warehouse (Analysis)**: Engineering SQL Warehouse (`80bad8a5778c2e98`) — use for agent queries
+- **SQL Warehouse**: Technology SQL Warehouse (`f0bdb929e2c1cf2d`) — production only, used by PBI SPN and agent queries
 - **PAT**: `<REDACTED — set DATABRICKS_TOKEN env var>`
-- **Catalogs to analyse**: sales, product, customer, supplychain, sourcingandbuying, technology
+- **Catalogs to analyse**: sales, product, customer, supplychain, sourcingandbuying, technology (production catalogs — NEVER use `_dev` suffixed catalogs)
 - **PBI SPN executed_as filter**: `65978fad-bc17-4f5a-b134-25d299885855`
 
 ## Power BI Service Principal

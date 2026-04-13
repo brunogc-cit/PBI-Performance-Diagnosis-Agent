@@ -1,0 +1,76 @@
+{
+  "collectedAt": "2026-04-13",
+  "tables": [
+    {"fullName": "sales.curated.fact_product_option_trade_daily_snapshot_v1", "rowCount": 6068600624, "sizeGB": 116.0, "numFiles": 2760, "clusteringColumns": ["dim_date_sk", "dim_product_option_sk", "_updated_date"], "tableType": "MANAGED", "compression": "zstd", "deletionVectors": true},
+    {"fullName": "sales.serve.fact_product_option_trade_daily_snapshot_v1", "rowCount": null, "sizeGB": null, "numFiles": null, "clusteringColumns": [], "tableType": "VIEW"}
+  ],
+  "tableQueryStats": [
+    {"tableName": "fact_product_option_trade_daily_snapshot_v1", "totalQueries": 1174346, "dailyQueries": 40494, "avgDurationMs": 2424, "p95DurationMs": 9665, "avgGbRead": 0.85, "avgRowsRead": 271820679},
+    {"tableName": "dim_product_option_v1", "totalQueries": 16485, "dailyQueries": 568, "avgDurationMs": 3722, "p95DurationMs": 15193, "avgGbRead": 1.19, "avgRowsRead": 127731951},
+    {"tableName": "dim_date_v2", "totalQueries": 83453, "dailyQueries": 2877, "avgDurationMs": 2840, "p95DurationMs": 11681, "avgGbRead": 0.87, "avgRowsRead": 133782665},
+    {"tableName": "dim_product_lifecycle_status_v1", "totalQueries": 4362, "dailyQueries": 150, "avgDurationMs": 3002, "p95DurationMs": 19418, "avgGbRead": 0.71, "avgRowsRead": 42821042},
+    {"tableName": "dim_pricing_store_v1", "totalQueries": 5243, "dailyQueries": 180, "avgDurationMs": 2563, "p95DurationMs": 8883, "avgGbRead": 1.13, "avgRowsRead": 46743883},
+    {"tableName": "dim_product_option_single_valued_user_defined_attributes_v1", "totalQueries": 1912, "dailyQueries": 65, "avgDurationMs": 12141, "p95DurationMs": 40011, "avgGbRead": 0.03, "avgRowsRead": 890284},
+    {"tableName": "dim_country_v1", "totalQueries": 1554, "dailyQueries": 53, "avgDurationMs": 1125, "p95DurationMs": 5045, "avgGbRead": 0.49, "avgRowsRead": 151361607},
+    {"tableName": "dim_warehouse_v1", "totalQueries": 2753, "dailyQueries": 94, "avgDurationMs": 983, "p95DurationMs": 5350, "avgGbRead": 0.31, "avgRowsRead": 138808898},
+    {"tableName": "dim_inventory_status_v1", "totalQueries": 762, "dailyQueries": 26, "avgDurationMs": 920, "p95DurationMs": 3039, "avgGbRead": 0.66, "avgRowsRead": 136403642},
+    {"tableName": "dim_selling_channel_v1", "totalQueries": 2179, "dailyQueries": 75, "avgDurationMs": 882, "p95DurationMs": 3054, "avgGbRead": 0.49, "avgRowsRead": 33199011},
+    {"tableName": "dim_supplier_v1", "totalQueries": 6690, "dailyQueries": 230, "avgDurationMs": 653, "p95DurationMs": 5056, "avgGbRead": 0.00, "avgRowsRead": 296152},
+    {"tableName": "dim_stock_age_band_v1", "totalQueries": 2064, "dailyQueries": 71, "avgDurationMs": 1601, "p95DurationMs": 9870, "avgGbRead": 0.08, "avgRowsRead": 5628806},
+    {"tableName": "financial_transform_daily_v1", "totalQueries": 1590, "dailyQueries": 54, "avgDurationMs": 558, "p95DurationMs": 1129, "avgGbRead": 0.00, "avgRowsRead": 1727},
+    {"tableName": "dim_financial_time_period_v1", "totalQueries": 1510, "dailyQueries": 52, "avgDurationMs": 1996, "p95DurationMs": 5764, "avgGbRead": 0.00, "avgRowsRead": 8423},
+    {"tableName": "dim_seller_v1", "totalQueries": 909, "dailyQueries": 31, "avgDurationMs": 649, "p95DurationMs": 2832, "avgGbRead": 0.00, "avgRowsRead": 71},
+    {"tableName": "dim_shop_v1", "totalQueries": 1623, "dailyQueries": 55, "avgDurationMs": 625, "p95DurationMs": 2985, "avgGbRead": 0.04, "avgRowsRead": 226313},
+    {"tableName": "dim_web_store_v1", "totalQueries": 1621, "dailyQueries": 55, "avgDurationMs": 543, "p95DurationMs": 2329, "avgGbRead": 0.00, "avgRowsRead": 5},
+    {"tableName": "dim_territory_v1", "totalQueries": 1261, "dailyQueries": 43, "avgDurationMs": 424, "p95DurationMs": 732, "avgGbRead": 0.04, "avgRowsRead": 4640037},
+    {"tableName": "dim_price_status_v1", "totalQueries": 2359, "dailyQueries": 81, "avgDurationMs": 335, "p95DurationMs": 692, "avgGbRead": 0.00, "avgRowsRead": 9330},
+    {"tableName": "option_ranking", "totalQueries": 0, "dailyQueries": 0, "avgDurationMs": 0, "p95DurationMs": 0, "avgGbRead": 0, "avgRowsRead": 0}
+  ],
+  "scanAmplification": {
+    "worstCase": {"readRows": 6035153904, "producedRows": 4854, "ratio": 1243336, "durationMs": 189281, "readGb": 18.57, "readFiles": 2731, "prunedFiles": 5, "date": "2026-04-09"},
+    "heaviestQuery": {"readRows": 40624339, "producedRows": 12000, "ratio": 3385, "durationMs": 500822, "readGb": 26.04, "executionMs": 499072, "compilationMs": 1750, "readFiles": 938, "prunedFiles": 17864, "date": "2026-04-09"}
+  },
+  "hourlyDistribution": [
+    {"hour": 0, "queries": 375, "avgMs": 7561, "p95Ms": 31494},
+    {"hour": 1, "queries": 115, "avgMs": 10781, "p95Ms": 29218},
+    {"hour": 2, "queries": 162, "avgMs": 1992, "p95Ms": 6183},
+    {"hour": 5, "queries": 659, "avgMs": 3922, "p95Ms": 20546},
+    {"hour": 6, "queries": 21694, "avgMs": 2519, "p95Ms": 11035},
+    {"hour": 7, "queries": 59556, "avgMs": 2178, "p95Ms": 8926},
+    {"hour": 8, "queries": 82350, "avgMs": 2051, "p95Ms": 8258},
+    {"hour": 9, "queries": 56103, "avgMs": 1960, "p95Ms": 7995},
+    {"hour": 10, "queries": 51409, "avgMs": 1962, "p95Ms": 7921},
+    {"hour": 11, "queries": 23663, "avgMs": 2361, "p95Ms": 10023},
+    {"hour": 12, "queries": 31721, "avgMs": 2145, "p95Ms": 8810},
+    {"hour": 13, "queries": 37930, "avgMs": 2569, "p95Ms": 10702},
+    {"hour": 14, "queries": 42552, "avgMs": 2274, "p95Ms": 9036},
+    {"hour": 15, "queries": 22554, "avgMs": 2174, "p95Ms": 8673},
+    {"hour": 16, "queries": 11690, "avgMs": 3253, "p95Ms": 13097},
+    {"hour": 17, "queries": 7159, "avgMs": 3446, "p95Ms": 15217},
+    {"hour": 18, "queries": 6267, "avgMs": 2894, "p95Ms": 12672},
+    {"hour": 19, "queries": 5507, "avgMs": 2708, "p95Ms": 12924},
+    {"hour": 20, "queries": 3996, "avgMs": 4051, "p95Ms": 17510},
+    {"hour": 21, "queries": 2534, "avgMs": 5802, "p95Ms": 26279},
+    {"hour": 22, "queries": 3285, "avgMs": 5091, "p95Ms": 22710},
+    {"hour": 23, "queries": 233, "avgMs": 7563, "p95Ms": 39268}
+  ],
+  "durationDistribution": [
+    {"bucket": "0-1s", "queries": 595922, "totalGbRead": 8192.67, "avgRowsRead": 3289756},
+    {"bucket": "1-5s", "queries": 446369, "totalGbRead": 284046.66, "avgRowsRead": 151427300},
+    {"bucket": "5-10s", "queries": 76458, "totalGbRead": 240849.51, "avgRowsRead": 1130625081},
+    {"bucket": "10-30s", "queries": 48091, "totalGbRead": 388335.42, "avgRowsRead": 2811198102},
+    {"bucket": "30-60s", "queries": 5970, "totalGbRead": 63308.59, "avgRowsRead": 3665041963},
+    {"bucket": "1-2min", "queries": 1556, "totalGbRead": 16936.06, "avgRowsRead": 3697415165},
+    {"bucket": ">2min", "queries": 184, "totalGbRead": 1495.36, "avgRowsRead": 2461631727}
+  ],
+  "overallPbiStats": {
+    "totalQueries": 1363585,
+    "slow10s": 66715,
+    "slow30s": 9767,
+    "avgDurationS": 2.4,
+    "p50S": 0.8,
+    "p95S": 9.8,
+    "maxS": 500.8,
+    "totalReadTb": 1129.98
+  }
+}

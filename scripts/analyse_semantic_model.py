@@ -91,6 +91,144 @@ def _classify_tables(tables: list[dict], relationships: list[dict]) -> dict[str,
     return result
 
 
+def _build_relationship_tree(
+    root: str,
+    adj_detail: dict[str, list[dict]],
+    table_names: set[str],
+    table_modes: dict[str, str],
+    classifications: dict[str, str],
+    volumetry_map: dict[str, dict],
+    max_tree_depth: int = 6,
+) -> dict:
+    """Build a hierarchical relationship tree via BFS from a root table.
+
+    Returns a tree structure with branches showing every reachable table,
+    the relationship metadata at each edge, and depth-level distribution.
+    """
+    tree_children: list[dict] = []
+    visited: set[str] = {root}
+    # BFS queue: (parent_children_list, current_table, depth)
+    queue: list[tuple[list, str, int]] = []
+
+    # Seed with direct neighbours
+    for edge in adj_detail.get(root, []):
+        neighbour = edge["target"]
+        if neighbour in table_names and neighbour not in visited:
+            visited.add(neighbour)
+            vol = volumetry_map.get(neighbour, {})
+            child: dict = {
+                "table": neighbour,
+                "classification": classifications.get(neighbour, "unknown"),
+                "storageMode": table_modes.get(neighbour, "unknown"),
+                "cardinality": edge["cardinality"],
+                "crossFilter": edge["crossFilter"],
+                "direction": edge["direction"],
+                "depth": 1,
+                "rowCount": vol.get("rowCount"),
+                "sizeGB": vol.get("sizeGB"),
+                "children": [],
+            }
+            tree_children.append(child)
+            queue.append((child["children"], neighbour, 1))
+
+    while queue:
+        parent_list, node, depth = queue.pop(0)
+        if depth >= max_tree_depth:
+            continue
+        for edge in adj_detail.get(node, []):
+            neighbour = edge["target"]
+            if neighbour in table_names and neighbour not in visited:
+                visited.add(neighbour)
+                vol = volumetry_map.get(neighbour, {})
+                child = {
+                    "table": neighbour,
+                    "classification": classifications.get(neighbour, "unknown"),
+                    "storageMode": table_modes.get(neighbour, "unknown"),
+                    "cardinality": edge["cardinality"],
+                    "crossFilter": edge["crossFilter"],
+                    "direction": edge["direction"],
+                    "depth": depth + 1,
+                    "rowCount": vol.get("rowCount"),
+                    "sizeGB": vol.get("sizeGB"),
+                    "children": [],
+                }
+                parent_list.append(child)
+                queue.append((child["children"], neighbour, depth + 1))
+
+    # Compute depth distribution and cascade metrics
+    depth_dist: dict[int, int] = defaultdict(int)
+    storage_at_depth: dict[int, dict[str, int]] = defaultdict(lambda: defaultdict(int))
+
+    def _walk(nodes: list[dict]) -> None:
+        for n in nodes:
+            d = n["depth"]
+            depth_dist[d] += 1
+            storage_at_depth[d][n["storageMode"]] += 1
+            _walk(n["children"])
+
+    _walk(tree_children)
+
+    total_reachable = sum(depth_dist.values())
+    max_depth = max(depth_dist.keys()) if depth_dist else 0
+
+    # Build depth summary list
+    depth_summary: list[dict] = []
+    for d in sorted(depth_dist.keys()):
+        depth_summary.append({
+            "depth": d,
+            "tableCount": depth_dist[d],
+            "storageModes": dict(storage_at_depth[d]),
+        })
+
+    return {
+        "branches": tree_children,
+        "totalReachableTables": total_reachable,
+        "maxDepth": max_depth,
+        "depthDistribution": depth_summary,
+        "branchingFactor": round(total_reachable / max(len(tree_children), 1), 1),
+    }
+
+
+def _compute_join_cascade(
+    table_names: set[str],
+    adj: dict[str, set[str]],
+    table_modes: dict[str, str],
+    classifications: dict[str, str],
+) -> list[dict]:
+    """For every table, compute how many tables are transitively pulled in
+    when a query touches it (the 'join cascade')."""
+    cascades: list[dict] = []
+    for tbl in sorted(table_names):
+        visited: set[str] = {tbl}
+        queue: list[str] = [tbl]
+        dq_count = 0
+        max_depth = 0
+        depth_map: dict[str, int] = {tbl: 0}
+        while queue:
+            node = queue.pop(0)
+            nd = depth_map[node]
+            for neighbour in adj.get(node, set()):
+                if neighbour not in visited and neighbour in table_names:
+                    visited.add(neighbour)
+                    depth_map[neighbour] = nd + 1
+                    max_depth = max(max_depth, nd + 1)
+                    if table_modes.get(neighbour) == "directQuery":
+                        dq_count += 1
+                    queue.append(neighbour)
+        total = len(visited) - 1  # exclude self
+        if total > 0:
+            cascades.append({
+                "table": tbl,
+                "classification": classifications.get(tbl, "unknown"),
+                "storageMode": table_modes.get(tbl, "unknown"),
+                "cascadeTables": total,
+                "cascadeDirectQuery": dq_count,
+                "cascadeMaxDepth": max_depth,
+            })
+    cascades.sort(key=lambda x: x["cascadeTables"], reverse=True)
+    return cascades
+
+
 def _compute_graph_analysis(
     tables: list[dict],
     relationships: list[dict],
@@ -98,11 +236,14 @@ def _compute_graph_analysis(
     volumetry_map: dict[str, dict],
 ) -> dict:
     """Compute relationship graph metrics: degree centrality, hub detection,
-    snowflake depth."""
-    # Build adjacency
+    snowflake depth, and detailed branching analysis."""
+    # Build adjacency (simple for degree counting)
     adj: dict[str, set[str]] = defaultdict(set)
     in_degree: dict[str, int] = defaultdict(int)
     out_degree: dict[str, int] = defaultdict(int)
+
+    # Build detailed adjacency with relationship metadata
+    adj_detail: dict[str, list[dict]] = defaultdict(list)
 
     for r in relationships:
         ft = r.get("fromTable", "")
@@ -112,6 +253,21 @@ def _compute_graph_analysis(
             adj[tt].add(ft)
             out_degree[ft] += 1
             in_degree[tt] += 1
+
+            card = f"{r.get('fromCardinality', '*')}:{r.get('toCardinality', '1')}"
+            cross = r.get("crossFilteringBehavior", "oneDirection")
+            adj_detail[ft].append({
+                "target": tt,
+                "cardinality": card,
+                "crossFilter": cross,
+                "direction": "outbound",
+            })
+            adj_detail[tt].append({
+                "target": ft,
+                "cardinality": card,
+                "crossFilter": cross,
+                "direction": "inbound",
+            })
 
     table_names = {t["name"] for t in tables}
     table_modes = {t["name"]: t["storageMode"] for t in tables}
@@ -145,11 +301,15 @@ def _compute_graph_analysis(
                     visited.add(neighbour)
                     queue.append((neighbour, depth + 1))
 
-    # Identify hub tables with enrichment
+    # Identify hub tables with enrichment + branching trees
     hub_tables: list[dict] = []
     for gt in graph_tables:
         if gt["isHub"]:
             vol = volumetry_map.get(gt["name"], {})
+            tree = _build_relationship_tree(
+                gt["name"], adj_detail, table_names, table_modes,
+                classifications, volumetry_map,
+            )
             hub_tables.append({
                 "name": gt["name"],
                 "degree": gt["degree"],
@@ -157,17 +317,24 @@ def _compute_graph_analysis(
                 "storageMode": gt["storageMode"],
                 "sizeGB": vol.get("sizeGB", None),
                 "rowCount": vol.get("rowCount", None),
+                "branchTree": tree,
             })
     hub_tables.sort(key=lambda x: x["degree"], reverse=True)
 
     total_degree = sum(gt["degree"] for gt in graph_tables)
     avg_degree = round(total_degree / len(graph_tables), 1) if graph_tables else 0
 
+    # Join cascade analysis for all tables
+    join_cascades = _compute_join_cascade(
+        table_names, adj, table_modes, classifications,
+    )
+
     return {
         "maxSnowflakeDepth": max_depth,
         "avgDegree": avg_degree,
         "hubTables": hub_tables,
         "tables": graph_tables,
+        "joinCascades": join_cascades,
     }
 
 

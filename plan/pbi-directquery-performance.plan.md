@@ -38,7 +38,7 @@ func = (_DbxCatalog, _DbxDatabase, _DbxTable) =>
     in Table
 ```
 
-- As **partitions DirectQuery** dos fatos são simples pass-through (ex: `let DatabricksTable = _fn_GetDataFromDBX("sales_dev", "serve", "fact_order_line_v1") in DatabricksTable`)
+- As **partitions DirectQuery** dos fatos são simples pass-through (ex: `let DatabricksTable = _fn_GetDataFromDBX("sales", "serve", "fact_order_line_v1") in DatabricksTable`)
 - As tabelas curated usam **liquid clustering** (ex: `fact_order_line_v1` clustered por `dim_fx_rate_type_sk`, `dim_billed_transaction_date_sk`, etc.)
 - Modelos como **ADE - OrderLine** (73 tabelas, 14 DQ), **ADE - Sales** (52 tabelas), **ADE - Purchase/Commitment/Stock** (78 tabelas) são os mais complexos
 
@@ -69,7 +69,7 @@ func = (_DbxCatalog as text, _DbxDatabase as text, _DbxTable as text,
 A partição do `Order Line` passaria a ser:
 
 ```m
-let DatabricksTable = _fn_GetDataFromDBXFiltered("sales_dev", "serve", "fact_order_line_v1",
+let DatabricksTable = _fn_GetDataFromDBXFiltered("sales", "serve", "fact_order_line_v1",
     "billed_transaction_date", _StartDate, _EndDate)
 in DatabricksTable
 ```
@@ -120,7 +120,7 @@ O Power BI suporta **Incremental Refresh com DirectQuery** (disponível com Prem
 2. Modificar as partições dos fatos para incluir filtro de data usando esses parâmetros:
    ```m
    let
-     DatabricksTable = _fn_GetDataFromDBX("sales_dev", "serve", "fact_order_line_v1"),
+     DatabricksTable = _fn_GetDataFromDBX("sales", "serve", "fact_order_line_v1"),
      Filtered = Table.SelectRows(DatabricksTable,
        each [billed_transaction_date] >= RangeStart and [billed_transaction_date] < RangeEnd)
    in Filtered

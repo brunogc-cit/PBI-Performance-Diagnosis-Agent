@@ -1,0 +1,121 @@
+{
+  "collectedAt": "2026-04-13",
+  "model": "ADE - Trade",
+  "factTable": "fact_product_option_trade_daily_snapshot_v1",
+  "profilingPeriod": "last 30 days",
+  "topSlowQueries": [
+    {
+      "statementId": "01f1344f-856a-1765-951b-495063e9d843",
+      "durationMs": 500822,
+      "executionMs": 499072,
+      "compilationMs": 1750,
+      "fetchMs": 497,
+      "producedRows": 12000,
+      "readRows": 40624339,
+      "readGb": 26.04,
+      "readFiles": 938,
+      "prunedFiles": 17864,
+      "scanAmplification": 3385,
+      "date": "2026-04-09T20:05:57Z",
+      "pattern": "Large result set with heavy I/O — 26 GB read, 938 files after pruning (17,864 pruned = 95% pruning efficiency)"
+    },
+    {
+      "statementId": "01f1341e-7898-1df4-aec7-4ec265cb3bd5",
+      "durationMs": 189281,
+      "executionMs": 179225,
+      "compilationMs": 9266,
+      "fetchMs": 611,
+      "producedRows": 4854,
+      "readRows": 6035153904,
+      "readGb": 18.57,
+      "readFiles": 2731,
+      "prunedFiles": 5,
+      "scanAmplification": 1243336,
+      "date": "2026-04-09T14:14:50Z",
+      "pattern": "Extreme scan amplification — 6B rows read for 4,854 returned. Only 5 files pruned (0.2%) = no effective clustering benefit"
+    },
+    {
+      "statementId": "01f1342f-4d37-16d4-9c9f-66ba31a48860",
+      "durationMs": 184754,
+      "executionMs": 182608,
+      "compilationMs": 625,
+      "fetchMs": 36967,
+      "producedRows": 1000001,
+      "readRows": 6249185839,
+      "readGb": 16.51,
+      "readFiles": 5459,
+      "prunedFiles": 0,
+      "scanAmplification": 6249,
+      "date": "2026-04-09T16:15:18Z",
+      "pattern": "Full table scan — 0 files pruned, all 5,459 files read. 1M row limit hit (PBI truncation). 16.5 GB read."
+    }
+  ],
+  "evidence": [
+    {
+      "claimId": "scan-amplification-trade-fact",
+      "claim": "PBI queries read 6 billion rows to return ~5,000 rows — scan amplification ratio 1,243,336:1",
+      "evidenceType": "query_history",
+      "statementId": "01f1341e-7898-1df4-aec7-4ec265cb3bd5",
+      "impactType": "both",
+      "impactExplanation": "6B rows = full table scan of 6.07B row fact table. Execution takes 179s. Pruning ineffective (5/2736 files pruned = 0.2%)."
+    },
+    {
+      "claimId": "no-pruning-full-scan",
+      "claim": "Clustering on dim_date_sk is not being utilised — PBI date filter goes through dim_date JOIN, not direct WHERE on fact table",
+      "evidenceType": "query_history",
+      "statementId": "01f1342f-4d37-16d4-9c9f-66ba31a48860",
+      "impactType": "latency",
+      "impactExplanation": "0 files pruned out of 5,459 means Databricks cannot leverage liquid clustering. Direct date predicate on fact would enable pruning."
+    },
+    {
+      "claimId": "trade-daily-volume-40k",
+      "claim": "Trade model generates 40,494 queries per day against the fact table alone",
+      "evidenceType": "query_history",
+      "impactType": "cost",
+      "impactExplanation": "1.17M queries in 30 days at avg 0.85 GB each = ~1 PB of data scanned monthly from this single fact table."
+    },
+    {
+      "claimId": "peak-hour-82k-queries",
+      "claim": "Peak hour (8 AM UTC) generates 82,350 queries per week with avg 2.05s each",
+      "evidenceType": "query_history",
+      "impactType": "latency",
+      "impactExplanation": "Warehouse concurrency is stressed at peak — 82K queries at avg 2s = 45.7 hours of compute in a single hour."
+    },
+    {
+      "claimId": "heavy-500s-query",
+      "claim": "Worst Trade query took 500s reading 26 GB and returning only 12,000 rows",
+      "evidenceType": "query_history",
+      "statementId": "01f1344f-856a-1765-951b-495063e9d843",
+      "impactType": "both",
+      "impactExplanation": "8+ minutes for a single visual render. 99.6% of time in execution (499s). Pruning was effective (95%) but still 938 files to scan."
+    },
+    {
+      "claimId": "slow-10s-count",
+      "claim": "55,597 Trade queries exceeded 10 seconds in the last 30 days (4.7% of total)",
+      "evidenceType": "query_history",
+      "impactType": "latency",
+      "impactExplanation": "Queries >10s correspond to reading 1.1B+ rows on average, indicating full or near-full table scans."
+    },
+    {
+      "claimId": "dim-uda-slowest-avg",
+      "claim": "dim_product_option_single_valued_user_defined_attributes_v1 has the highest avg query duration at 12.1s (P95: 40s)",
+      "evidenceType": "query_history",
+      "impactType": "latency",
+      "impactExplanation": "Despite small row counts (890K avg), this UDA table participates in complex cross-table queries with the fact table."
+    },
+    {
+      "claimId": "bidirectional-relationships",
+      "claim": "3 bidirectional cross-filter relationships exist in the Trade model",
+      "evidenceType": "model_analysis",
+      "impactType": "latency",
+      "impactExplanation": "Bidirectional cross-filtering on DirectQuery tables generates additional subqueries and complex JOINs, increasing query cost."
+    },
+    {
+      "claimId": "fact-table-116gb",
+      "claim": "fact_product_option_trade_daily_snapshot_v1 is 116 GB with 6.07 billion rows across 2,760 files",
+      "evidenceType": "describe_detail",
+      "impactType": "cost",
+      "impactExplanation": "Large fact table with liquid clustering on dim_date_sk, dim_product_option_sk, _updated_date. Clustering works when direct predicates are applied."
+    }
+  ]
+}

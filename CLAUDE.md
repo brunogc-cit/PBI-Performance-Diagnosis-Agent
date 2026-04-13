@@ -32,6 +32,13 @@ PBI-Performance-Diagnosis-Agent/
 │   ├── run_bpa.py                     # Step 6: BPA rule checks → bpa-results.json
 │   ├── parse_perf_analyzer.py         # Step 5: parse PBI Perf Analyzer JSON → perf-summary.json
 │   ├── generate_report.py             # Step 8: produce HTML report from intermediate JSONs
+│   ├── analyse_user_queries.py        # Step 4b: per-user query attribution
+│   ├── analyse_capacity_settings.py   # Step 5c: capacity settings impact simulation
+│   ├── analyse_workload.py            # Step 5d: workload & surge protection analysis
+│   ├── analyse_column_memory.py       # Step 1c: column-level memory estimation
+│   ├── extract_pbix_layouts.py         # Step 1b: extract Layout from .pbix → pbix_extracted/
+│   ├── analyse_report_visuals.py      # Step 1b: PBI Inspector-style visual rules → visual-analysis.json
+│   ├── run_engineering_bpa.py         # Step 3b: engineering BPA (15 dbt rules)
 │   └── requirements.txt               # Empty — no external deps
 │
 ├── references/                        # Knowledge base (read-only)
@@ -59,11 +66,16 @@ The agent follows an 8-step workflow defined in `SKILL.md`:
 |------|------|--------|--------|----------|
 | 0 | Input Validation | — (reads `input.md`) | Human confirmation | Always |
 | 1 | Semantic Model Analysis | `analyse_semantic_model.py` | `model-taxonomy.json` | Needs PBI repo |
+| 1b | PBIX Report Analysis | `extract_pbix_layouts.py` + `analyse_report_visuals.py` | `visual-analysis.json` | When reports listed |
 | 2 | DAX Complexity Analysis | `audit_dax.py` + `analyse_dax_complexity.py` | `dax-audit.json` + `dax-complexity.json` | Needs PBI repo |
 | 3 | dbt Source Code Analysis | `analyse_dbt_lineage.py` | `dbt-lineage.json` | Optional (needs dbt repo) |
 | 4 | Databricks Metadata Profiling | — (MCP/manual queries) | `databricks-profile.json` | Optional (needs Databricks) |
 | 5 | Query Profiling | `parse_perf_analyzer.py` | `perf-summary.json` / `query-profile.json` | Optional |
 | 6 | Best Practice Analyser | `run_bpa.py` | `bpa-results.json` | Needs PBI repo |
+| 3b | Engineering BPA | `run_engineering_bpa.py` | `engineering-bpa-results.json` | Optional (needs dbt repo) |
+| 4b | User Query Attribution | `analyse_user_queries.py` | `user-query-profile.json` | Optional (needs query data) |
+| 5c | Capacity Settings Simulation | `analyse_capacity_settings.py` | `capacity-settings-analysis.json` | Optional (needs query data) |
+| 5d | Workload Analysis | `analyse_workload.py` | `workload-analysis.json` | Optional (needs query data) |
 | 7 | Cross-Reference + Synthesis | — (agent reasoning) | `synthesis.json` | Always |
 | 8 | Report Generation | `generate_report.py` | `*_Performance_Diagnosis.html` | Always |
 
@@ -125,6 +137,41 @@ python3 scripts/run_bpa.py \
   --model-path <path-to-PBI-model-dir> \
   --output output/
 
+# Step 3b: Engineering BPA
+python3 scripts/run_engineering_bpa.py \
+  --dbt-path <path-to-dbt-project> \
+  --taxonomy output/model-taxonomy.json \
+  --output output/
+
+# Step 4b: User query attribution
+python3 scripts/analyse_user_queries.py \
+  --query-data output/query-history-export.json \
+  --output output/
+
+# Step 5c: Capacity settings simulation
+python3 scripts/analyse_capacity_settings.py \
+  --query-data output/query-history-export.json \
+  --taxonomy output/model-taxonomy.json \
+  --output output/
+
+# Step 5d: Workload & capacity analysis
+python3 scripts/analyse_workload.py \
+  --query-data output/query-history-export.json \
+  --capacity-config output/capacity-config.json \
+  --output output/
+
+# Column memory analysis
+python3 scripts/analyse_column_memory.py \
+  --model-path <path-to-PBI-model-dir> \
+  --taxonomy output/model-taxonomy.json \
+  --dax-complexity output/dax-complexity.json \
+  --output output/
+
+# Visual layer rules
+python3 scripts/analyse_report_visuals.py \
+  --layout-path output/pbix_extracted/Layout \
+  --output output/
+
 # Step 8: Generate HTML report from intermediate JSONs
 # --run-label is a brief LLM-generated description for the execution
 # The script creates output/YYYY-MM-DD_HHMM_<run-label>/ and moves all files there
@@ -150,6 +197,18 @@ python3 scripts/generate_report.py \
 **`parse_perf_analyzer.py`** — Parses Power BI Desktop Performance Analyzer JSON exports. Analyses visual load times, query durations, render costs. Groups visuals under User Actions. Computes summary statistics (avg, median, P95, page load, bottleneck classification). Outputs `perf-summary.json`.
 
 **`generate_report.py`** — Reads all intermediate JSONs from the output directory, reads `synthesis.json` for root cause findings with **Where** classification (Engineering / Semantic Model / Power BI), and produces a single self-contained HTML file with inline CSS. Creates a timestamped subdirectory (`output/YYYY-MM-DD_HHMM_<run-label>/`) and moves all intermediate files there. **New in v2**: Model taxonomy shows classification (fact/dim), volumetry (rows, GB), and relationship topology (hub tables, snowflake depth). DAX complexity shows context transitions as primary metric. Hot tables include volumetry, degree, and optimisation priority. BPA shows impact type per rule and hides passing rules. dbt section is conditional (collapsed when no actionable findings). RCA includes scope badges (model-wide/report-specific). Detailed recommendations include evidence blocks, impact breakdowns, connection mode comparisons, dependency chains, sub-findings, and deep-dive flags.
+
+**`run_engineering_bpa.py`** — Runs 15 engineering best practice rules against dbt SQL and contract YAMLs. Checks SELECT *, missing clustering, wide serve views, missing WHERE filters, functions on filter columns, OR in JOINs, ROW_NUMBER vs QUALIFY, non-atomic materialisation, and more. Cross-references with model-taxonomy.json to only check dbt models consumed by PBI. Outputs `engineering-bpa-results.json`.
+
+**`analyse_user_queries.py`** — Processes Databricks system.query.history exports (JSON or CSV) to build per-user query profiles. Computes stats (avg/p50/p95/max duration, GB read, slow query counts), identifies training candidates via 3 heuristics, and produces hourly distribution. Outputs `user-query-profile.json`.
+
+**`analyse_capacity_settings.py`** — Simulates the impact of Fabric capacity management settings (query timeout, memory limit, row set counts, dataset size) at various thresholds. Follows Microsoft specialist methodology. Outputs `capacity-settings-analysis.json`.
+
+**`analyse_workload.py`** — Analyses CU consumption patterns by time-of-day and user. Recommends surge protection thresholds, workload isolation, capacity scaling pros/cons, and semantic model settings (Large Storage Format, Query Scale-Out). Outputs `workload-analysis.json`.
+
+**`analyse_column_memory.py`** — Estimates column-level memory consumption from PBI model metadata and Databricks row counts. Identifies hidden/unreferenced columns as removal candidates with estimated savings. Outputs `column-memory-analysis.json`.
+
+**`analyse_report_visuals.py`** — Parses PBIX Layout JSON and applies 8 PBI Inspector-style rules: too many visuals, missing date slicers, excessive filters, hidden pages with queries, auto-refresh, wide tables, measure-heavy cards, embedded images. Outputs `visual-analysis.json`.
 
 ## PBI Semantic Model Format
 
@@ -182,7 +241,15 @@ The PBI repository also contains `.pbix` report files at `powerbi/reports/<Repor
 - `Layout` — JSON with pages, visuals, filters, bookmarks, and slicer configs
 - `DataModelSchema` — JSON with the embedded semantic model
 
-Extract with: `unzip -o "<path>.pbix" Layout DataModelSchema -d output/pbix_extracted`
+Extract with:
+```bash
+python3 scripts/extract_pbix_layouts.py \
+  --reports-dir <pbi-repo>/powerbi/reports \
+  --report-names "Report Name 1,Report Name 2" \
+  --output output/
+```
+
+The script handles both legacy PBIX format (`Report/Layout` as UTF-16-LE encoded JSON) and PBIR format (`Report/definition/pages/` structure) by reconstructing a compatible Layout JSON. Resolves report name mismatches (e.g., "ADE - Trade" → "Trade/") using prefix-stripping and fuzzy matching.
 
 Use PBIX analysis when:
 - Correlating `VisualId` from Databricks query history to specific report visuals
@@ -283,14 +350,7 @@ The user running the agent needs `CAN USE` permission on the target SQL Warehous
 | Warehouse | ID | Purpose |
 |-----------|-----|---------|
 | Technology SQL Warehouse | `f0bdb929e2c1cf2d` | Production PBI queries (used by `spn-ade-pbi`) |
-| Engineering SQL Warehouse | `80bad8a5778c2e98` | Engineering / ad-hoc queries |
-| DBT ETL SQL Warehouse | `206c7a32b698f960` | dbt ETL runs |
-| DBT DEV SQL Warehouse | `b0e1490aee9df380` | dbt development |
-| DBT CI SQL Warehouse | `fab1ac2d4644fa14` | dbt CI pipelines |
-
-If `execute_sql` returns "You do not have permission to use the SQL Warehouse", either:
-- Ask your Databricks admin to grant `CAN USE` on the target warehouse
-- Override the warehouse at query time: `execute_sql` accepts an optional `warehouse_id` parameter — try `80bad8a5778c2e98` (Engineering) as a fallback
+**IMPORTANT**: Always use the Technology SQL Warehouse (`f0bdb929e2c1cf2d`) for all queries. Do NOT use the Engineering warehouse or any other warehouse. If `execute_sql` returns a permission error, ask the user to request `CAN USE` access — do not fall back to another warehouse.
 
 #### Troubleshooting
 
@@ -307,14 +367,13 @@ If `execute_sql` returns "You do not have permission to use the SQL Warehouse", 
 | Field | Value |
 |-------|-------|
 | Workspace URL | `https://adb-2762816844316267.7.azuredatabricks.net` |
-| SQL Warehouse (Production) | Technology SQL Warehouse (`f0bdb929e2c1cf2d`) |
-| SQL Warehouse (Fallback) | Engineering SQL Warehouse (`80bad8a5778c2e98`) |
+| SQL Warehouse | Technology SQL Warehouse (`f0bdb929e2c1cf2d`) — production only, no fallback |
 | HTTP Path | `/sql/1.0/warehouses/f0bdb929e2c1cf2d` |
 | Auth Method | Databricks CLI OAuth (`databricks-cli` profile) |
 | PBI Service Principal | `spn-ade-pbi` (object ID: `65978fad-bc17-4f5a-b134-25d299885855`) |
 | Query Source | PowerBI |
 | Photon | Enabled (99% of task time) |
-| Catalogs | sales, product, customer, supplychain, sourcingandbuying, technology |
+| Catalogs | sales, product, customer, supplychain, sourcingandbuying, technology (production — NEVER use `_dev` suffixed catalogs) |
 
 To filter PBI queries in `system.query.history`:
 ```sql
@@ -390,6 +449,7 @@ The scripts were validated against the real ASOS model:
 
 ## Key Constraints
 
+- **Production only** — ALL Databricks queries MUST use production catalogs (`sales`, `product`, `customer`, `supplychain`, `sourcingandbuying`, `technology`) without `_dev` suffix. Always use the Technology SQL Warehouse (`f0bdb929e2c1cf2d`). NEVER use the Engineering warehouse (`80bad8a5778c2e98`) or any other warehouse. The PBI model repo contains `_dev` suffixed catalogs in `_DbxEnvironmentSuffix` parameters — ignore those for Databricks queries; they are dev-time settings, not production references.
 - **Never execute git operations** — agents create files only, humans handle git
 - **British English** in all output (analyse, optimise, behaviour, prioritise)
 - **Always validate input.md first** — never skip Step 0

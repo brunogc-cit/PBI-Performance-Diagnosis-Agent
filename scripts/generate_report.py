@@ -136,6 +136,240 @@ def _classification_badge(cls: str) -> str:
     return f'<span class="badge {badge_cls}">{label}</span>'
 
 
+def _render_tree_node(node: dict, is_last: bool = False) -> str:
+    """Recursively render a snowflake tree node as nested HTML <ul>/<li>."""
+    mode = node.get("storageMode", "import")
+    mode_cls = {"directQuery": "sf-dq", "dual": "sf-dual", "import": "sf-import"}.get(mode, "")
+    cls_label = node.get("classification", "")[:3]
+    cross = node.get("crossFilter", "oneDirection")
+    card = node.get("cardinality", "")
+    bidi_cls = " sf-edge-bidi" if cross == "bothDirections" else ""
+    bidi_icon = " &#x21C6;" if cross == "bothDirections" else ""
+    vol_info = ""
+    if node.get("rowCount"):
+        vol_info = f" &middot; {_fmt_rows(node['rowCount'])} rows"
+    if node.get("sizeGB"):
+        vol_info += f" &middot; {_fmt_gb(node['sizeGB'])}"
+
+    edge_html = f'<span class="sf-edge-info{bidi_cls}">[{card}{bidi_icon}]{vol_info}</span>'
+
+    children_html = ""
+    if node.get("children"):
+        items = ""
+        for i, child in enumerate(node["children"]):
+            items += _render_tree_node(child, i == len(node["children"]) - 1)
+        children_html = f'<ul class="sf-tree">{items}</ul>'
+
+    return f'''<li class="sf-node">
+      <span class="sf-node-label {mode_cls}">{escape(node["table"])}
+        <span class="badge {_classification_badge_cls(cls_label)}" style="font-size:9px;padding:1px 6px">{cls_label}</span>
+        {_badge(mode)}
+      </span>{edge_html}
+      {children_html}
+    </li>'''
+
+
+def _classification_badge_cls(cls: str) -> str:
+    """Return just the badge CSS class for a classification abbreviation."""
+    return {
+        "fac": "badge-high", "dim": "badge-info",
+        "bri": "badge-medium", "met": "badge-low",
+    }.get(cls, "badge-low")
+
+
+def _render_depth_bar(depth_dist: list[dict], total_tables: int) -> str:
+    """Render a stacked horizontal bar showing tables per depth level."""
+    if not depth_dist or total_tables == 0:
+        return ""
+    colours = ["var(--accent)", "var(--green)", "var(--amber)", "var(--red)", "var(--muted)", "#8e44ad"]
+    bars = ""
+    for i, dd in enumerate(depth_dist):
+        pct = (dd["tableCount"] / total_tables) * 100
+        colour = colours[i % len(colours)]
+        dq = dd.get("storageModes", {}).get("directQuery", 0)
+        tooltip = f"Depth {dd['depth']}: {dd['tableCount']} tables"
+        if dq:
+            tooltip += f" ({dq} DQ)"
+        bars += f'<div class="sf-depth-segment" style="width:{max(pct, 6):.1f}%;background:{colour}" title="{tooltip}">L{dd["depth"]}</div>'
+    return f'''<div class="sf-depth-bar">
+      <span class="sf-depth-label">Depth</span>{bars}
+      <span style="font-size:10px;color:var(--muted);margin-left:4px">{total_tables} tables</span>
+    </div>'''
+
+
+def _render_hub_tree_card(hub: dict) -> str:
+    """Render a full snowflake branching card for one hub table."""
+    tree = hub.get("branchTree", {})
+    branches = tree.get("branches", [])
+    if not branches:
+        return ""
+
+    total = tree.get("totalReachableTables", 0)
+    max_d = tree.get("maxDepth", 0)
+    bf = tree.get("branchingFactor", 0)
+    depth_dist = tree.get("depthDistribution", [])
+
+    # Root node
+    mode = hub.get("storageMode", "unknown")
+    vol_info = ""
+    if hub.get("rowCount"):
+        vol_info += f" &middot; {_fmt_rows(hub['rowCount'])} rows"
+    if hub.get("sizeGB"):
+        vol_info += f" &middot; {_fmt_gb(hub['sizeGB'])}"
+
+    # Build tree HTML
+    tree_items = ""
+    for i, branch in enumerate(branches):
+        tree_items += _render_tree_node(branch, i == len(branches) - 1)
+
+    # Depth distribution bar
+    depth_bar = _render_depth_bar(depth_dist, total)
+
+    # Count DirectQuery tables in cascade
+    dq_in_cascade = sum(
+        dd.get("storageModes", {}).get("directQuery", 0)
+        for dd in depth_dist
+    )
+
+    # Cascade warning
+    cascade_warning = ""
+    if total > 5 or dq_in_cascade > 3:
+        cascade_warning = f'''<div class="cascade-card">
+          <h4>&#9888; Join Cascade Impact</h4>
+          <p>Any query touching <strong>{escape(hub["name"])}</strong> can transitively involve
+             <strong>{total} additional tables</strong> across <strong>{max_d} depth levels</strong>.</p>
+          {"<p><strong>" + str(dq_in_cascade) + " DirectQuery tables</strong> in the cascade generate separate SQL queries to Databricks, compounding latency.</p>" if dq_in_cascade > 0 else ""}
+          <p style="font-size:11px;color:var(--muted)">Each relationship hop adds JOINs to the generated SQL. Deeper chains = more subqueries = slower response.</p>
+        </div>'''
+
+    return f'''<div class="card" style="margin-top:12px">
+      <h3 style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span class="sf-node-label sf-root">{escape(hub["name"])}</span>
+        <span style="font-size:12px;color:var(--muted);font-weight:400">
+          degree {hub["degree"]} &middot; {total} reachable tables &middot; {max_d} max depth &middot; branching factor {bf}{vol_info}
+        </span>
+      </h3>
+      {depth_bar}
+      <div style="overflow-x:auto;padding:8px 0">
+        <ul class="sf-tree">{tree_items}</ul>
+      </div>
+      {cascade_warning}
+    </div>'''
+
+
+def _render_cascade_summary_table(join_cascades: list[dict], top_n: int = 15) -> str:
+    """Render a summary table of top tables by join cascade size."""
+    if not join_cascades:
+        return ""
+    rows = ""
+    for c in join_cascades[:top_n]:
+        cascade_extra = "color:var(--red);font-weight:600;" if c["cascadeTables"] > 10 else (
+            "color:var(--amber);font-weight:600;" if c["cascadeTables"] > 5 else "")
+        dq_extra = "color:var(--red);font-weight:600;" if c["cascadeDirectQuery"] > 3 else ""
+        rows += f'''<tr>
+          <td><strong>{escape(c["table"])}</strong></td>
+          <td>{_classification_badge(c.get("classification", ""))}</td>
+          <td>{_badge(c.get("storageMode", ""))}</td>
+          <td style="text-align:right;{cascade_extra}">{c["cascadeTables"]}</td>
+          <td style="text-align:right;{dq_extra}">{c["cascadeDirectQuery"]}</td>
+          <td style="text-align:right">{c["cascadeMaxDepth"]}</td>
+        </tr>'''
+    return f'''<div class="card" style="margin-top:16px">
+      <h3>Join Cascade &mdash; Tables Transitively Involved per Query</h3>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">
+        When Power BI queries a table, all related tables in the snowflake model are transitively joined.
+        Higher cascade = more JOINs = slower DirectQuery SQL.
+      </p>
+      <div style="overflow-x:auto">
+      <table>
+        <thead><tr>
+          <th>Table</th><th>Type</th><th>Storage</th>
+          <th style="text-align:right">Cascade Tables</th>
+          <th style="text-align:right">DQ in Cascade</th>
+          <th style="text-align:right">Max Depth</th>
+        </tr></thead>
+        <tbody>{rows}</tbody>
+      </table>
+      </div>
+    </div>'''
+
+
+def _render_branching_suggestions(hub_tables: list[dict], join_cascades: list[dict]) -> str:
+    """Generate actionable improvement suggestions based on branching analysis."""
+    suggestions: list[str] = []
+
+    # Check for deep cascades
+    deep_hubs = [h for h in hub_tables if h.get("branchTree", {}).get("maxDepth", 0) >= 4]
+    if deep_hubs:
+        names = ", ".join(h["name"] for h in deep_hubs[:3])
+        suggestions.append(
+            f"<strong>Reduce snowflake depth</strong> for {names} &mdash; chains of 4+ relationship hops "
+            f"generate deeply nested SQL subqueries. Consider denormalising intermediate dimension "
+            f"attributes into the fact table or creating pre-joined aggregation tables."
+        )
+
+    # Check for high branching factor
+    wide_hubs = [h for h in hub_tables if h.get("branchTree", {}).get("branchingFactor", 0) > 3]
+    if wide_hubs:
+        names = ", ".join(h["name"] for h in wide_hubs[:3])
+        suggestions.append(
+            f"<strong>Reduce branching factor</strong> for {names} &mdash; high fan-out from hub tables "
+            f"means each query pulls in many dimension tables. Review whether all relationships are "
+            f"actively used by report visuals; unused relationships can be removed or deactivated."
+        )
+
+    # Check for DQ tables deep in the tree
+    dq_deep = []
+    for h in hub_tables:
+        tree = h.get("branchTree", {})
+        for dd in tree.get("depthDistribution", []):
+            if dd["depth"] >= 2 and dd.get("storageModes", {}).get("directQuery", 0) > 0:
+                dq_deep.append(h["name"])
+                break
+    if dq_deep:
+        suggestions.append(
+            "<strong>Convert deep DirectQuery dimensions to Dual/Import</strong> &mdash; tables beyond "
+            "depth 1 that are DirectQuery force additional roundtrips to Databricks. Small lookup "
+            "tables (&lt; 1M rows) at depth 2+ should use Import or Dual storage mode."
+        )
+
+    # Check for bidirectional relationships in branches
+    bidi_in_branches: set[str] = set()
+    for h in hub_tables:
+        def _find_bidi(nodes: list[dict], hub_name: str = h["name"]) -> None:
+            for n in nodes:
+                if n.get("crossFilter") == "bothDirections":
+                    bidi_in_branches.add(f"{hub_name} &rarr; {n['table']}")
+                _find_bidi(n.get("children", []), hub_name)
+        _find_bidi(h.get("branchTree", {}).get("branches", []))
+    if bidi_in_branches:
+        examples = ", ".join(list(bidi_in_branches)[:3])
+        suggestions.append(
+            f"<strong>Remove bidirectional cross-filtering</strong> in branches ({examples}) &mdash; "
+            f"bidirectional filters propagate across the entire snowflake chain, multiplying the "
+            f"number of SQL JOINs. Use CROSSFILTER() in specific DAX measures instead."
+        )
+
+    # Check for very large cascades
+    big_cascades = [c for c in join_cascades if c["cascadeTables"] > 15]
+    if big_cascades:
+        names = ", ".join(c["table"] for c in big_cascades[:3])
+        suggestions.append(
+            f"<strong>Consider aggregation tables</strong> for {names} &mdash; queries involving 15+ "
+            f"transitively joined tables are expensive. Pre-computed aggregation tables for common "
+            f"grain levels (daily, weekly) dramatically reduce the join footprint."
+        )
+
+    if not suggestions:
+        return ""
+
+    items = "".join(f"<li>{s}</li>" for s in suggestions)
+    return f'''<div class="sf-suggestion">
+      <h4>Snowflake Optimisation Suggestions</h4>
+      <ul>{items}</ul>
+    </div>'''
+
+
 def _perf_bar(name: str, time_label: str, pct: float) -> str:
     colour = "red" if pct > 30 else ("amber" if pct > 10 else "green")
     return f"""<div style="margin-bottom:10px">
@@ -160,8 +394,7 @@ CSS = """
     .report-header h1 { font-size:24px; font-weight:600; margin-bottom:8px; }
     .report-header .metadata { font-size:13px; color:#adb5bd; display:flex; gap:24px; flex-wrap:wrap; }
     .container { max-width:1200px; margin:0 auto; padding:32px 40px 60px; }
-    .section-title { font-size:18px; font-weight:600; color:var(--dark); margin:40px 0 20px; padding-bottom:10px; border-bottom:3px solid var(--accent); }
-    .section-title:first-child { margin-top:0; }
+    .section-title { font-size:18px; font-weight:600; color:var(--dark); margin:0; padding:0; }
     .metric-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
     .metric-card { background:#fff; border:1px solid var(--border); border-radius:8px; padding:20px; text-align:center; }
     .metric-card .value { font-size:28px; font-weight:700; color:var(--dark); line-height:1.2; }
@@ -187,17 +420,92 @@ CSS = """
     .recommendation-box { background:linear-gradient(135deg,rgba(7,112,207,0.08),rgba(7,112,207,0.03)); border:1px solid rgba(7,112,207,0.2); border-radius:8px; padding:20px 24px; margin:16px 0; }
     .recommendation-box h4 { color:var(--accent); margin-bottom:8px; font-size:14px; }
     .recommendation-box p { font-size:13px; margin-bottom:8px; }
-    .quadrant-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-    .quadrant-box { border-radius:8px; padding:20px; }
-    .quadrant-box h3 { margin-bottom:12px; font-size:14px; }
-    .quadrant-box ul { list-style:none; padding:0; }
-    .quadrant-box li { margin-bottom:8px; font-size:13px; }
+    .matrix-wrapper { position:relative; margin:24px 0 24px 48px; }
+    .matrix-y-label { position:absolute; left:-48px; top:50%; transform:rotate(-90deg) translateX(-50%); transform-origin:0 0; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--muted); white-space:nowrap; }
+    .matrix-x-label { text-align:center; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-top:8px; }
+    .matrix-grid { display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:12px; }
+    .matrix-box { border-radius:8px; padding:20px; min-height:120px; position:relative; }
+    .matrix-box h3 { margin-bottom:4px; font-size:14px; font-weight:700; }
+    .matrix-box .matrix-subtitle { font-size:11px; color:var(--muted); margin-bottom:12px; }
+    .matrix-box .matrix-count { display:inline-block; background:rgba(255,255,255,0.7); border-radius:12px; padding:2px 10px; font-size:11px; font-weight:700; margin-bottom:8px; }
+    .matrix-box ul { list-style:none; padding:0; margin:0; }
+    .matrix-box li { margin-bottom:6px; font-size:13px; line-height:1.4; }
+    .matrix-box details summary { font-size:13px; color:inherit; padding:4px 0; }
+    .matrix-box details summary:hover { text-decoration:underline; }
+    .matrix-actions-table { margin-top:8px; font-size:12px; }
+    .matrix-actions-table td { padding:6px 10px; }
+    .matrix-actions-table tr:nth-child(even) { background:rgba(255,255,255,0.4); }
+    .matrix-arrow-right { position:absolute; bottom:-22px; left:50%; font-size:14px; color:var(--muted); }
+    .matrix-arrow-up { position:absolute; left:-28px; top:50%; font-size:14px; color:var(--muted); }
     details { margin-top:16px; }
     details summary { cursor:pointer; font-weight:600; color:var(--accent); padding:8px 0; font-size:13px; }
     details summary:hover { text-decoration:underline; }
     .report-footer { margin-top:48px; padding-top:20px; border-top:1px solid var(--border); font-size:12px; color:var(--muted); text-align:center; }
-    @media (max-width:768px) { .metric-grid,.quadrant-grid { grid-template-columns:1fr; } .container { padding:16px 20px 40px; } }
-    @media print { body { background:#fff; font-size:12px; } .card { box-shadow:none; break-inside:avoid; } .section-title { break-after:avoid; } }
+    .tooltip-wrap { position:relative; cursor:help; border-bottom:1px dashed currentColor; }
+    .tooltip-wrap::after { content:attr(data-tooltip); position:absolute; bottom:120%; left:50%; transform:translateX(-50%); background:var(--dark); color:#fff; padding:10px 14px; border-radius:6px; font-size:11px; line-height:1.5; white-space:pre-line; min-width:320px; max-width:420px; opacity:0; pointer-events:none; transition:opacity 0.2s; z-index:100; box-shadow:0 4px 12px rgba(0,0,0,0.2); }
+    .tooltip-wrap:hover::after { opacity:1; }
+    .heat-green { background: rgba(26,135,84,0.15); }
+    .heat-yellow { background: rgba(212,160,23,0.15); }
+    .heat-red { background: rgba(192,57,43,0.15); }
+    .sortable-th { cursor: pointer; user-select: none; }
+    .sortable-th:hover { background: #dee2e6; }
+    .sortable-th::after { content: ' \\25B4\\25BE'; font-size: 10px; color: var(--muted); }
+    .bar-container { background:#e9ecef; border-radius:4px; height:18px; overflow:hidden; }
+    .bar-fill { height:100%; border-radius:4px; min-width:2px; }
+    .pros-cons-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .pros-cons-grid ul { list-style:none; padding:0; }
+    .pros-cons-grid li { margin-bottom:8px; font-size:13px; padding-left:20px; position:relative; }
+    .pros-cons-grid li::before { position:absolute; left:0; }
+    .pros-list li::before { content:'\\2713'; color:var(--green); }
+    .cons-list li::before { content:'\\2717'; color:var(--red); }
+    .report-section { margin-bottom:8px; border:1px solid var(--border); border-radius:8px; background:#fff; }
+    .report-section > summary { list-style:none; cursor:pointer; padding:16px 24px; font-size:18px; font-weight:600; color:var(--dark); border-bottom:3px solid transparent; display:flex; align-items:center; gap:12px; user-select:none; }
+    .report-section > summary:hover { background:var(--light-bg); }
+    .report-section > summary::before { content:'\\25B6'; font-size:12px; color:var(--accent); transition:transform 0.2s; flex-shrink:0; }
+    .report-section[open] > summary { border-bottom-color:var(--accent); }
+    .report-section[open] > summary::before { transform:rotate(90deg); }
+    .report-section > summary::-webkit-details-marker { display:none; }
+    .report-section > .section-body { padding:24px; }
+    .toc-card { background:#fff; border:1px solid var(--border); border-radius:8px; padding:20px 24px; margin-bottom:24px; }
+    .toc-card h3 { font-size:15px; font-weight:600; margin-bottom:12px; color:var(--dark); }
+    .toc-list { list-style:none; padding:0; columns:2; column-gap:24px; }
+    .toc-list li { margin-bottom:6px; font-size:13px; break-inside:avoid; }
+    .toc-list a { color:var(--accent); text-decoration:none; }
+    .toc-list a:hover { text-decoration:underline; }
+    .approach-card { background:#fff; border:1px solid var(--border); border-radius:8px; padding:24px; margin-bottom:24px; }
+    .approach-card h3 { font-size:15px; font-weight:600; margin-bottom:12px; color:var(--dark); }
+    .approach-card ul { padding-left:20px; font-size:13px; }
+    .approach-card li { margin-bottom:6px; }
+    .input-badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; margin-right:6px; }
+    .input-active { background:rgba(26,135,84,0.12); color:var(--green); }
+    .input-inactive { background:rgba(0,0,0,0.06); color:var(--muted); }
+    /* Snowflake tree visualisation */
+    .sf-tree { list-style:none; padding-left:0; margin:0; }
+    .sf-tree .sf-tree { padding-left:24px; border-left:2px solid var(--border); margin-left:8px; }
+    .sf-node { padding:6px 0; position:relative; }
+    .sf-node::before { content:''; position:absolute; left:-24px; top:16px; width:20px; height:0; border-top:2px solid var(--border); }
+    .sf-tree > .sf-node:first-child::before { display:none; }
+    .sf-tree > .sf-tree > .sf-node::before { display:block; }
+    .sf-node-label { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:6px; font-size:12px; font-weight:600; border:1px solid var(--border); background:#fff; }
+    .sf-node-label.sf-root { background:var(--dark); color:#fff; border-color:var(--dark); font-size:13px; padding:6px 14px; }
+    .sf-node-label.sf-dq { border-color:var(--red); background:rgba(192,57,43,0.06); }
+    .sf-node-label.sf-dual { border-color:var(--amber); background:rgba(212,160,23,0.06); }
+    .sf-node-label.sf-import { border-color:var(--green); background:rgba(26,135,84,0.06); }
+    .sf-edge-info { font-size:10px; color:var(--muted); font-weight:400; margin-left:4px; }
+    .sf-edge-bidi { color:var(--red); font-weight:600; }
+    .sf-depth-bar { display:flex; align-items:center; gap:4px; margin-bottom:6px; }
+    .sf-depth-segment { height:22px; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:#fff; min-width:24px; }
+    .sf-depth-label { font-size:11px; color:var(--muted); min-width:54px; font-weight:600; }
+    .cascade-card { background:linear-gradient(135deg,rgba(192,57,43,0.06),rgba(212,160,23,0.03)); border:1px solid rgba(192,57,43,0.15); border-radius:8px; padding:16px 20px; margin:12px 0; }
+    .cascade-card h4 { font-size:13px; font-weight:700; color:var(--red); margin-bottom:8px; }
+    .cascade-card p { font-size:12px; margin-bottom:6px; }
+    .cascade-table td { font-size:12px; }
+    .sf-suggestion { background:linear-gradient(135deg,rgba(26,135,84,0.08),rgba(26,135,84,0.02)); border:1px solid rgba(26,135,84,0.2); border-radius:8px; padding:16px 20px; margin:12px 0; }
+    .sf-suggestion h4 { font-size:13px; font-weight:700; color:var(--green); margin-bottom:8px; }
+    .sf-suggestion ul { padding-left:18px; font-size:12px; }
+    .sf-suggestion li { margin-bottom:6px; }
+    @media (max-width:768px) { .metric-grid,.quadrant-grid { grid-template-columns:1fr; } .container { padding:16px 20px 40px; } .sf-tree .sf-tree { padding-left:16px; } }
+    @media print { body { background:#fff; font-size:12px; } .card { box-shadow:none; break-inside:avoid; } .report-section { break-inside:avoid; } .report-section[open] > summary { break-after:avoid; } .tooltip-wrap::after { display:none; } .report-section > summary::before { content:''; } }
 """
 
 
@@ -214,9 +522,40 @@ def generate_html(
     source_dir: Path | None = None,
 ) -> str:
     """Generate the full HTML report from intermediate data."""
-    now = datetime.now(timezone.utc).strftime("%d %b %Y %H:%M UTC")
+    now = datetime.now(timezone.utc).strftime("%d %b %Y")
     synthesis = _read_json_file(source_dir / "synthesis.json") if source_dir else None
     query_profile = _read_json_file(source_dir / "query-profile.json") if source_dir else None
+    dbx_profile = _read_json_file(source_dir / "databricks-profile.json") if source_dir else None
+
+    # New analysis JSONs (conditional — sections render only when present)
+    user_query_profile = _read_json_file(source_dir / "user-query-profile.json") if source_dir else None
+    capacity_settings = _read_json_file(source_dir / "capacity-settings-analysis.json") if source_dir else None
+    workload_analysis = _read_json_file(source_dir / "workload-analysis.json") if source_dir else None
+    column_memory = _read_json_file(source_dir / "column-memory-analysis.json") if source_dir else None
+    engineering_bpa = _read_json_file(source_dir / "engineering-bpa-results.json") if source_dir else None
+    visual_analysis = _read_json_file(source_dir / "visual-analysis.json") if source_dir else None
+
+    # Build per-table query stats lookup from databricks-profile.json
+    table_query_stats: dict[str, dict] = {}
+    if dbx_profile and dbx_profile.get("tableQueryStats"):
+        for tqs in dbx_profile["tableQueryStats"]:
+            tname = tqs.get("tableName", "").lower()
+            if tname:
+                table_query_stats[tname] = tqs
+
+    # Enrich taxonomy tables with volumetry from databricks-profile.json
+    # (Step 1 runs before Step 4, so taxonomy has no volumetry at creation time)
+    if taxonomy and dbx_profile and dbx_profile.get("tables"):
+        dbx_vol: dict[str, dict] = {}
+        for dt in dbx_profile["tables"]:
+            dtname = dt.get("tableName", "").lower()
+            if dtname:
+                dbx_vol[dtname] = {"rowCount": dt.get("rowCount"), "sizeGB": dt.get("sizeGB")}
+        for t in taxonomy.get("tables", []):
+            if not t.get("volumetry") and t.get("sourceTable"):
+                src = t["sourceTable"].lower()
+                if src in dbx_vol:
+                    t["volumetry"] = dbx_vol[src]
 
     # ── Collect statistics ──
     stats = taxonomy.get("statistics", {}) if taxonomy else {}
@@ -236,21 +575,63 @@ def generate_html(
     dax_stats = dax_complexity.get("statistics", {}) if dax_complexity else {}
     cross_dq = dax_stats.get("crossMultipleDQ", 0)
     avg_complexity = dax_stats.get("avgComplexityScore", 0)
-    complexity_dist = dax_stats.get("complexityDistribution", {})
+    complexity_dist = dax_stats.get("byComplexity", dax_stats.get("complexityDistribution", {}))
 
     dbt_stats_raw = dbt_lineage.get("statistics", {}) if dbt_lineage else {}
 
-    # Health score: always computed from BPA findings (ignore synthesis healthScore
-    # to ensure consistency). Deductions capped per severity tier.
-    #   High: -10 each (no cap — high findings are serious)
-    #   Medium: -3 each (capped at -30)
-    #   Low: -1 each (capped at -20 — low findings are code quality noise)
-    health = max(0, min(100,
-        100 - bpa_high * 10 - min(bpa_medium * 3, 30) - min(bpa_low, 20)))
+    # ── Health Score v2: 4-pillar point budget ──
+    # Each pillar has a fixed point budget. Sum = 0-100. Global floor = 5.
+    #   BPA Compliance (40)  — rule violations severity
+    #   DAX Quality    (25)  — anti-patterns, complexity
+    #   Architecture   (25)  — model structure risks
+    #   dbt Quality    (10)  — data pipeline quality
+
+    # Pillar 1: BPA Compliance (max 40)
+    bpa_h_deduct = min(bpa_high * 3.5, 30)
+    bpa_m_deduct = min(bpa_medium * 0.3, 8)
+    health_bpa = max(2, 40 - bpa_h_deduct - bpa_m_deduct)
+
+    # Pillar 2: DAX Quality (max 25)
+    dax_fa = dax_stats.get("measuresWithFilterAll", 0)
+    dax_subq = dax_stats.get("measuresWithHighSubqueries", 0)
+    dax_crit = complexity_dist.get("critical", 0)
+    fa_deduct = min(dax_fa * 0.35, 12)
+    subq_deduct = min(dax_subq * 0.3, 10)
+    crit_deduct = min(dax_crit * 0.15, 6)
+    health_dax = max(0, 25 - fa_deduct - subq_deduct - crit_deduct) if dax_complexity else 25
+
+    # Pillar 3: Architecture (max 25)
+    dq_excess = max(0, dq_tables - 5)
+    bidi_deduct = min(bidi_rels * 4, 12)
+    dq_deduct = min(dq_excess * 1.5, 10)
+    health_arch = max(3, 25 - bidi_deduct - dq_deduct) if taxonomy else 25
+
+    # Engineering BPA findings affect Architecture pillar
+    eng_bpa_summary = engineering_bpa.get("summary", {}) if engineering_bpa else {}
+    eng_high = eng_bpa_summary.get("high", 0)
+    eng_deduct = min(eng_high * 1.5, 8)
+    if engineering_bpa and taxonomy:
+        health_arch = max(3, health_arch - eng_deduct)
+
+    # Pillar 4: dbt Quality (max 10)
+    dbt_act = dbt_stats_raw.get("actionableFindingsCount", 0)
+    dbt_wide = dbt_stats_raw.get("wideModels", 0)
+    dbt_act_deduct = min(dbt_act * 0.08, 5)
+    dbt_wide_deduct = min(dbt_wide * 0.25, 4)
+    health_dbt = max(0, 10 - dbt_act_deduct - dbt_wide_deduct) if dbt_lineage else 10
+
+    health = max(5, round(health_bpa + health_dax + health_arch + health_dbt))
     health_grade = "A" if health >= 80 else ("B" if health >= 60 else ("C" if health >= 40 else ("D" if health >= 20 else "F")))
 
     health_class = "green" if health >= 70 else ("amber" if health >= 40 else "red")
     health_label = f"Grade {health_grade}"
+
+    # Health score tooltip — shown on hover wherever the score appears
+    health_tooltip = (
+        f"BPA: {health_bpa:.0f}/40 · DAX: {health_dax:.0f}/25 · "
+        f"Arch: {health_arch:.0f}/25 · dbt: {health_dbt:.0f}/10\n"
+        f"Grades: A (80+) · B (60-79) · C (40-59) · D (20-39) · F (<20)"
+    )
 
     # ── Build sections ──
     sections: list[str] = []
@@ -275,30 +656,64 @@ def generate_html(
     dbx_daily_html = ""
     if synthesis and synthesis.get("databricksDailyStats"):
         ds = synthesis["databricksDailyStats"]
+        total_q = ds.get("totalQueries", 0) or 0
+        slow10 = ds.get("slow10s", 0) or 0
+        slow30 = ds.get("slow30s", 0) or 0
+        # Compute percentages: use pre-computed if available, else derive
+        pct_slow10 = ds.get("pctSlow10s") or (round(slow10 * 100 / total_q, 1) if total_q else 0)
+        pct_slow30 = ds.get("pctSlow30s") or (round(slow30 * 100 / total_q, 1) if total_q else 0)
+        pct_cached = ds.get("pctCached", 0) or 0
+        sessions = ds.get("distinctSessions", 0) or 0
+        avg_qps = ds.get("avgQueriesPerSession") or (round(total_q / sessions, 1) if sessions else 0)
+        period_label = f"last {ds['periodDays']}d" if ds.get("periodDays") and ds["periodDays"] > 1 else "today"
+
+        # Sessions card (conditionally shown)
+        sessions_card = ""
+        if sessions:
+            sessions_card = f"""
+        <div class="metric-card">
+          <div class="value">{_fmt_number(sessions)}</div>
+          <div class="label">Report Sessions</div>
+          <div class="sub">~{avg_qps} queries/session</div>
+        </div>"""
+
+        # Cache card (conditionally shown)
+        cache_card = ""
+        if pct_cached:
+            cache_cls = "green" if pct_cached > 50 else ("amber" if pct_cached > 20 else "red")
+            cache_card = f"""
+        <div class="metric-card {cache_cls}">
+          <div class="value">{pct_cached:.1f}%</div>
+          <div class="label">Cache Hit Rate</div>
+          <div class="sub">queries served from cache</div>
+        </div>"""
+
+        slow10_cls = "red" if pct_slow10 > 10 else ("amber" if pct_slow10 > 3 else "")
         dbx_daily_html = f"""
     <div class="card">
-      <h3>Databricks PBI Query Load (today)</h3>
+      <h3>Databricks PBI Query Load
+        <span style="font-weight:400;font-size:12px;color:var(--muted);margin-left:12px">{period_label}</span></h3>
       <div class="metric-grid">
         <div class="metric-card red">
-          <div class="value">{_fmt_number(ds.get('totalQueries', 0))}</div>
+          <div class="value">{_fmt_number(total_q)}</div>
           <div class="label">Total PBI Queries</div>
           <div class="sub">from spn-ade-pbi</div>
-        </div>
-        <div class="metric-card {'red' if ds.get('slow10s', 0) > 100 else 'amber'}">
-          <div class="value">{_fmt_number(ds.get('slow10s', 0))}</div>
+        </div>{sessions_card}
+        <div class="metric-card {slow10_cls}">
+          <div class="value">{_fmt_number(slow10)} <span style="font-size:14px;font-weight:400">({pct_slow10:.1f}%)</span></div>
           <div class="label">Slow &gt;10s</div>
-          <div class="sub">{_fmt_number(ds.get('slow30s', 0))} &gt;30s</div>
+          <div class="sub">{_fmt_number(slow30)} &gt;30s ({pct_slow30:.1f}%)</div>
         </div>
         <div class="metric-card red">
           <div class="value">{ds.get('totalReadTb', 0):.1f} TB</div>
-          <div class="label">Data Read Today</div>
+          <div class="label">Data Read</div>
           <div class="sub">P95: {ds.get('p95s', 0):.1f}s, max: {ds.get('maxs', 0):.0f}s</div>
         </div>
         <div class="metric-card">
           <div class="value">{ds.get('avgDurationS', 0):.1f}s</div>
           <div class="label">Avg Query Duration</div>
           <div class="sub">P50: {ds.get('p50s', 0):.1f}s</div>
-        </div>
+        </div>{cache_card}
       </div>
     </div>"""
 
@@ -369,7 +784,7 @@ def generate_html(
         <div class="sub">{bpa_high} high, {bpa_medium} medium</div>
       </div>
       <div class="metric-card {health_class}">
-        <div class="value">{health}/100</div>
+        <div class="value"><span class="tooltip-wrap" data-tooltip="{health_tooltip}">{health}/100</span></div>
         <div class="label">Health Score</div>
         <div class="sub">{health_label}</div>
       </div>
@@ -379,6 +794,66 @@ def generate_html(
     {git_context_html}
     {dbx_daily_html}
     """)
+
+    # ═══════════════════════════════════════════════════════
+    # SECTION: QUERY ATTRIBUTION DASHBOARD
+    # ═══════════════════════════════════════════════════════
+    if user_query_profile:
+        sec_num += 1
+        uqp_totals = user_query_profile.get("totals", {})
+        uqp_users = user_query_profile.get("users", [])
+        uqp_training = user_query_profile.get("trainingCandidates", [])
+        training_usernames = {tc.get("username", "").lower() for tc in uqp_training}
+
+        # Compute percentile thresholds for heat-map colouring
+        all_avg_durations = sorted([u.get("avgDurationMs", 0) for u in uqp_users])
+        p50_dur = all_avg_durations[len(all_avg_durations) // 2] if all_avg_durations else 0
+        p90_dur = all_avg_durations[int(len(all_avg_durations) * 0.9)] if all_avg_durations else 0
+
+        def _heat_class(val, p50, p90):
+            if val > p90: return "heat-red"
+            if val > p50: return "heat-yellow"
+            return "heat-green"
+
+        user_rows = ""
+        for u in uqp_users[:30]:  # Cap at 30 users
+            uname = u.get("username", "Unknown")
+            is_training = uname.lower() in training_usernames
+            badge = ' <span class="badge badge-high">Training</span>' if is_training else ""
+            heat = _heat_class(u.get("avgDurationMs", 0), p50_dur, p90_dur)
+            user_rows += f"""<tr class="{heat}">
+              <td>{escape(uname)}{badge}</td>
+              <td data-val="{u.get('totalQueries', 0)}">{_fmt_number(u.get('totalQueries', 0))}</td>
+              <td data-val="{u.get('avgDurationMs', 0)}">{_fmt_number(u.get('avgDurationMs', 0))} ms</td>
+              <td data-val="{u.get('p95DurationMs', 0)}">{_fmt_number(u.get('p95DurationMs', 0))} ms</td>
+              <td data-val="{u.get('maxDurationMs', 0)}">{_fmt_number(u.get('maxDurationMs', 0))} ms</td>
+              <td data-val="{u.get('totalGBRead', 0)}">{u.get('totalGBRead', 0):.1f} GB</td>
+              <td data-val="{u.get('queriesOver10s', 0)}">{u.get('queriesOver10s', 0)}</td>
+              <td data-val="{u.get('queriesOver30s', 0)}">{u.get('queriesOver30s', 0)}</td>
+            </tr>"""
+
+        sections.append(f"""
+        <h2 class="section-title">{sec_num}. Query Attribution Dashboard</h2>
+        <div class="metric-grid">
+          <div class="metric-card"><div class="value">{uqp_totals.get('totalUsers', 0)}</div><div class="label">Total Users</div></div>
+          <div class="metric-card"><div class="value">{_fmt_number(uqp_totals.get('totalQueries', 0))}</div><div class="label">Total Queries</div></div>
+          <div class="metric-card amber"><div class="value">{_fmt_number(uqp_totals.get('queriesOver10s', 0))}</div><div class="label">Queries &gt;10s</div></div>
+          <div class="metric-card red"><div class="value">{_fmt_number(uqp_totals.get('queriesOver30s', 0))}</div><div class="label">Queries &gt;30s</div></div>
+        </div>
+        <div class="card">
+          <h3>Per-User Query Profile</h3>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Colour coding: <span class="heat-green" style="padding:2px 8px;border-radius:3px">below median</span> <span class="heat-yellow" style="padding:2px 8px;border-radius:3px">above median</span> <span class="heat-red" style="padding:2px 8px;border-radius:3px">above P90</span></p>
+          <table id="user-query-table">
+            <thead><tr>
+              <th class="sortable-th">Username</th><th class="sortable-th">Queries</th><th class="sortable-th">Avg Duration</th>
+              <th class="sortable-th">P95</th><th class="sortable-th">Max</th><th class="sortable-th">GB Read</th>
+              <th class="sortable-th">&gt;10s</th><th class="sortable-th">&gt;30s</th>
+            </tr></thead>
+            <tbody>{user_rows}</tbody>
+          </table>
+        </div>
+        {"<div class='card'><h3>Training Candidates</h3><ul>" + "".join(f"<li><strong>{escape(tc.get('username', ''))}</strong>: {escape(tc.get('reason', ''))}</li>" for tc in uqp_training) + "</ul></div>" if uqp_training else ""}
+        """)
 
     # ═══════════════════════════════════════════════════════
     # SECTION: DATABRICKS QUERY PROFILE
@@ -463,32 +938,105 @@ def generate_html(
     if taxonomy:
         sec_num += 1
         has_volumetry = any(t.get("volumetry") for t in taxonomy.get("tables", []))
-        table_rows = ""
+        has_query_stats = bool(table_query_stats)
+
+        # Pre-build PBI table name → Databricks source table name mapping
+        pbi_to_dbx: dict[str, str] = {}
+        for t in taxonomy.get("tables", []):
+            if t.get("sourceTable"):
+                pbi_to_dbx[t["name"]] = t["sourceTable"].lower()
+
+        # Group tables by classification for better visual hierarchy
+        tables_by_class: dict[str, list] = {"fact": [], "dimension": [], "bridge": [], "metadata": [], "": []}
         total_data_gb = 0.0
         for t in taxonomy.get("tables", []):
-            src = ""
-            if t.get("sourceTable"):
-                src = f"{t['sourceCatalog']}.{t['sourceDatabase']}.{t['sourceTable']}"
             vol = t.get("volumetry", {})
-            row_count = vol.get("rowCount")
             size_gb = vol.get("sizeGB")
             if size_gb:
                 total_data_gb += size_gb
             cls = t.get("classification", "")
-            size_class = ""
-            if size_gb and size_gb > 10:
-                size_class = ' style="background:rgba(192,57,43,0.06)"'
-            elif size_gb and size_gb > 1:
-                size_class = ' style="background:rgba(212,160,23,0.06)"'
-            table_rows += f"""<tr{size_class}>
-              <td>{escape(t['name'])}</td>
-              <td>{_classification_badge(cls) if cls else '-'}</td>
+            if cls in tables_by_class:
+                tables_by_class[cls].append(t)
+            else:
+                tables_by_class[""].append(t)
+
+        # Build rows grouped by classification
+        group_labels = {
+            "fact": ("Fact Tables", "var(--red)"),
+            "dimension": ("Dimension Tables", "var(--accent)"),
+            "bridge": ("Bridge Tables", "var(--amber)"),
+            "metadata": ("Metadata Tables", "var(--muted)"),
+            "": ("Other Tables", "var(--muted)"),
+        }
+
+        table_rows = ""
+        for cls_key in ("fact", "dimension", "bridge", "metadata", ""):
+            group = tables_by_class.get(cls_key, [])
+            if not group:
+                continue
+            label, color = group_labels[cls_key]
+            table_rows += f"""<tr class="group-header"><td colspan="{'9' if has_query_stats else '6'}" style="background:rgba(0,0,0,0.03);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;color:{color};padding:8px 14px;border-bottom:2px solid {color}">{label} ({len(group)})</td></tr>"""
+
+            for t in group:
+                src = ""
+                if t.get("sourceTable"):
+                    src = f"{t['sourceCatalog']}.{t['sourceDatabase']}.{t['sourceTable']}"
+                vol = t.get("volumetry", {})
+                row_count = vol.get("rowCount")
+                size_gb = vol.get("sizeGB")
+                is_large = size_gb and size_gb > 10
+                is_medium = size_gb and size_gb > 1
+
+                row_style = ""
+                if is_large:
+                    row_style = ' style="background:rgba(192,57,43,0.04)"'
+                elif is_medium:
+                    row_style = ' style="background:rgba(212,160,23,0.04)"'
+
+                # Query stats columns (conditional)
+                qs_cells = ""
+                if has_query_stats:
+                    tqs = table_query_stats.get(pbi_to_dbx.get(t["name"], ""), {})
+                    daily_q = tqs.get("dailyQueries")
+                    avg_dur = tqs.get("avgDurationMs")
+                    p95_dur = tqs.get("p95DurationMs")
+                    dur_style = ""
+                    if avg_dur and avg_dur > 10000:
+                        dur_style = ' style="color:var(--red);font-weight:600"'
+                    elif avg_dur and avg_dur > 3000:
+                        dur_style = ' style="color:var(--amber);font-weight:600"'
+                    muted_dash = '<span style="color:#6c757d">-</span>'
+                    daily_q_html = str(int(daily_q)) if daily_q is not None else muted_dash
+                    avg_dur_html = f"{avg_dur:,.0f} ms" if avg_dur is not None else muted_dash
+                    p95_dur_html = f"{p95_dur:,.0f} ms" if p95_dur is not None else muted_dash
+                    qs_cells = (
+                        f"<td style='text-align:right'>{daily_q_html}</td>"
+                        f"<td{dur_style} style='text-align:right'>{avg_dur_html}</td>"
+                        f"<td style='text-align:right'>{p95_dur_html}</td>"
+                    )
+
+                # Bold fact table names, highlight large row counts
+                name_style = "font-weight:600" if cls_key == "fact" else ""
+                rows_html = _fmt_rows(row_count)
+                if row_count and row_count > 1_000_000_000:
+                    rows_html = f'<span style="color:var(--red);font-weight:600">{rows_html}</span>'
+                elif row_count and row_count > 100_000_000:
+                    rows_html = f'<span style="color:var(--amber);font-weight:600">{rows_html}</span>'
+
+                size_html = _fmt_gb(size_gb)
+                if is_large:
+                    size_html = f'<span style="color:var(--red);font-weight:600">{size_html}</span>'
+                elif is_medium:
+                    size_html = f'<span style="color:var(--amber);font-weight:600">{size_html}</span>'
+
+                table_rows += f"""<tr{row_style}>
+              <td style="{name_style}">{escape(t['name'])}</td>
               <td>{_badge(t['storageMode'])}</td>
-              <td>{t['columnCount']}</td>
-              <td>{t['measureCount']}</td>
-              <td>{_fmt_rows(row_count)}</td>
-              <td>{_fmt_gb(size_gb)}</td>
-              <td style="font-size:11px">{escape(src)}</td></tr>"""
+              <td style="text-align:right">{t['columnCount']}</td>
+              <td style="text-align:right">{t['measureCount']}</td>
+              <td style="text-align:right">{rows_html}</td>
+              <td style="text-align:right">{size_html}</td>
+              <td style="font-size:11px;color:var(--muted);max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="{escape(src)}">{escape(src)}</td>{qs_cells}</tr>"""
 
         # Volumetry summary card
         vol_summary = ""
@@ -514,13 +1062,34 @@ def generate_html(
         if ga and ga.get("hubTables"):
             hub_rows = ""
             for h in ga["hubTables"]:
+                tree = h.get("branchTree", {})
+                reachable = tree.get("totalReachableTables", 0)
+                max_tree_d = tree.get("maxDepth", 0)
+                bf = tree.get("branchingFactor", 0)
                 hub_rows += f"""<tr>
                   <td><strong>{escape(h['name'])}</strong></td>
                   <td>{h['degree']}</td>
                   <td>{_classification_badge(h.get('classification', ''))}</td>
                   <td>{_badge(h.get('storageMode', ''))}</td>
                   <td>{_fmt_rows(h.get('rowCount'))}</td>
-                  <td>{_fmt_gb(h.get('sizeGB'))}</td></tr>"""
+                  <td>{_fmt_gb(h.get('sizeGB'))}</td>
+                  <td style="text-align:right">{reachable}</td>
+                  <td style="text-align:right">{max_tree_d}</td>
+                  <td style="text-align:right">{bf}</td></tr>"""
+
+            # Build snowflake branching tree cards for each hub
+            tree_cards = ""
+            for h in ga["hubTables"]:
+                tree_cards += _render_hub_tree_card(h)
+
+            # Join cascade summary table
+            cascade_html = _render_cascade_summary_table(ga.get("joinCascades", []))
+
+            # Suggestions
+            suggestions_html = _render_branching_suggestions(
+                ga["hubTables"], ga.get("joinCascades", [])
+            )
+
             graph_html = f"""
         <div class="card"><h3>Relationship Topology</h3>
           <div class="metric-grid" style="margin-bottom:16px">
@@ -528,20 +1097,102 @@ def generate_html(
             <div class="metric-card"><div class="value">{ga.get('avgDegree', 0)}</div><div class="label">Avg Degree</div></div>
             <div class="metric-card red"><div class="value">{len(ga.get('hubTables', []))}</div><div class="label">Hub Tables (degree &ge; 5)</div></div>
           </div>
-          <table><thead><tr><th>Hub Table</th><th>Degree</th><th>Type</th><th>Storage</th><th>Rows</th><th>Size</th></tr></thead>
+          <div style="overflow-x:auto">
+          <table><thead><tr><th>Hub Table</th><th>Degree</th><th>Type</th><th>Storage</th><th>Rows</th><th>Size</th><th style="text-align:right">Reachable</th><th style="text-align:right">Max Depth</th><th style="text-align:right">Branch Factor</th></tr></thead>
             <tbody>{hub_rows}</tbody></table>
-        </div>"""
+          </div>
+        </div>
+        <div class="card"><h3>Snowflake Branching &mdash; Hub Relationship Trees</h3>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:12px">
+            Each tree below shows the full relationship chain radiating from a hub table.
+            Every branch represents a JOIN that Power BI generates in DirectQuery SQL.
+            Deeper and wider trees = more complex queries = slower performance.
+            <span style="display:inline-flex;gap:8px;margin-left:8px">
+              <span class="sf-node-label sf-dq" style="font-size:10px;padding:2px 6px">DirectQuery</span>
+              <span class="sf-node-label sf-dual" style="font-size:10px;padding:2px 6px">Dual</span>
+              <span class="sf-node-label sf-import" style="font-size:10px;padding:2px 6px">Import</span>
+              <span class="sf-edge-info sf-edge-bidi" style="font-size:10px">&#x21C6; = bidirectional</span>
+            </span>
+          </p>
+          {tree_cards}
+        </div>
+        {cascade_html}
+        {suggestions_html}"""
 
+        qs_headers = "<th style='text-align:right'>Daily Queries</th><th style='text-align:right'>Avg Duration</th><th style='text-align:right'>P95 Duration</th>" if has_query_stats else ""
+        table_count = len(taxonomy.get("tables", []))
+        fact_count = len(tables_by_class.get("fact", []))
+        dim_count = len(tables_by_class.get("dimension", []))
         sections.append(f"""
         <h2 class="section-title">{sec_num}. Model Taxonomy</h2>
         {vol_summary}
-        <div class="card"><h3>Tables &amp; Storage Modes</h3>
-          <table><thead><tr><th>Table</th><th>Type</th><th>Storage Mode</th><th>Columns</th><th>Measures</th><th>Rows</th><th>Size</th><th>Databricks Source</th></tr></thead>
-            <tbody>{table_rows}</tbody></table></div>
-        <div class="card"><h3>Relationships ({total_rels} total — {bidi_rels} bidirectional)</h3>
-          <table><thead><tr><th>From</th><th>To</th><th>Cardinality</th><th>Cross-Filter</th><th>Active</th></tr></thead>
-            <tbody>{rel_rows}</tbody></table></div>
+        <div class="card"><h3>Tables &amp; Storage Modes
+          <span style="font-weight:400;font-size:12px;color:var(--muted);margin-left:12px">{table_count} tables &middot; {total_rels} relationships ({bidi_rels} bidirectional)</span></h3>
+          <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+            <span class="badge badge-high">{fact_count} Fact</span>
+            <span class="badge badge-info">{dim_count} Dimension</span>
+            <span class="badge badge-medium">{len(tables_by_class.get('bridge', []))} Bridge</span>
+            <span class="badge badge-low">{len(tables_by_class.get('metadata', [])) + len(tables_by_class.get('', []))} Meta/Other</span>
+          </div>
+          <div style="overflow-x:auto">
+          <table><thead><tr><th>Table</th><th>Storage Mode</th><th style="text-align:right">Columns</th><th style="text-align:right">Measures</th><th style="text-align:right">Rows</th><th style="text-align:right">Size</th><th>Databricks Source</th>{qs_headers}</tr></thead>
+            <tbody>{table_rows}</tbody></table>
+          </div></div>
+        <details>
+          <summary>Relationships ({total_rels} total &mdash; {bidi_rels} bidirectional)</summary>
+          <div class="card" style="margin-top:12px">
+            <table><thead><tr><th>From</th><th>To</th><th>Cardinality</th><th>Cross-Filter</th><th>Active</th></tr></thead>
+              <tbody>{rel_rows}</tbody></table>
+          </div>
+        </details>
         {graph_html}
+        """)
+
+    # ═══════════════════════════════════════════════════════
+    # SECTION: MEMORY & COLUMN ANALYSIS
+    # ═══════════════════════════════════════════════════════
+    if column_memory:
+        sec_num += 1
+        cm_summary = column_memory.get("summary", {})
+        cm_tables = column_memory.get("topTablesByMemory", [])
+        cm_candidates = column_memory.get("removalCandidates", [])
+
+        top_table_rows = ""
+        for t in cm_tables[:10]:
+            top_table_rows += f"""<tr>
+              <td><strong>{escape(t.get('name', ''))}</strong></td>
+              <td>{t.get('estimatedMemoryMB', 0):.1f} MB</td>
+              <td>{t.get('columnCount', 0)}</td>
+              <td>{t.get('removalCandidates', 0)}</td>
+            </tr>"""
+
+        candidate_rows = ""
+        for c in cm_candidates[:15]:
+            candidate_rows += f"""<tr>
+              <td>{escape(c.get('table', ''))}</td>
+              <td>{escape(c.get('column', ''))}</td>
+              <td>{escape(c.get('dataType', ''))}</td>
+              <td>{'Yes' if c.get('isHidden') else 'No'}</td>
+              <td>{escape(c.get('reason', ''))}</td>
+              <td style="font-weight:600">{c.get('estimatedSavingsMB', 0):.1f} MB</td>
+            </tr>"""
+
+        sections.append(f"""
+        <h2 class="section-title">{sec_num}. Memory &amp; Column Analysis</h2>
+        <div class="metric-grid">
+          <div class="metric-card"><div class="value">{cm_summary.get('estimatedTotalMemoryMB', 0):.0f} MB</div><div class="label">Estimated Total Memory</div></div>
+          <div class="metric-card"><div class="value">{cm_summary.get('totalColumns', 0)}</div><div class="label">Total Columns</div></div>
+          <div class="metric-card amber"><div class="value">{cm_summary.get('removalCandidateCount', 0)}</div><div class="label">Removal Candidates</div></div>
+          <div class="metric-card green"><div class="value">{cm_summary.get('potentialSavingsMB', 0):.0f} MB ({cm_summary.get('potentialSavingsPct', 0):.1f}%)</div><div class="label">Potential Savings</div></div>
+        </div>
+        <div class="card">
+          <h3>Top Tables by Estimated Memory</h3>
+          <table>
+            <thead><tr><th>Table</th><th>Estimated Memory</th><th>Columns</th><th>Removal Candidates</th></tr></thead>
+            <tbody>{top_table_rows}</tbody>
+          </table>
+        </div>
+        {"<div class='card' style='margin-top:16px'><h3>Column Removal Candidates</h3><table><thead><tr><th>Table</th><th>Column</th><th>Type</th><th>Hidden</th><th>Reason</th><th>Savings</th></tr></thead><tbody>" + candidate_rows + "</tbody></table></div>" if candidate_rows else ""}
         """)
 
     # ═══════════════════════════════════════════════════════
@@ -551,7 +1202,25 @@ def generate_html(
         sec_num += 1
         dax_s = dax_complexity.get("statistics", {})
         measures = dax_complexity.get("measures", [])
-        top_measures = measures[:20]
+
+        # Time intelligence suffixes — measures ending with these are TI variants
+        _TI_SUFFIXES = (
+            " LY", " PY", " LW", " LM",
+            " YTD", " MTD", " WTD", " QTD", " HTD",
+            " SPLY", " FYTD", " FHTD",
+            " LY YTD", " LY MTD", " LY WTD", " LY QTD", " LY HTD",
+            " vs LY", " vs PY",
+            " % LY", " % PY",
+            " OB LM", " T&R LM",
+        )
+
+        def _is_ti_measure(name: str) -> bool:
+            upper = name.strip().upper()
+            return any(upper.endswith(s) for s in _TI_SUFFIXES)
+
+        # Take top 30 to have enough non-TI measures when filter is on
+        top_measures = measures[:30]
+        ti_count_in_top = sum(1 for m in top_measures if _is_ti_measure(m["name"]))
         measure_rows = ""
         for m in top_measures:
             ctx = m.get("contextTransitions", 0)
@@ -559,8 +1228,11 @@ def generate_html(
             fa = m.get("filterAllCount", 0)
             subq = m.get("estimatedSQLSubqueries", 0)
             cross = "Yes" if m.get("crossesMultipleDQ") else ""
-            measure_rows += f"""<tr>
-              <td>{escape(m['name'])}</td><td>{escape(m['hostTable'])}</td>
+            is_ti = _is_ti_measure(m["name"])
+            ti_attr = ' data-ti="1"' if is_ti else ''
+            ti_badge = ' <span style="font-size:9px;color:var(--muted);border:1px solid var(--border);border-radius:3px;padding:0 4px;margin-left:4px;vertical-align:middle">TI</span>' if is_ti else ''
+            measure_rows += f"""<tr{ti_attr}>
+              <td>{escape(m['name'])}{ti_badge}</td><td>{escape(m['hostTable'])}</td>
               <td>{m['complexityScore']}</td>
               <td>{ctx}</td><td>{hops}</td><td>{fa}</td><td>{subq}</td>
               <td>{_badge(m['complexityLevel'])}</td>
@@ -571,16 +1243,32 @@ def generate_html(
         measures_filter_all = dax_s.get("measuresWithFilterAll", 0)
 
         # Hot tables — enriched
+        ht_has_qs = bool(table_query_stats) and taxonomy is not None
         hot_table_rows = ""
         for ht in dax_complexity.get("hotTables", [])[:10]:
             priority = ht.get("optimizationPriority", "low")
+            ht_qs_cells = ""
+            if ht_has_qs:
+                ht_dbx = pbi_to_dbx.get(ht["table"], "") if taxonomy else ""
+                ht_tqs = table_query_stats.get(ht_dbx, {})
+                ht_daily = ht_tqs.get("dailyQueries")
+                ht_avg = ht_tqs.get("avgDurationMs")
+                ht_dur_style = ""
+                if ht_avg and ht_avg > 10000:
+                    ht_dur_style = ' style="color:var(--red);font-weight:600"'
+                elif ht_avg and ht_avg > 3000:
+                    ht_dur_style = ' style="color:var(--amber);font-weight:600"'
+                ht_qs_cells = (
+                    f"<td>{int(ht_daily) if ht_daily is not None else '-'}</td>"
+                    f"<td{ht_dur_style}>{f'{ht_avg:,.0f} ms' if ht_avg is not None else '-'}</td>"
+                )
             hot_table_rows += f"""<tr>
               <td>{escape(ht['table'])}</td><td>{_badge(ht['storageMode'])}</td>
               <td>{ht['referenceCount']}</td>
               <td>{_fmt_rows(ht.get('rowCount'))}</td>
               <td>{_fmt_gb(ht.get('sizeGB'))}</td>
               <td>{ht.get('degree', '-')}</td>
-              <td>{_priority_badge(priority)}</td></tr>"""
+              <td>{_priority_badge(priority)}</td>{ht_qs_cells}</tr>"""
 
         sections.append(f"""
         <h2 class="section-title">{sec_num}. DAX Complexity Report</h2>
@@ -602,11 +1290,27 @@ def generate_html(
             <div class="label">Avg Complexity Score</div>
           </div>
         </div>
-        <div class="card"><h3>Top {len(top_measures)} Most Complex Measures</h3>
-          <table><thead><tr><th>Measure</th><th>Table</th><th>Score</th><th>Ctx Trans.</th><th>Hops</th><th>FILTER(ALL)</th><th>Est. SQL Subq.</th><th>Level</th><th>Cross-DQ</th></tr></thead>
-            <tbody>{measure_rows}</tbody></table></div>
-        <div class="card"><h3>Hot Tables — Optimisation Candidates</h3>
-          <table><thead><tr><th>Table</th><th>Storage</th><th>Refs</th><th>Rows</th><th>Size</th><th>Degree</th><th>Priority</th></tr></thead>
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <h3 style="margin:0">Top Most Complex Measures <span id="dax-count" style="font-weight:400;color:var(--muted)">({len(top_measures)})</span></h3>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer;user-select:none">
+              <input type="checkbox" id="dax-ti-toggle" checked onchange="toggleTI(this.checked)">
+              Show Time Intelligence ({ti_count_in_top})
+            </label>
+          </div>
+          <table id="dax-top-table"><thead><tr><th>Measure</th><th>Table</th><th>Score</th><th>Ctx Trans.</th><th>Hops</th><th>FILTER(ALL)</th><th>Est. SQL Subq.</th><th>Level</th><th>Cross-DQ</th></tr></thead>
+            <tbody>{measure_rows}</tbody></table>
+          <script>
+            function toggleTI(show) {{
+              var rows = document.querySelectorAll('#dax-top-table tbody tr[data-ti]');
+              rows.forEach(function(r) {{ r.style.display = show ? '' : 'none'; }});
+              var visible = document.querySelectorAll('#dax-top-table tbody tr:not([style*="display: none"])').length;
+              document.getElementById('dax-count').textContent = '(' + visible + ')';
+            }}
+          </script>
+        </div>
+        <div class="card"><h3>Hot Tables &mdash; Optimisation Candidates</h3>
+          <table><thead><tr><th>Table</th><th>Storage</th><th>Refs</th><th>Rows</th><th>Size</th><th>Degree</th><th>Priority</th>{"<th>Daily Queries</th><th>Avg Duration</th>" if ht_has_qs else ""}</tr></thead>
             <tbody>{hot_table_rows}</tbody></table></div>
         """)
 
@@ -619,8 +1323,10 @@ def generate_html(
         passing_rules = bpa_results.get("passingRules", [])
 
         # Rule violations table — only show FAIL rules with impact type
+        # Sort by highest violation count first
+        sorted_rules = sorted(bpa_results.get("ruleResults", []), key=lambda r: r.get("count", 0), reverse=True)
         rule_rows = ""
-        for r in bpa_results.get("ruleResults", []):
+        for r in sorted_rules:
             impact = r.get("performanceImpact", "")
             impact_badge = _impact_type_badge(impact) if impact else ""
             impact_desc = escape(r.get("impactDescription", ""))
@@ -679,6 +1385,54 @@ def generate_html(
         """)
 
     # ═══════════════════════════════════════════════════════
+    # SECTION: ENGINEERING BEST PRACTICES
+    # ═══════════════════════════════════════════════════════
+    if engineering_bpa:
+        sec_num += 1
+        eng_summary = engineering_bpa.get("summary", {})
+        eng_rules = engineering_bpa.get("ruleResults", [])
+        eng_passing = engineering_bpa.get("passingRules", [])
+
+        # Sort by count descending
+        sorted_eng_rules = sorted(eng_rules, key=lambda r: r.get("count", 0), reverse=True)
+
+        eng_rows = ""
+        for rule in sorted_eng_rules:
+            examples_html = ""
+            for ex in rule.get("examples", [])[:3]:
+                examples_html += f"<div style='font-size:11px;color:var(--muted);margin-top:4px'>{escape(ex.get('model', ''))} → {escape(ex.get('detail', ''))}</div>"
+            eng_rows += f"""<tr>
+              <td><strong>{escape(rule.get('ruleId', ''))}</strong></td>
+              <td>{escape(rule.get('title', ''))}{examples_html}</td>
+              <td>{_badge(rule.get('severity', 'medium'))}</td>
+              <td style="font-weight:600">{rule.get('count', 0)}</td>
+              <td style="font-size:12px">{escape(rule.get('recommendation', ''))}</td>
+            </tr>"""
+
+        passing_html = ""
+        if eng_passing:
+            passing_items = ", ".join(f"{p.get('ruleId', '')}: {p.get('title', '')}" for p in eng_passing)
+            passing_html = f"<details><summary>Passing rules ({len(eng_passing)})</summary><p style='font-size:12px;color:var(--muted);margin-top:8px'>{escape(passing_items)}</p></details>"
+
+        sections.append(f"""
+        <h2 class="section-title">{sec_num}. Engineering Best Practices {'<span class="badge badge-high">Engineering</span>' if eng_summary.get('high', 0) > 0 else ''}</h2>
+        <div class="metric-grid">
+          <div class="metric-card red"><div class="value">{eng_summary.get('high', 0)}</div><div class="label">High</div></div>
+          <div class="metric-card amber"><div class="value">{eng_summary.get('medium', 0)}</div><div class="label">Medium</div></div>
+          <div class="metric-card green"><div class="value">{eng_summary.get('low', 0)}</div><div class="label">Low</div></div>
+          <div class="metric-card"><div class="value">{eng_summary.get('totalFindings', 0)}</div><div class="label">Total Findings</div></div>
+        </div>
+        <div class="card">
+          <h3>Rule Violations <span class="badge badge-high">Engineering</span></h3>
+          <table>
+            <thead><tr><th>Rule</th><th>Description</th><th>Severity</th><th>Count</th><th>Recommendation</th></tr></thead>
+            <tbody>{eng_rows}</tbody>
+          </table>
+          {passing_html}
+        </div>
+        """)
+
+    # ═══════════════════════════════════════════════════════
     # SECTION: dbt LINEAGE (conditional — value gate)
     # ═══════════════════════════════════════════════════════
     if dbt_lineage:
@@ -726,62 +1480,314 @@ def generate_html(
         """)
 
     # ═══════════════════════════════════════════════════════
-    # SECTION: ROOT CAUSE ANALYSIS (from synthesis)
+    # SECTION: REPORT VISUAL ANALYSIS
     # ═══════════════════════════════════════════════════════
-    if synthesis and "topFindings" in synthesis:
+    if visual_analysis:
         sec_num += 1
-        syn_findings = synthesis["topFindings"]
-        finding_rows = ""
-        for f in syn_findings:
-            scope = f.get("scope", "model-wide")
-            finding_rows += (
-                f"<tr><td>{escape(str(f.get('id', '')))}</td>"
-                f"<td><strong>{escape(str(f.get('title', '')))}</strong></td>"
-                f"<td>{_badge(f.get('severity', 'medium'))}</td>"
-                f"<td>{_scope_badge(scope)}</td>"
-                f"<td>{_where_badges(f.get('layers', []))}</td>"
-                f"<td>{escape(str(f.get('impact', '')))}</td>"
-                f"<td>{escape(str(f.get('effort', '')))}</td></tr>\n"
-            )
+        va_summary = visual_analysis.get("summary", {})
+        va_reports = visual_analysis.get("reports", [])
+
+        visual_rows = ""
+        for report in va_reports:
+            for rule in report.get("ruleResults", []):
+                for ex in rule.get("examples", [])[:3]:
+                    visual_rows += f"""<tr>
+                      <td>{_badge(rule.get('severity', 'medium'))}</td>
+                      <td><strong>{escape(rule.get('ruleId', ''))}</strong>: {escape(rule.get('title', ''))}</td>
+                      <td>{escape(ex.get('page', ex.get('detail', '')))}</td>
+                      <td style="font-size:12px">{escape(ex.get('recommendation', rule.get('recommendation', '')))}</td>
+                    </tr>"""
 
         sections.append(f"""
-    <h2 class="section-title">{sec_num}. Root Cause Analysis</h2>
-    <div class="card"><h3>Findings by Severity</h3>
-      <table><thead><tr><th>#</th><th>Finding</th><th>Severity</th><th>Scope</th><th>Where</th><th>Impact</th><th>Effort</th></tr></thead>
-        <tbody>{finding_rows}</tbody></table></div>
-    """)
+        <h2 class="section-title">{sec_num}. Report Visual Analysis <span class="badge badge-info">Power BI</span></h2>
+        <div class="metric-grid">
+          <div class="metric-card"><div class="value">{va_summary.get('totalPages', 0)}</div><div class="label">Pages Analysed</div></div>
+          <div class="metric-card"><div class="value">{va_summary.get('totalVisuals', 0)}</div><div class="label">Total Visuals</div></div>
+          <div class="metric-card red"><div class="value">{va_summary.get('high', 0)}</div><div class="label">High</div></div>
+          <div class="metric-card amber"><div class="value">{va_summary.get('medium', 0)}</div><div class="label">Medium</div></div>
+        </div>
+        <div class="card">
+          <table>
+            <thead><tr><th>Severity</th><th>Rule</th><th>Location</th><th>Recommendation</th></tr></thead>
+            <tbody>{visual_rows}</tbody>
+          </table>
+        </div>
+        """)
 
     # ═══════════════════════════════════════════════════════
-    # SECTION: RECOMMENDATION QUADRANT
+    # SECTION: CAPACITY SETTINGS ANALYSIS
+    # ═══════════════════════════════════════════════════════
+    if capacity_settings:
+        sec_num += 1
+        qt = capacity_settings.get("queryTimeout", {})
+        qt_rec = qt.get("recommendation", {})
+        qt_dist = qt.get("durationDistribution", [])
+
+        # Build duration distribution bars
+        dist_bars = ""
+        max_count = max((b.get("count", 0) for b in qt_dist), default=1) or 1
+        for b in qt_dist:
+            pct = b.get("count", 0) / max_count * 100
+            colour = "var(--green)" if b.get("pct", 0) > 50 else ("var(--amber)" if b.get("pct", 0) > 1 else "var(--red)")
+            dist_bars += f"""<div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+              <span style="width:80px;font-size:12px;text-align:right;font-weight:600">{escape(b.get('bucket', ''))}</span>
+              <div class="bar-container" style="flex:1"><div class="bar-fill" style="width:{pct:.1f}%;background:{colour}"></div></div>
+              <span style="width:80px;font-size:12px">{_fmt_number(b.get('count', 0))} ({b.get('pct', 0):.1f}%)</span>
+            </div>"""
+
+        # Notes from Luke's methodology
+        notes_html = ""
+        for note in qt.get("notes", []):
+            notes_html += f"<li style='font-size:12px;margin-bottom:4px'>{escape(note)}</li>"
+
+        sections.append(f"""
+        <h2 class="section-title">{sec_num}. Capacity Settings Analysis <span class="badge badge-high">Capacity Admin</span></h2>
+        <div class="card">
+          <h3>Query Timeout Simulation</h3>
+          <div class="metric-grid" style="grid-template-columns:repeat(3,1fr)">
+            <div class="metric-card"><div class="value">{qt.get('currentDefault', 3600)}s</div><div class="label">Current Default</div></div>
+            <div class="metric-card"><div class="value">{qt.get('pbiReportDefault', 225)}s</div><div class="label">PBI Report Default</div></div>
+            <div class="metric-card green"><div class="value">{qt_rec.get('value', '-')}s</div><div class="label">Recommended</div></div>
+          </div>
+          <h4 style="margin-top:16px">Query Duration Distribution</h4>
+          {dist_bars}
+          <div class="note-box" style="margin-top:16px">
+            <strong>Luke&rsquo;s Methodology:</strong> {escape(qt_rec.get('lukeMethodology', qt.get('lukeMethodology', '')))}
+          </div>
+          {"<ul style='margin-top:12px'>" + notes_html + "</ul>" if notes_html else ""}
+        </div>
+        """)
+
+    # ═══════════════════════════════════════════════════════
+    # SECTION: WORKLOAD & INFRASTRUCTURE
+    # ═══════════════════════════════════════════════════════
+    if workload_analysis:
+        sec_num += 1
+        wa = workload_analysis
+        sp = wa.get("surgeProtection", {})
+        cs = wa.get("capacityScaling", {})
+        sms = wa.get("semanticModelSettings", {})
+
+        # Hourly distribution heatmap
+        hourly = wa.get("hourlyDistribution", [])
+        hour_cells = ""
+        max_q = max((h.get("queryCount", 0) for h in hourly), default=1) or 1
+        for h in hourly:
+            intensity = h.get("queryCount", 0) / max_q
+            bg = f"rgba(192,57,43,{intensity:.2f})" if intensity > 0.5 else f"rgba(212,160,23,{intensity:.2f})" if intensity > 0.2 else f"rgba(26,135,84,{intensity:.2f})"
+            hour_cells += f'<td style="text-align:center;background:{bg};font-size:11px;padding:4px;min-width:36px" title="Hour {h.get("hour",0)}: {h.get("queryCount",0)} queries">{h.get("queryCount",0)}</td>'
+
+        # Surge protection
+        sp_cap = sp.get("capacityLevel", {})
+        sp_ws = sp.get("workspaceLevel", {})
+
+        # Capacity scaling pros/cons
+        scaling_html = ""
+        if cs:
+            cur = cs.get("currentCapacity", {})
+            pros = cs.get("prosAndCons", {}).get("pros", [])
+            cons = cs.get("prosAndCons", {}).get("cons", [])
+            scaling_html = f"""
+            <div class="card" style="margin-top:16px">
+              <h3>Capacity Scaling: {escape(cur.get('previousSku', '?'))} → {escape(cur.get('sku', '?'))}</h3>
+              <div class="metric-grid" style="grid-template-columns:repeat(3,1fr)">
+                <div class="metric-card"><div class="value">{escape(cur.get('sku', '-'))}</div><div class="label">Current SKU</div></div>
+                <div class="metric-card"><div class="value">{cur.get('capacityUnits', '-')}</div><div class="label">Capacity Units</div></div>
+                <div class="metric-card"><div class="value">{escape(str(cur.get('subscriptionQuota', '-')))}</div><div class="label">Subscription Quota</div></div>
+              </div>
+              <div class="pros-cons-grid" style="margin-top:16px">
+                <div><h4 style="color:var(--green)">Pros</h4><ul class="pros-list">{"".join(f"<li>{escape(p)}</li>" for p in pros)}</ul></div>
+                <div><h4 style="color:var(--red)">Cons</h4><ul class="cons-list">{"".join(f"<li>{escape(c)}</li>" for c in cons)}</ul></div>
+              </div>
+              <div class="note-box" style="margin-top:12px"><strong>Key insight:</strong> Scaling alone does not fix inefficient queries — combine with query optimisation for sustainable performance.</div>
+            </div>"""
+
+        # Semantic model settings
+        settings_html = ""
+        if sms:
+            lsf = sms.get("largeStorageFormat", {})
+            qso = sms.get("queryScaleOut", {})
+            if lsf or qso:
+                settings_html = f"""
+                <div class="card" style="margin-top:16px">
+                  <h3>Semantic Model Settings</h3>
+                  <table>
+                    <thead><tr><th>Setting</th><th>Current</th><th>Recommendation</th><th>Impact</th></tr></thead>
+                    <tbody>
+                      <tr><td>Large Semantic Model Storage Format</td><td>{_badge('Off') if not lsf.get('currentStatus', 'Off') == 'On' else _badge('On')}</td><td><strong>{escape(lsf.get('recommendation', 'Enable'))}</strong></td><td>Prerequisite for Query Scale-Out. Model is {lsf.get('modelSizeMB', '?')} MB.</td></tr>
+                      <tr><td>Query Scale-Out</td><td>{_badge('Off')}</td><td><strong>{escape(qso.get('recommendation', 'Enable'))}</strong></td><td>Distributes queries across read-only replicas during peak load.</td></tr>
+                    </tbody>
+                  </table>
+                  <details style="margin-top:12px">
+                    <summary>Pros &amp; Cons — Large Storage Format</summary>
+                    <div class="pros-cons-grid" style="margin-top:8px">
+                      <div><ul class="pros-list">{"".join(f"<li>{escape(p)}</li>" for p in lsf.get('pros', []))}</ul></div>
+                      <div><ul class="cons-list">{"".join(f"<li>{escape(c)}</li>" for c in lsf.get('cons', []))}</ul></div>
+                    </div>
+                  </details>
+                  <details style="margin-top:8px">
+                    <summary>Pros &amp; Cons — Query Scale-Out</summary>
+                    <div class="pros-cons-grid" style="margin-top:8px">
+                      <div><ul class="pros-list">{"".join(f"<li>{escape(p)}</li>" for p in qso.get('pros', []))}</ul></div>
+                      <div><ul class="cons-list">{"".join(f"<li>{escape(c)}</li>" for c in qso.get('cons', []))}</ul></div>
+                    </div>
+                  </details>
+                </div>"""
+
+        sections.append(f"""
+        <h2 class="section-title">{sec_num}. Workload &amp; Infrastructure <span class="badge badge-high">Capacity Admin</span></h2>
+        <div class="card">
+          <h3>Hourly Query Distribution</h3>
+          <div style="overflow-x:auto">
+            <table style="table-layout:fixed"><thead><tr>{"".join(f'<th style="text-align:center;font-size:10px;padding:4px">{h:02d}</th>' for h in range(24))}</tr></thead>
+            <tbody><tr>{hour_cells}</tr></tbody></table>
+          </div>
+          <p style="font-size:12px;color:var(--muted);margin-top:8px">Peak hour: {wa.get('peakHour', '?')}:00 ({_fmt_number(wa.get('peakHourQueries', 0))} queries). Peak-to-off-peak ratio: {wa.get('peakToOffPeakRatio', '?')}x</p>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <h3>Surge Protection Recommendations</h3>
+          <div class="metric-grid" style="grid-template-columns:repeat(2,1fr)">
+            <div class="metric-card"><div class="value">{sp_cap.get('recommendedRejectionThreshold', '-')}%</div><div class="label">Rejection Threshold</div><div class="sub">{escape(sp_cap.get('rationale', ''))}</div></div>
+            <div class="metric-card"><div class="value">{sp_cap.get('recommendedRecoveryThreshold', '-')}%</div><div class="label">Recovery Threshold</div></div>
+          </div>
+          {"<div class='note-box' style='margin-top:12px'><strong>Mission Critical:</strong> " + ", ".join(escape(w) for w in sp_ws.get('missionCritical', [])) + "</div>" if sp_ws.get('missionCritical') else ""}
+        </div>
+        {scaling_html}
+        {settings_html}
+        """)
+
+    # ═══════════════════════════════════════════════════════
+    # SECTION: ACTION-PRIORITY MATRIX
     # ═══════════════════════════════════════════════════════
     if synthesis and "topFindings" in synthesis:
         sec_num += 1
         syn_findings = synthesis["topFindings"]
-        quadrants = {"quick_win": [], "strategic": [], "minor": [], "deprioritise": []}
+
+        # --- Normalise quadrant keys ---
+        _q_map = {
+            "quick win": "quick_win", "quick_win": "quick_win", "Quick Win": "quick_win",
+            "strategic investment": "strategic", "strategic": "strategic", "Strategic Investment": "strategic",
+            "minor improvement": "minor", "minor": "minor", "Minor Improvement": "minor",
+            "deprioritise": "deprioritise", "Deprioritise": "deprioritise",
+            "thankless": "deprioritise", "Thankless Tasks": "deprioritise",
+        }
+        quadrants: dict[str, list] = {"quick_win": [], "strategic": [], "minor": [], "deprioritise": []}
         for f in syn_findings:
-            q = f.get("quadrant", "strategic")
+            q = _q_map.get(f.get("quadrant", "strategic"), "strategic")
             quadrants.setdefault(q, []).append(f)
 
-        def _quad_items(items):
+        # --- Map roadmap actions into quadrants by finding reference ---
+        finding_quad_lookup = {f.get("id"): _q_map.get(f.get("quadrant", "strategic"), "strategic") for f in syn_findings}
+        roadmap_by_quad: dict[str, list] = {"quick_win": [], "strategic": [], "minor": [], "deprioritise": []}
+        for phase in synthesis.get("implementationRoadmap", []):
+            phase_name = phase.get("phase", "")
+            for item in phase.get("actions", phase.get("items", [])):
+                if isinstance(item, dict):
+                    action_desc = item.get("action", "")
+                    where_val = item.get("where", "")
+                    finding_ref = item.get("finding", "")
+                    impact_val = item.get("impact", "")
+                else:
+                    action_desc = str(item)
+                    where_val, finding_ref, impact_val = "", "", ""
+                # Determine quadrant from finding reference
+                fids = [fid.strip() for fid in finding_ref.split(",") if fid.strip()] if finding_ref else []
+                target_q = "strategic"  # default
+                for fid in fids:
+                    if fid in finding_quad_lookup:
+                        target_q = finding_quad_lookup[fid]
+                        break
+                if where_val:
+                    where_r = _where_badges([w.strip() for w in where_val.split(",")] if "," in where_val else [where_val])
+                else:
+                    matched = [f for f in syn_findings if f.get("id") in fids]
+                    layers = []
+                    for m in matched:
+                        layers.extend(m.get("layers", []))
+                    where_r = _where_badges(list(dict.fromkeys(layers))) if layers else '<span class="badge badge-info">TBD</span>'
+                roadmap_by_quad.setdefault(target_q, []).append({
+                    "action": action_desc,
+                    "where_html": where_r,
+                    "finding": finding_ref,
+                    "impact": impact_val,
+                    "phase": phase_name,
+                })
+
+        def _matrix_findings(items):
             return "".join(
                 f"<li><strong>{escape(str(f.get('id', '')))}</strong>: {escape(str(f.get('title', '')))} "
                 f"{_where_badges(f.get('layers', []))}</li>"
                 for f in items
             )
 
+        def _matrix_actions_table(actions):
+            if not actions:
+                return '<p style="font-size:12px;color:var(--muted);margin-top:8px">No actions mapped to this quadrant.</p>'
+            rows = ""
+            for a in actions:
+                ref = f"[{escape(a['finding'])}] " if a.get("finding") else ""
+                rows += f"<tr><td>{ref}<strong>{escape(a['action'])}</strong></td><td>{a['where_html']}</td></tr>\n"
+            return f"""<table class="matrix-actions-table" style="width:100%;border-collapse:collapse">
+              <thead><tr><th style="text-align:left;font-size:11px;padding:4px 10px">Action</th><th style="text-align:left;font-size:11px;padding:4px 10px">Where</th></tr></thead>
+              <tbody>{rows}</tbody></table>"""
+
+        def _matrix_box(key, title, subtitle, colour_bg, colour_border, colour_title, icon, findings, actions):
+            count = len(findings)
+            action_count = len(actions)
+            findings_html = _matrix_findings(findings) if findings else '<li style="color:var(--muted)">No findings in this quadrant</li>'
+            actions_html = _matrix_actions_table(actions)
+            return f"""<div class="matrix-box" style="background:{colour_bg};border:1px solid {colour_border}">
+        <h3 style="color:{colour_title}">{icon} {title}</h3>
+        <div class="matrix-subtitle">{subtitle}</div>
+        <span class="matrix-count" style="color:{colour_title}">{count} finding{"s" if count != 1 else ""} &middot; {action_count} action{"s" if action_count != 1 else ""}</span>
+        <details>
+          <summary style="color:{colour_title}">View findings &amp; actions</summary>
+          <div style="margin-top:8px">
+            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:6px">Findings</div>
+            <ul>{findings_html}</ul>
+            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin:12px 0 6px">Implementation Actions</div>
+            {actions_html}
+          </div>
+        </details>
+      </div>"""
+
+        qw_box = _matrix_box("quick_win", "Quick Wins", "High Impact, Low Effort &mdash; top priority",
+                             "rgba(26,135,84,0.06)", "rgba(26,135,84,0.25)", "var(--green)", "&#9889;",
+                             quadrants.get("quick_win", []), roadmap_by_quad.get("quick_win", []))
+        mp_box = _matrix_box("strategic", "Major Projects", "High Impact, High Effort &mdash; plan carefully",
+                             "rgba(7,112,207,0.06)", "rgba(7,112,207,0.25)", "var(--accent)", "&#128640;",
+                             quadrants.get("strategic", []), roadmap_by_quad.get("strategic", []))
+        fi_box = _matrix_box("minor", "Fill-ins", "Low Impact, Low Effort &mdash; if time permits",
+                             "rgba(108,117,125,0.06)", "rgba(108,117,125,0.2)", "#6c757d", "&#128221;",
+                             quadrants.get("minor", []), roadmap_by_quad.get("minor", []))
+        tt_box = _matrix_box("deprioritise", "Thankless Tasks", "Low Impact, High Effort &mdash; avoid or re-evaluate",
+                             "rgba(192,57,43,0.06)", "rgba(192,57,43,0.2)", "var(--red)", "&#9888;",
+                             quadrants.get("deprioritise", []), roadmap_by_quad.get("deprioritise", []))
+
         sections.append(f"""
-    <h2 class="section-title">{sec_num}. Recommendation Quadrant</h2>
-    <div class="quadrant-grid">
-      <div class="quadrant-box" style="background:rgba(26,135,84,0.06);border:1px solid rgba(26,135,84,0.2)">
-        <h3 style="color:var(--green)">Quick Wins (Low Effort, High Impact)</h3>
-        <ul>{_quad_items(quadrants.get('quick_win', []))}</ul>
-      </div>
-      <div class="quadrant-box" style="background:rgba(7,112,207,0.06);border:1px solid rgba(7,112,207,0.2)">
-        <h3 style="color:var(--accent)">Strategic Investments (Higher Effort, High Impact)</h3>
-        <ul>{_quad_items(quadrants.get('strategic', []))}</ul>
-      </div>
+    <h2 class="section-title">{sec_num}. Action-Priority Matrix</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:8px">
+      All findings and implementation actions plotted by <strong>effort</strong> vs <strong>impact</strong>
+      to maximise productivity. Expand each quadrant to see findings and their mapped actions.
+    </p>
+    <div class="note-box" style="margin-bottom:16px">
+      <strong>Where:</strong>
+      <span class="badge badge-high">Engineering</span> = Databricks / dbt / Delta tables
+      &nbsp;&middot;&nbsp;
+      <span class="badge badge-medium">Semantic Model</span> = PBI model / DAX / M expressions
+      &nbsp;&middot;&nbsp;
+      <span class="badge badge-info">Power BI</span> = Report layout / slicers / configuration
     </div>
-    {('<div class="card"><h3>Deprioritise (High Effort, Low Impact)</h3><ul>' + _quad_items(quadrants.get("deprioritise", [])) + '</ul></div>') if quadrants.get("deprioritise") else ""}
+    <div class="matrix-wrapper">
+      <div class="matrix-y-label">&larr; Low Impact &nbsp;&nbsp;&nbsp; High Impact &rarr;</div>
+      <div class="matrix-grid">
+        {qw_box}
+        {mp_box}
+        {fi_box}
+        {tt_box}
+      </div>
+      <div class="matrix-x-label">&larr; Low Effort &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; High Effort &rarr;</div>
+    </div>
     """)
 
     # ═══════════════════════════════════════════════════════
@@ -941,88 +1947,192 @@ def generate_html(
       {options_html}
     </div>
 """
+        # Build Findings by Severity reference table (formerly standalone Root Cause Analysis section)
+        severity_ref_rows = ""
+        for sf in synthesis["topFindings"]:
+            sf_scope = sf.get("scope", "model-wide")
+            severity_ref_rows += (
+                f"<tr><td>{escape(str(sf.get('id', '')))}</td>"
+                f"<td><strong>{escape(str(sf.get('title', '')))}</strong></td>"
+                f"<td>{_badge(sf.get('severity', 'medium'))}</td>"
+                f"<td>{_scope_badge(sf_scope)}</td>"
+                f"<td>{_where_badges(sf.get('layers', []))}</td>"
+                f"<td>{escape(str(sf.get('impact', '')))}</td>"
+                f"<td>{escape(str(sf.get('effort', '')))}</td></tr>\n"
+            )
+
         sections.append(f"""
     <h2 class="section-title">{sec_num}. Detailed Recommendations</h2>
     <p style="font-size:13px;color:var(--muted);margin-bottom:20px">
       Implementation details, trade-offs, and alternative options for each finding.
     </p>
     {detail_cards}
+    <details style="margin-top:24px">
+      <summary>Findings by Severity &mdash; Quick Reference Table</summary>
+      <div class="card" style="margin-top:12px">
+        <table><thead><tr><th>#</th><th>Finding</th><th>Severity</th><th>Scope</th><th>Where</th><th>Impact</th><th>Effort</th></tr></thead>
+          <tbody>{severity_ref_rows}</tbody></table>
+      </div>
+    </details>
     """)
 
-    # ═══════════════════════════════════════════════════════
-    # SECTION: IMPLEMENTATION ROADMAP
-    # ═══════════════════════════════════════════════════════
-    if synthesis and synthesis.get("implementationRoadmap"):
-        sec_num += 1
-        syn_findings = synthesis.get("topFindings", [])
-        roadmap_html = ""
-        for phase in synthesis["implementationRoadmap"]:
-            phase_name = escape(str(phase.get("phase", "")))
-            items_rows = ""
-            # Support both formats:
-            #   Old: {"items": ["F1: description", ...]}
-            #   New: {"actions": [{"action": "...", "where": "...", "finding": "F1"}]}
-            raw_items = phase.get("actions", phase.get("items", []))
-            for item in raw_items:
-                if isinstance(item, dict):
-                    desc = item.get("action", "")
-                    where_val = item.get("where", "")
-                    finding_ref = item.get("finding", "")
-                    if where_val:
-                        where_r = _where_badges([w.strip() for w in where_val.split(",")] if "," in where_val else [where_val])
-                    else:
-                        fid_list = [f.strip() for f in finding_ref.split(",")]
-                        matched = [f for f in syn_findings if f.get("id") in fid_list]
-                        layers = []
-                        for m in matched:
-                            layers.extend(m.get("layers", []))
-                        where_r = _where_badges(list(dict.fromkeys(layers))) if layers else '<span class="badge badge-info">TBD</span>'
-                    if finding_ref:
-                        desc = f"[{finding_ref}] {desc}"
-                    items_rows += f"<tr><td><strong>{escape(desc)}</strong></td><td>{where_r}</td></tr>\n"
-                else:
-                    # Legacy string format: "F1: description"
-                    parts = str(item).split(":", 1)
-                    fid_ref = parts[0].strip() if len(parts) > 1 else ""
-                    desc = parts[1].strip() if len(parts) > 1 else str(item)
-                    matched = [f for f in syn_findings if f.get("id") == fid_ref]
-                    where_r = _where_badges(matched[0].get("layers", [])) if matched else '<span class="badge badge-info">TBD</span>'
-                    items_rows += f"<tr><td><strong>{escape(desc)}</strong></td><td>{where_r}</td></tr>\n"
-
-            roadmap_html += f"""
-    <div class="recommendation-box"><h4>{phase_name}</h4>
-      <table style="margin-top:12px"><thead><tr><th>Action</th><th>Where</th></tr></thead>
-        <tbody>{items_rows}</tbody></table></div>"""
-
-        sections.append(f"""
-    <h2 class="section-title">{sec_num}. Implementation Roadmap</h2>
-    <div class="note-box">
-      <strong>Where:</strong>
-      <span class="badge badge-high">Engineering</span> = Databricks / dbt / Delta tables
-      &nbsp;&middot;&nbsp;
-      <span class="badge badge-medium">Semantic Model</span> = PBI model / DAX / M expressions
-      &nbsp;&middot;&nbsp;
-      <span class="badge badge-info">Power BI</span> = Report layout / slicers / configuration
-    </div>
-    {roadmap_html}
-    """)
+    # (Implementation Roadmap is now merged into the Action-Priority Matrix section above)
 
     # ═══════════════════════════════════════════════════════
     # SECTION: HEALTH SCORE SUMMARY
     # ═══════════════════════════════════════════════════════
     sec_num += 1
+
+    # Build per-pillar detail strings for the breakdown
+    bpa_detail = f"{bpa_high} high (-{bpa_h_deduct:.1f}), {bpa_medium} medium (-{bpa_m_deduct:.1f})"
+    dax_detail_parts = []
+    if dax_fa: dax_detail_parts.append(f"{dax_fa} FILTER(ALL) (-{fa_deduct:.1f})")
+    if dax_subq: dax_detail_parts.append(f"{dax_subq} high-subq (-{subq_deduct:.1f})")
+    if dax_crit: dax_detail_parts.append(f"{dax_crit} critical (-{crit_deduct:.1f})")
+    dax_detail = ", ".join(dax_detail_parts) if dax_detail_parts else "No issues detected"
+    if not dax_complexity: dax_detail = "No data (neutral)"
+    arch_detail_parts = []
+    if bidi_rels: arch_detail_parts.append(f"{bidi_rels} bidirectional (-{bidi_deduct:.1f})")
+    if dq_excess > 0: arch_detail_parts.append(f"{dq_excess} excess DQ (-{dq_deduct:.1f})")
+    if eng_high: arch_detail_parts.append(f"{eng_high} eng BPA high (-{eng_deduct:.1f})")
+    arch_detail = ", ".join(arch_detail_parts) if arch_detail_parts else "No issues detected"
+    if not taxonomy: arch_detail = "No data (neutral)"
+    dbt_detail_parts = []
+    if dbt_act: dbt_detail_parts.append(f"{dbt_act} actionable (-{dbt_act_deduct:.1f})")
+    if dbt_wide: dbt_detail_parts.append(f"{dbt_wide} wide models (-{dbt_wide_deduct:.1f})")
+    dbt_detail = ", ".join(dbt_detail_parts) if dbt_detail_parts else "No issues detected"
+    if not dbt_lineage: dbt_detail = "No data (neutral)"
+
+    def _pillar_class(score, max_pts):
+        pct = score / max_pts if max_pts else 0
+        return "green" if pct >= 0.7 else ("amber" if pct >= 0.4 else "red")
+
     sections.append(f"""
     <h2 class="section-title">{sec_num}. Health Score Summary</h2>
     <div class="card" style="text-align:center;padding:40px">
-      <div style="font-size:64px;font-weight:700;color:var(--{health_class})">{health}/100</div>
+      <div style="font-size:64px;font-weight:700;color:var(--{health_class})">
+        <span class="tooltip-wrap" data-tooltip="{health_tooltip}">{health}/100</span>
+      </div>
       <div style="font-size:16px;font-weight:600;color:var(--{health_class});margin-top:8px">Grade {health_grade}</div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3>Score Breakdown &mdash; 4 Pillars</h3>
+      <table>
+        <thead><tr><th>Pillar</th><th>Score</th><th>Max</th><th>Key Factors</th></tr></thead>
+        <tbody>
+          <tr><td>BPA Compliance</td><td style="color:var(--{_pillar_class(health_bpa, 40)});font-weight:600">{health_bpa:.0f}</td><td>40</td><td style="font-size:12px">{escape(bpa_detail)}</td></tr>
+          <tr><td>DAX Quality</td><td style="color:var(--{_pillar_class(health_dax, 25)});font-weight:600">{health_dax:.0f}</td><td>25</td><td style="font-size:12px">{escape(dax_detail)}</td></tr>
+          <tr><td>Architecture</td><td style="color:var(--{_pillar_class(health_arch, 25)});font-weight:600">{health_arch:.0f}</td><td>25</td><td style="font-size:12px">{escape(arch_detail)}</td></tr>
+          <tr><td>dbt Quality</td><td style="color:var(--{_pillar_class(health_dbt, 10)});font-weight:600">{health_dbt:.0f}</td><td>10</td><td style="font-size:12px">{escape(dbt_detail)}</td></tr>
+          <tr style="font-weight:700;border-top:2px solid var(--border)"><td>Total</td><td style="color:var(--{health_class})">{health}</td><td>100</td><td>Grade {health_grade}</td></tr>
+        </tbody>
+      </table>
+      <div style="display:flex;gap:16px;margin-top:16px;font-size:12px">
+        <span class="badge badge-low">A: 80+</span>
+        <span class="badge badge-info">B: 60-79</span>
+        <span class="badge badge-medium">C: 40-59</span>
+        <span class="badge badge-high">D: 20-39</span>
+        <span class="badge" style="background:rgba(0,0,0,0.08)">F: &lt;20</span>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-top:12px">
+        Each pillar starts at its maximum and gets deductions capped per signal category.
+        Missing data sources receive full points (neutral). Global minimum: 5.
+      </p>
     </div>
     """)
 
     # ═══════════════════════════════════════════════════════
-    # ASSEMBLE
+    # ASSEMBLE — wrap sections in collapsible <details>, build TOC & approach
     # ═══════════════════════════════════════════════════════
-    sections_html = "\n".join(sections)
+
+    # Extract section titles from <h2> tags and wrap each in <details>
+    wrapped_sections: list[str] = []
+    toc_entries: list[tuple[str, str, str]] = []  # (sec_id, number, title_text)
+
+    for sec_html in sections:
+        # Extract the <h2 class="section-title">N. Title ...</h2>
+        h2_match = re.search(r'<h2\s+class="section-title">(.*?)</h2>', sec_html, re.DOTALL)
+        if h2_match:
+            raw_title = h2_match.group(1)
+            # Strip HTML tags for TOC text
+            title_text = re.sub(r'<[^>]+>', '', raw_title).strip()
+            # Extract section number for anchor
+            num_match = re.match(r'(\d+)', title_text)
+            sec_id = f"sec-{num_match.group(1)}" if num_match else f"sec-{len(toc_entries)+1}"
+            toc_entries.append((sec_id, num_match.group(1) if num_match else str(len(toc_entries)+1), title_text))
+
+            # Remove the <h2> from content — it becomes the <summary>
+            body_content = sec_html[:h2_match.start()] + sec_html[h2_match.end():]
+            wrapped_sections.append(
+                f'<details id="{sec_id}" class="report-section">'
+                f'<summary>{raw_title}</summary>'
+                f'<div class="section-body">{body_content}</div>'
+                f'</details>'
+            )
+        else:
+            wrapped_sections.append(sec_html)
+
+    sections_html = "\n".join(wrapped_sections)
+
+    # ── Build Approach & TOC ──
+    # Determine which inputs were active
+    inputs_list = [
+        ("Semantic Model (Tabular Editor JSON)", bool(taxonomy), "Model structure, tables, relationships, measures, storage modes"),
+        ("DAX Measures Analysis", bool(dax_complexity), "Complexity scoring, anti-pattern detection, context transitions"),
+        ("Best Practice Analyser (BPA)", bool(bpa_results), f"{bpa_total} findings across 12 rules"),
+        ("dbt Source Code (Serve + Curated)", bool(dbt_lineage), "Lineage, materialisation, clustering, column pruning"),
+        ("Engineering BPA (dbt Rules)", bool(engineering_bpa), f"{eng_bpa_summary.get('totalFindings', 0)} findings across 15 rules" if engineering_bpa else ""),
+        ("Databricks Metadata & Volumetry", bool(dbx_profile), "Row counts, table sizes, query statistics"),
+        ("Databricks Query History", bool(query_profile or user_query_profile), "Per-user attribution, duration profiling"),
+        ("Capacity Settings Simulation", bool(capacity_settings), "Timeout, memory limit, row set thresholds",
+         "Requires query history export (JSON/CSV) with per-query memory and row-set metrics; system.query.history does not expose memory consumption per statement"),
+        ("Workload & Infrastructure Analysis", bool(workload_analysis), "Surge protection, capacity scaling, model settings",
+         "Requires Fabric Admin API data (capacity CU consumption, surge protection config, workspace-to-capacity mapping) which cannot be queried programmatically; needs manual export from the Fabric Admin Portal"),
+        ("Column Memory Estimation", bool(column_memory), f"{column_memory.get('summary', {}).get('removalCandidateCount', 0)} removal candidates" if column_memory else "",
+         "Requires Databricks volumetry at column level (per-column cardinality and byte width); DESCRIBE DETAIL only provides table-level stats, not column-level storage estimates"),
+        ("PBIX Visual Layer Analysis", bool(visual_analysis), f"{visual_analysis.get('summary', {}).get('totalFindings', 0)} visual rule findings" if visual_analysis else "",
+         "No PBIX report file was extracted; requires running unzip on the .pbix to obtain the Layout JSON for visual-level rule checks"),
+        ("Synthesis & Cross-Reference", bool(synthesis), "Root cause analysis, implementation roadmap"),
+    ]
+
+    input_bullets = ""
+    for entry in inputs_list:
+        label, active, detail = entry[0], entry[1], entry[2]
+        skip_reason = entry[3] if len(entry) > 3 else ""
+        badge_cls = "input-active" if active else "input-inactive"
+        status = "Active" if active else "Skipped"
+        if active and detail:
+            detail_str = f" &mdash; {escape(detail)}"
+        elif not active and skip_reason:
+            detail_str = f" &mdash; {escape(skip_reason)}"
+        else:
+            detail_str = ""
+        input_bullets += f'<li><span class="input-badge {badge_cls}">{status}</span> <strong>{escape(label)}</strong>{detail_str}</li>\n'
+
+    toc_items = ""
+    for sec_id, num, title in toc_entries:
+        toc_items += f'<li><a href="#{sec_id}">{escape(title)}</a></li>\n'
+
+    active_count = sum(1 for entry in inputs_list if entry[1])
+    analysis_mode = synthesis.get("analysisMode", "model-wide").replace("-", " ").title() if synthesis else "Standard"
+
+    approach_html = f"""
+    <div class="approach-card">
+      <h3>Analysis Approach</h3>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">
+        This report was produced by the <strong>PBI Performance Diagnosis Agent</strong> using an automated
+        {active_count}-source analysis pipeline. The agent examines the full stack &mdash; from Databricks
+        infrastructure through dbt data pipelines to the Power BI semantic model and report layer &mdash;
+        to identify performance bottlenecks and produce evidence-backed recommendations.
+      </p>
+      <h4 style="font-size:13px;margin-bottom:8px">Data Sources &amp; Tools</h4>
+      <ul>{input_bullets}</ul>
+    </div>
+    <div class="toc-card">
+      <h3>Table of Contents</h3>
+      <ol class="toc-list">{toc_items}</ol>
+    </div>
+    """
 
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -1038,16 +2148,20 @@ def generate_html(
     <div class="metadata">
       <span>{now}</span>
       <span>PBI Performance Diagnosis Agent</span>
-      <span>Health: {health}/100 ({health_grade})</span>
-      <span>Mode: {escape(synthesis.get('analysisMode', 'model-wide').replace('-', ' ').title()) if synthesis else 'Standard'}</span>
+      <span class="tooltip-wrap" data-tooltip="{health_tooltip}">Health: {health}/100 ({health_grade})</span>
+      <span>Mode: {escape(analysis_mode)}</span>
     </div>
   </div>
   <div class="container">
+    {approach_html}
     {sections_html}
     <div class="report-footer">
-      Generated by PBI Performance Diagnosis Agent &middot; {now} &middot; Health Score: {health}/100 (Grade {health_grade})
+      Generated by PBI Performance Diagnosis Agent &middot; {now} &middot; <span class="tooltip-wrap" data-tooltip="{health_tooltip}">Health Score: {health}/100 (Grade {health_grade})</span>
     </div>
   </div>
+<script>
+document.querySelectorAll('.sortable-th').forEach(th=>{{th.addEventListener('click',()=>{{const t=th.closest('table'),i=Array.from(th.parentNode.children).indexOf(th),rows=Array.from(t.querySelectorAll('tbody tr')),a=th.dataset.sort!=='asc';th.dataset.sort=a?'asc':'desc';rows.sort((x,y)=>{{const va=x.children[i]?.dataset.val||x.children[i]?.textContent||'',vb=y.children[i]?.dataset.val||y.children[i]?.textContent||'',na=parseFloat(va),nb=parseFloat(vb);if(!isNaN(na)&&!isNaN(nb))return a?na-nb:nb-na;return a?va.localeCompare(vb):vb.localeCompare(va)}});rows.forEach(r=>t.querySelector('tbody').appendChild(r))}})}});
+</script>
 </body>
 </html>"""
 
@@ -1102,7 +2216,10 @@ def main():
     # Move intermediate JSON files into the run subdirectory
     json_files = ["model-taxonomy.json", "dax-audit.json", "dax-complexity.json",
                   "dbt-lineage.json", "bpa-results.json", "synthesis.json",
-                  "query-profile.json", "perf-summary.json", "databricks-profile.json"]
+                  "query-profile.json", "perf-summary.json", "databricks-profile.json",
+                  "user-query-profile.json", "capacity-settings-analysis.json",
+                  "workload-analysis.json", "column-memory-analysis.json",
+                  "engineering-bpa-results.json", "visual-analysis.json"]
     moved = []
     for jf in json_files:
         src = input_dir / jf

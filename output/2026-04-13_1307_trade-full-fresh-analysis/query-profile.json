@@ -1,0 +1,122 @@
+{
+  "model": "ADE - Trade",
+  "analysisDate": "2026-04-13",
+  "periodDays": 30,
+  "source": "system.query.history via Databricks MCP",
+  "spnFilter": "executed_as = '65978fad-bc17-4f5a-b134-25d299885855'",
+  "evidence": [
+    {
+      "claimId": "column-overselection-serve-view",
+      "claim": "Serve view exposes 91 columns from fact table to PBI, but typical visuals use <10 columns",
+      "evidenceType": "view_definition",
+      "source": "SHOW CREATE TABLE sales.serve.fact_product_option_trade_daily_snapshot_v1",
+      "detail": "The serve view is SELECT * from curated table with all 91 columns. PBI's DirectQuery engine generates SQL selecting ALL 91 columns even when a visual only needs a few aggregated values.",
+      "impactType": "cost",
+      "impactExplanation": "Column over-selection increases read_bytes per query. However, with columnar storage (Parquet/Delta), the engine can skip unneeded column data. Impact is primarily I/O cost and memory, not necessarily latency."
+    },
+    {
+      "claimId": "scan-amplification-trade-fact",
+      "claim": "PBI queries read 5.6B rows and 115 GB to return 0 rows",
+      "evidenceType": "query_history",
+      "queryId": "01f126d4-7043-1658-b57e-6431852ba223",
+      "sqlSnippet": "PBI DirectQuery — SELECT with nested subqueries across multiple catalogs",
+      "metrics": {
+        "durationMs": 224550,
+        "readRows": 5608190592,
+        "readBytes": 124053413588,
+        "producedRows": 0,
+        "readFiles": 4764,
+        "prunedFiles": 4,
+        "pruningEfficiency": "0.08%"
+      },
+      "impactType": "both",
+      "impactExplanation": "Near-zero file pruning (4/4768 files) despite clustering on dim_date_sk. This indicates the date filter is not being pushed down to the fact table — consistent with PBI's date-filter-via-JOIN pattern."
+    },
+    {
+      "claimId": "option-ranking-12x-scan",
+      "claim": "Option Ranking query scans fact table 12 times via UNION ALL CTE, taking 500+ seconds",
+      "evidenceType": "query_history",
+      "queryId": "01f1344f-856a-1765-951b-495063e9d843",
+      "sqlSnippet": "WITH retail_sale_qty_top AS (SELECT ... FROM fact_product_option_trade_daily_snapshot_v1 ...) UNION ALL ... (12 branches)",
+      "metrics": {
+        "durationMs": 500822,
+        "readRows": 40624339,
+        "readBytes": 27958582126,
+        "producedRows": 12000,
+        "readFiles": 938,
+        "prunedFiles": 17864,
+        "pruningEfficiency": "95%"
+      },
+      "impactType": "latency",
+      "impactExplanation": "The Option Ranking query is a native SQL pass-through (not standard PBI DirectQuery). It uses WHERE dim_date_sk = date_add(current_date(), -1) which DOES enable clustering pruning (17864 files pruned). But 12 separate scans still make it extremely slow (500s). Could be pre-aggregated."
+    },
+    {
+      "claimId": "date-filter-via-join-no-pruning",
+      "claim": "PBI DirectQuery applies date filters via JOIN to dim_date rather than WHERE on fact table, preventing cluster pruning",
+      "evidenceType": "query_history",
+      "queryId": "01f1341e-6928-16c8-bd01-093bc0365e89",
+      "metrics": {
+        "durationMs": 216141,
+        "readFiles": 2731,
+        "prunedFiles": 5,
+        "pruningEfficiency": "0.18%"
+      },
+      "impactType": "latency",
+      "impactExplanation": "The fact table is clustered by dim_date_sk but PBI's generated SQL joins to dim_date with a WHERE on calendar_date, then joins the fact table via surrogate key. Databricks cannot push the date predicate through the JOIN to the fact table's clustering column. Only 5 of 2736 files are pruned."
+    },
+    {
+      "claimId": "1m-row-visual-fetch",
+      "claim": "At least one PBI visual fetches 1M+ rows, reading 6.2B rows and 16.5 GB",
+      "evidenceType": "query_history",
+      "queryId": "01f1342f-4d37-16d4-9c9f-66ba31a48860",
+      "metrics": {
+        "durationMs": 184754,
+        "readRows": 6249185839,
+        "producedRows": 1000001,
+        "readBytes": 17731318587,
+        "prunedFiles": 0,
+        "resultFetchMs": 36967
+      },
+      "impactType": "both",
+      "impactExplanation": "A visual returning 1M rows suggests a detail table or matrix with no aggregation. The 37s result fetch time alone is significant. Zero file pruning indicates no predicate pushdown."
+    },
+    {
+      "claimId": "peak-hour-concentration",
+      "claim": "80% of Trade fact table queries occur between 07:00-16:00 UTC, with 80K queries at peak hour (08:00)",
+      "evidenceType": "query_history_aggregation",
+      "metrics": {
+        "peakHour": 8,
+        "peakQueries": 80835,
+        "offPeakAvgS": 6.2,
+        "peakAvgS": 4.2,
+        "peakP95S": 14.0
+      },
+      "impactType": "latency",
+      "impactExplanation": "Lower latency during peak hours (4.1s vs 6.5s off-peak) suggests warehouse auto-scaling is effective during business hours but cold starts affect overnight/early morning queries."
+    },
+    {
+      "claimId": "filter-all-77-measures",
+      "claim": "77 DAX measures use FILTER(ALL(...)) pattern, each generating full table scans in DirectQuery",
+      "evidenceType": "dax_audit",
+      "source": "audit_dax.py output",
+      "impactType": "latency",
+      "impactExplanation": "Each FILTER(ALL(Table)) in a DirectQuery measure forces a separate full-scan SQL subquery. With 77 such measures across the model, visuals displaying multiple measures compound the scan amplification."
+    },
+    {
+      "claimId": "bidirectional-relationships-3",
+      "claim": "3 bidirectional cross-filter relationships exist, potentially doubling SQL query complexity",
+      "evidenceType": "bpa_results",
+      "source": "run_bpa.py output",
+      "impactType": "latency",
+      "impactExplanation": "Bidirectional relationships in DirectQuery mode require the engine to generate additional SQL subqueries for the reverse filter direction. With 3 bidirectional relationships on a model with DirectQuery fact tables, this can significantly increase query cost."
+    },
+    {
+      "claimId": "auto-refresh-enabled",
+      "claim": "Trade report has auto-refresh enabled, generating continuous background queries against Databricks",
+      "evidenceType": "visual_analysis",
+      "source": "analyse_report_visuals.py output",
+      "impactType": "cost",
+      "impactExplanation": "Auto-refresh on a DirectQuery report triggers periodic full re-queries of all visible visuals. With the Trade model's heavy fact table, this significantly increases warehouse CU consumption without user-initiated need."
+    }
+  ]
+}

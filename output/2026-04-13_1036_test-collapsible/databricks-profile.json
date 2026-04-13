@@ -1,0 +1,192 @@
+{
+  "tables": [
+    {
+      "fullName": "product_dev.serve.dim_product_in_pricing_store_v1",
+      "rowCount": 211597318,
+      "sizeGB": null
+    },
+    {
+      "fullName": "product_dev.serve.dim_product_option_country_restriction_v1",
+      "rowCount": 2565480,
+      "sizeGB": 0.02,
+      "numFiles": null
+    },
+    {
+      "fullName": "product_dev.serve.dim_product_option_fabric_composition_v1",
+      "rowCount": 4740271,
+      "sizeGB": 0.02,
+      "numFiles": null
+    },
+    {
+      "fullName": "product_dev.serve.dim_product_option_in_pricing_store_v1",
+      "rowCount": 35817756,
+      "sizeGB": null
+    },
+    {
+      "fullName": "product_dev.serve.dim_product_option_in_store_v1",
+      "rowCount": 44579104,
+      "sizeGB": null
+    },
+    {
+      "fullName": "product_dev.serve.dim_product_option_in_warehouse_v1",
+      "rowCount": 27474621,
+      "sizeGB": null
+    },
+    {
+      "fullName": "product_dev.serve.dim_product_option_multi_valued_user_defined_attributes_v1",
+      "rowCount": 12689340,
+      "sizeGB": 0.07,
+      "numFiles": null
+    },
+    {
+      "fullName": "product_dev.serve.dim_product_option_single_valued_user_defined_attributes_v1",
+      "rowCount": 2484195,
+      "sizeGB": 0.09,
+      "numFiles": null
+    },
+    {
+      "fullName": "product_dev.serve.dim_product_option_v1",
+      "rowCount": 2489157,
+      "sizeGB": 0.35,
+      "numFiles": null
+    },
+    {
+      "fullName": "sales_dev.serve.dim_lifecycle_price_status_v1",
+      "rowCount": 6,
+      "sizeGB": 0.0,
+      "numFiles": null
+    },
+    {
+      "fullName": "sales_dev.serve.dim_price_status_group_v1",
+      "rowCount": 4,
+      "sizeGB": null
+    },
+    {
+      "fullName": "sales_dev.serve.dim_price_status_v1",
+      "rowCount": 6,
+      "sizeGB": null
+    },
+    {
+      "fullName": "sales_dev.serve.dim_pricing_store_v1",
+      "rowCount": 19,
+      "sizeGB": null
+    },
+    {
+      "fullName": "sales_dev.serve.dim_product_lifecycle_status_v1",
+      "rowCount": 7,
+      "sizeGB": null
+    },
+    {
+      "fullName": "sales_dev.serve.dim_seller_v1",
+      "rowCount": 145,
+      "sizeGB": 0.0,
+      "numFiles": null
+    },
+    {
+      "fullName": "sales_dev.serve.dim_selling_channel_v1",
+      "rowCount": 5,
+      "sizeGB": null
+    },
+    {
+      "fullName": "sales_dev.serve.dim_shop_v1",
+      "rowCount": 4,
+      "sizeGB": null
+    },
+    {
+      "fullName": "sales_dev.serve.dim_web_store_v1",
+      "rowCount": 18,
+      "sizeGB": null
+    },
+    {
+      "fullName": "sales_dev.serve.fact_product_option_trade_daily_snapshot_v1",
+      "rowCount": 6052560794,
+      "sizeGB": 116.02,
+      "numFiles": null
+    },
+    {
+      "fullName": "sourcingandbuying_dev.serve.dim_supplier_v1",
+      "rowCount": 6474,
+      "sizeGB": 0.0002,
+      "numFiles": null
+    },
+    {
+      "fullName": "supplychain_dev.serve.dim_inventory_status_v1",
+      "rowCount": 22,
+      "sizeGB": null
+    },
+    {
+      "fullName": "supplychain_dev.serve.dim_stock_age_band_v1",
+      "rowCount": 1043,
+      "sizeGB": null
+    },
+    {
+      "fullName": "supplychain_dev.serve.dim_warehouse_v1",
+      "rowCount": 20,
+      "sizeGB": 0.0,
+      "numFiles": null
+    },
+    {
+      "fullName": "technology_dev.serve.dim_country_v1",
+      "rowCount": 255,
+      "sizeGB": 0.0,
+      "numFiles": null
+    },
+    {
+      "fullName": "technology_dev.serve.dim_date_v2",
+      "rowCount": 9964,
+      "sizeGB": 0.0002,
+      "numFiles": null
+    },
+    {
+      "fullName": "technology_dev.serve.dim_financial_time_period_v1",
+      "rowCount": 1346,
+      "sizeGB": null
+    },
+    {
+      "fullName": "technology_dev.serve.dim_territory_v1",
+      "rowCount": 5,
+      "sizeGB": 0.0,
+      "numFiles": null
+    },
+    {
+      "fullName": "technology_dev.serve.financial_half_to_date_daily_v1",
+      "rowCount": 2220480,
+      "sizeGB": null
+    },
+    {
+      "fullName": "technology_dev.serve.financial_month_to_date_daily_v1",
+      "rowCount": 1597375,
+      "sizeGB": null
+    },
+    {
+      "fullName": "technology_dev.serve.financial_transform_daily_v1",
+      "rowCount": 9964,
+      "sizeGB": null
+    },
+    {
+      "fullName": "technology_dev.serve.financial_year_to_date_daily_v1",
+      "rowCount": 2960492,
+      "sizeGB": null
+    },
+    {
+      "fullName": "technology_dev.serve.ref_financial_half_to_date_weekly_v1",
+      "rowCount": 15897,
+      "sizeGB": null
+    },
+    {
+      "fullName": "technology_dev.serve.ref_financial_month_to_date_weekly_v1",
+      "rowCount": 3180,
+      "sizeGB": null
+    },
+    {
+      "fullName": "technology_dev.serve.ref_financial_transform_weekly_v1",
+      "rowCount": 1179,
+      "sizeGB": null
+    },
+    {
+      "fullName": "technology_dev.serve.ref_financial_year_to_date_weekly_v1",
+      "rowCount": 31003,
+      "sizeGB": null
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+model_name,table_name,source_table,row_count,min_date,timespam(days),date_fields
+ADE - Trade,Product Pricing Store,product.serve.dim_product_in_pricing_store_v1,211597318,,,
+ADE - Trade,Product Option Country Restriction,product.serve.dim_product_option_country_restriction_v1,2565480,,,
+ADE - Trade,Product Option Fabric Composition,product.serve.dim_product_option_fabric_composition_v1,4740271,,,
+ADE - Trade,Product Option In Pricing Store,product.serve.dim_product_option_in_pricing_store_v1,35817756,,,
+ADE - Trade,Product Option In Store,product.serve.dim_product_option_in_store_v1,44579104,1900-01-01,46120,"go_live_date, available_to_sell_date"
+ADE - Trade,Product Option In Warehouse,product.serve.dim_product_option_in_warehouse_v1,27474621,1900-01-01,46120,"dim_go_live_date_sk, dim_lifecycle_pre_new_date_sk, dim_lifecycle_current_date_sk, dim_lifecycle_clearance_date_sk, dim_lifecycle_old_date_sk"
+ADE - Trade,Multi-Value UDA,product.serve.dim_product_option_multi_valued_user_defined_attributes_v1,12689340,2021-05-21,1785,last_update_datetime
+ADE - Trade,UDA,product.serve.dim_product_option_single_valued_user_defined_attributes_v1,2484195,,,planned_go_live_date
+ADE - Trade,Option,product.serve.dim_product_option_v1,2489157,2005-11-08,2919801,"option_earliest_global_go_live_date, ade_source_last_updated"
+ADE - Trade,Lifecycle Price Status,sales.serve.dim_lifecycle_price_status_v1,6,,,
+ADE - Trade,Price Status Group,sales.serve.dim_price_status_group_v1,4,,,
+ADE - Trade,Price Status,sales.serve.dim_price_status_v1,6,,,
+ADE - Trade,Pricing Store,sales.serve.dim_pricing_store_v1,19,,,
+ADE - Trade,Product Lifecycle Status,sales.serve.dim_product_lifecycle_status_v1,7,,,
+ADE - Trade,Seller,sales.serve.dim_seller_v1,145,,,
+ADE - Trade,Selling Channel,sales.serve.dim_selling_channel_v1,5,,,
+ADE - Trade,Shop,sales.serve.dim_shop_v1,4,,,
+ADE - Trade,Web Store,sales.serve.dim_web_store_v1,18,,,
+ADE - Trade,Daily Trade,sales.serve.fact_product_option_trade_daily_snapshot_v1,6052560794,2023-09-04,960,dim_date_sk
+ADE - Trade,Supplier,sourcingandbuying.serve.dim_supplier_v1,6474,,,
+ADE - Trade,Inventory Status,supplychain.serve.dim_inventory_status_v1,22,,,
+ADE - Trade,Stock Age Band,supplychain.serve.dim_stock_age_band_v1,1043,,,
+ADE - Trade,Warehouse,supplychain.serve.dim_warehouse_v1,20,,,
+ADE - Trade,Country,technology.serve.dim_country_v1,255,,,
+ADE - Trade,Date,technology.serve.dim_date_v2,9964,1900-01-01,2958463,"dim_date_sk, calendar_week_id, etc"
+ADE - Trade,Earliest Global Available To Sell Date,technology.serve.dim_date_v2,9964,1900-01-01,2958463,"dim_date_sk, calendar_week_id, etc"
+ADE - Trade,Earliest Global Go Live Date,technology.serve.dim_date_v2,9964,1900-01-01,2958463,"dim_date_sk, calendar_week_id, etc"
+ADE - Trade,Go Live Date FC,technology.serve.dim_date_v2,9964,1900-01-01,2958463,"dim_date_sk, calendar_week_id, etc"
+ADE - Trade,Time Period,technology.serve.dim_financial_time_period_v1,1346,2024-09-02,727,dim_date_sk
+ADE - Trade,Territory,technology.serve.dim_territory_v1,5,,,
+ADE - Trade,Daily Financial Half to Date,technology.serve.financial_half_to_date_daily_v1,2220480,1900-01-01,2958463,"dim_date_sk, dim_date_sk_htd"
+ADE - Trade,Daily Financial Month to Date,technology.serve.financial_month_to_date_daily_v1,1597375,1900-01-01,2958463,"dim_date_sk, dim_date_sk_mtd"
+ADE - Trade,Daily Financial Transform,technology.serve.financial_transform_daily_v1,9964,1900-01-01,2958463,"dim_date_sk, dim_date_sk_last_year, dim_date_sk_yesterday, dim_date_sk_last_week etc"
+ADE - Trade,Daily Financial Year to Date,technology.serve.financial_year_to_date_daily_v1,2960492,1900-01-01,2958463,"dim_date_sk, dim_date_sk_ytd"
+ADE - Trade,Weekly Financial Half to Date,technology.serve.ref_financial_half_to_date_weekly_v1,15897,,,"financial_year_week_id, financial_year_week_id_htd"
+ADE - Trade,Weekly Financial Month to Date,technology.serve.ref_financial_month_to_date_weekly_v1,3180,,,"financial_year_week_id, financial_year_week_id_mtd"
+ADE - Trade,Weekly Financial Transform,technology.serve.ref_financial_transform_weekly_v1,1179,,,"financial_year_week_id, financial_year_week_id_last_week, financial_year_week_id_last_year"
+ADE - Trade,Weekly Financial Year to Date,technology.serve.ref_financial_year_to_date_weekly_v1,31003,,,"financial_year_week_id, financial_year_week_id_ytd"
+ADE - Trade,Column_selector,,null,,,
+ADE - Trade,ALB Bracket,,null,,,
+ADE - Trade,Option Ranking,,null,,,
+ADE - Trade,LW Slicer,,null,,,
+ADE - Trade,OptionConditionSelector,,null,,,

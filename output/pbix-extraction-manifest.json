@@ -1,0 +1,37 @@
+{
+  "extractionDate": "2026-04-13T12:58:38Z",
+  "reportsDir": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/asos-data-ade-powerbi/powerbi/reports",
+  "requestedReports": [
+    "ADE - Trade",
+    "Ranking View of Trade"
+  ],
+  "results": [
+    {
+      "inputName": "ADE - Trade",
+      "resolvedDir": "Trade",
+      "pbixPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/asos-data-ade-powerbi/powerbi/reports/Trade/Trade.pbix",
+      "format": "pbir",
+      "layoutPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/claude-cowork/PBI-Performance-Diagnosis-Agent/output/pbix_extracted/Trade/Layout",
+      "matched": true,
+      "confidence": "exact"
+    },
+    {
+      "inputName": "Ranking View of Trade",
+      "resolvedDir": "Ranking View of Trade",
+      "pbixPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/asos-data-ade-powerbi/powerbi/reports/Ranking View of Trade/Ranking View of Trade.pbix",
+      "format": "legacy",
+      "layoutPath": "/Users/brunogcmartins/environment/cit/ASOS/asos-data-workflow/claude-cowork/PBI-Performance-Diagnosis-Agent/output/pbix_extracted/Ranking View of Trade/Layout",
+      "matched": true,
+      "confidence": "exact"
+    }
+  ],
+  "summary": {
+    "requested": 2,
+    "extracted": 2,
+    "failed": 0,
+    "formats": {
+      "pbir": 1,
+      "legacy": 1
+    }
+  }
+}

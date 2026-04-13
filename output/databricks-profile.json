@@ -1,0 +1,307 @@
+{
+  "tables": [
+    {
+      "fullName": "sales.serve.fact_product_option_trade_daily_snapshot_v1",
+      "isView": true,
+      "underlyingTable": "sales.curated.fact_product_option_trade_daily_snapshot_v1",
+      "rowCount": null,
+      "sizeGB": 116.02,
+      "numFiles": 2760,
+      "clusteringColumns": ["dim_date_sk", "dim_product_option_sk", "_updated_date"],
+      "columnCount": 91,
+      "note": "Serve view is SELECT * over curated table (124.6 GB, 2760 files). 91 columns exposed."
+    },
+    {
+      "fullName": "product.serve.dim_product_option_v1",
+      "isView": true,
+      "underlyingTable": "product.curated.dim_product_option_v1",
+      "rowCount": null,
+      "sizeGB": 0.36,
+      "numFiles": 9,
+      "clusteringColumns": ["product_buyrarchy_division", "product_buyrarchy_buying_group"]
+    },
+    {
+      "fullName": "technology.serve.dim_date_v2",
+      "isView": true,
+      "underlyingTable": "technology.curated.dim_date_v2",
+      "rowCount": null,
+      "sizeGB": 0.0002,
+      "numFiles": 1,
+      "clusteringColumns": []
+    },
+    {
+      "fullName": "technology.serve.dim_country_v1",
+      "isView": true
+    },
+    {
+      "fullName": "technology.serve.dim_territory_v1",
+      "isView": true
+    },
+    {
+      "fullName": "technology.serve.dim_financial_time_period_v1",
+      "isView": true
+    },
+    {
+      "fullName": "technology.serve.financial_transform_daily_v1",
+      "isView": true
+    },
+    {
+      "fullName": "technology.serve.financial_half_to_date_daily_v1",
+      "isView": true
+    },
+    {
+      "fullName": "technology.serve.financial_month_to_date_daily_v1",
+      "isView": true
+    },
+    {
+      "fullName": "technology.serve.financial_year_to_date_daily_v1",
+      "isView": true
+    },
+    {
+      "fullName": "sales.serve.dim_pricing_store_v1",
+      "isView": true
+    },
+    {
+      "fullName": "sales.serve.dim_price_status_v1",
+      "isView": true
+    },
+    {
+      "fullName": "sales.serve.dim_price_status_group_v1",
+      "isView": true
+    },
+    {
+      "fullName": "sales.serve.dim_selling_channel_v1",
+      "isView": true
+    },
+    {
+      "fullName": "sales.serve.dim_seller_v1",
+      "isView": true
+    },
+    {
+      "fullName": "sales.serve.dim_web_store_v1",
+      "isView": true
+    },
+    {
+      "fullName": "sales.serve.dim_shop_v1",
+      "isView": true
+    },
+    {
+      "fullName": "sales.serve.dim_lifecycle_price_status_v1",
+      "isView": true
+    },
+    {
+      "fullName": "sales.serve.dim_product_lifecycle_status_v1",
+      "isView": true
+    },
+    {
+      "fullName": "product.serve.dim_product_option_in_pricing_store_v1",
+      "isView": true
+    },
+    {
+      "fullName": "product.serve.dim_product_option_in_store_v1",
+      "isView": true
+    },
+    {
+      "fullName": "product.serve.dim_product_option_in_warehouse_v1",
+      "isView": true
+    },
+    {
+      "fullName": "product.serve.dim_product_option_country_restriction_v1",
+      "isView": true
+    },
+    {
+      "fullName": "product.serve.dim_product_option_fabric_composition_v1",
+      "isView": true
+    },
+    {
+      "fullName": "product.serve.dim_product_in_pricing_store_v1",
+      "isView": true
+    },
+    {
+      "fullName": "product.serve.dim_product_option_single_valued_user_defined_attributes_v1",
+      "isView": true
+    },
+    {
+      "fullName": "product.serve.dim_product_option_multi_valued_user_defined_attributes_v1",
+      "isView": true
+    },
+    {
+      "fullName": "supplychain.serve.dim_inventory_status_v1",
+      "isView": true
+    },
+    {
+      "fullName": "supplychain.serve.dim_stock_age_band_v1",
+      "isView": true
+    },
+    {
+      "fullName": "supplychain.serve.dim_warehouse_v1",
+      "isView": true
+    },
+    {
+      "fullName": "sourcingandbuying.serve.dim_supplier_v1",
+      "isView": true
+    }
+  ],
+  "tableQueryStats": [
+    {
+      "tableName": "fact_product_option_trade_daily_snapshot_v1",
+      "dailyQueries": 19493,
+      "totalQueries30d": 584787,
+      "avgDurationMs": 4568,
+      "p95DurationMs": 15264,
+      "avgReadGB": 1.83,
+      "avgReadRows": 587321625,
+      "note": "Highest volume table — 585K queries in 30 days (non-cached)"
+    },
+    {
+      "tableName": "dim_date_v2",
+      "dailyQueries": 1493,
+      "totalQueries30d": 44795,
+      "avgDurationMs": 4978,
+      "p95DurationMs": 16281,
+      "avgReadGB": 1.74,
+      "avgReadRows": 263737260
+    },
+    {
+      "tableName": "dim_product_option_v1",
+      "dailyQueries": 371,
+      "totalQueries30d": 11135,
+      "avgDurationMs": 6011,
+      "p95DurationMs": 18870,
+      "avgReadGB": 2.16,
+      "avgReadRows": 250568874
+    },
+    {
+      "tableName": "dim_product_option_in_pricing_store_v1",
+      "dailyQueries": 88,
+      "totalQueries30d": 2655,
+      "avgDurationMs": 5779,
+      "p95DurationMs": 15152,
+      "avgReadGB": 3.18,
+      "avgReadRows": 155822215
+    },
+    {
+      "tableName": "dim_product_option_in_warehouse_v1",
+      "dailyQueries": 12,
+      "totalQueries30d": 358,
+      "avgDurationMs": 6873,
+      "p95DurationMs": 19319,
+      "avgReadGB": 4.61,
+      "avgReadRows": 376757026
+    },
+    {
+      "tableName": "dim_product_option_in_store_v1",
+      "dailyQueries": 2,
+      "totalQueries30d": 58,
+      "avgDurationMs": 9913,
+      "p95DurationMs": 27582,
+      "avgReadGB": 2.04,
+      "avgReadRows": 267241011
+    },
+    {
+      "tableName": "financial_transform_daily_v1",
+      "dailyQueries": 2,
+      "totalQueries30d": 69,
+      "avgDurationMs": 1246,
+      "p95DurationMs": 2748,
+      "avgReadGB": 0.0,
+      "avgReadRows": 39813
+    }
+  ],
+  "hourlyDistribution": [
+    {"hour": 0, "queries": 2081, "avgS": 5.1, "p95S": 16.8},
+    {"hour": 1, "queries": 447, "avgS": 6.5, "p95S": 26.3},
+    {"hour": 2, "queries": 935, "avgS": 4.8, "p95S": 15.4},
+    {"hour": 3, "queries": 429, "avgS": 5.5, "p95S": 21.3},
+    {"hour": 4, "queries": 546, "avgS": 8.3, "p95S": 35.6},
+    {"hour": 5, "queries": 931, "avgS": 3.7, "p95S": 15.0},
+    {"hour": 6, "queries": 14011, "avgS": 4.6, "p95S": 16.9},
+    {"hour": 7, "queries": 52333, "avgS": 4.3, "p95S": 13.5},
+    {"hour": 8, "queries": 80835, "avgS": 4.1, "p95S": 14.0},
+    {"hour": 9, "queries": 69103, "avgS": 4.1, "p95S": 13.8},
+    {"hour": 10, "queries": 55412, "avgS": 4.2, "p95S": 13.9},
+    {"hour": 11, "queries": 44928, "avgS": 4.4, "p95S": 14.7},
+    {"hour": 12, "queries": 42488, "avgS": 4.4, "p95S": 14.4},
+    {"hour": 13, "queries": 47114, "avgS": 4.8, "p95S": 16.2},
+    {"hour": 14, "queries": 53650, "avgS": 4.8, "p95S": 15.4},
+    {"hour": 15, "queries": 38816, "avgS": 4.5, "p95S": 14.6},
+    {"hour": 16, "queries": 28062, "avgS": 5.5, "p95S": 18.5},
+    {"hour": 17, "queries": 16296, "avgS": 5.2, "p95S": 17.4},
+    {"hour": 18, "queries": 8135, "avgS": 5.5, "p95S": 19.8},
+    {"hour": 19, "queries": 5764, "avgS": 6.7, "p95S": 24.4},
+    {"hour": 20, "queries": 6692, "avgS": 7.1, "p95S": 24.4},
+    {"hour": 21, "queries": 6731, "avgS": 6.7, "p95S": 23.8},
+    {"hour": 22, "queries": 5002, "avgS": 7.6, "p95S": 31.4},
+    {"hour": 23, "queries": 4046, "avgS": 3.8, "p95S": 13.1}
+  ],
+  "slowestQueries": [
+    {
+      "statementId": "01f1344f-856a-1765-951b-495063e9d843",
+      "durationMs": 500822,
+      "producedRows": 12000,
+      "readBytes": 27958582126,
+      "readRows": 40624339,
+      "readFiles": 938,
+      "prunedFiles": 17864,
+      "executionMs": 499072,
+      "compilationMs": 1750,
+      "note": "Option Ranking query — CTE with 12 UNION ALL branches, each scanning fact table separately for different ranking metrics. Effectively scans the table 12 times.",
+      "queryType": "option-ranking-cte"
+    },
+    {
+      "statementId": "01f126d4-7043-1658-b57e-6431852ba223",
+      "durationMs": 224550,
+      "producedRows": 0,
+      "readBytes": 124053413588,
+      "readRows": 5608190592,
+      "readFiles": 4764,
+      "prunedFiles": 4,
+      "executionMs": 220327,
+      "compilationMs": 4194,
+      "note": "PBI DirectQuery — massive full scan, 5.6B rows, 115.5 GB read, near-zero file pruning (4 of 4768 files pruned). Classic column-overselection + date-filter-via-JOIN pattern."
+    },
+    {
+      "statementId": "01f1341e-6928-16c8-bd01-093bc0365e89",
+      "durationMs": 216141,
+      "producedRows": 0,
+      "readBytes": 19572167391,
+      "readRows": 6040019164,
+      "readFiles": 2731,
+      "prunedFiles": 5,
+      "executionMs": 198252,
+      "compilationMs": 10234,
+      "note": "PBI DirectQuery — 6B rows read, 18.2 GB. Very poor pruning (5 of 2736 files)."
+    },
+    {
+      "statementId": "01f1342f-4d37-16d4-9c9f-66ba31a48860",
+      "durationMs": 184754,
+      "producedRows": 1000001,
+      "readBytes": 17731318587,
+      "readRows": 6249185839,
+      "readFiles": 5459,
+      "prunedFiles": 0,
+      "executionMs": 182608,
+      "compilationMs": 625,
+      "resultFetchMs": 36967,
+      "note": "PBI visual fetching 1M rows — extremely wide result set. Zero file pruning."
+    }
+  ],
+  "factTableDetail": {
+    "tableName": "sales.curated.fact_product_option_trade_daily_snapshot_v1",
+    "format": "delta",
+    "sizeBytes": 124577619990,
+    "sizeGB": 116.02,
+    "numFiles": 2760,
+    "clusteringColumns": ["dim_date_sk", "dim_product_option_sk", "_updated_date"],
+    "lastModified": "2026-04-13T08:13:45.000Z",
+    "properties": {
+      "compression": "zstd",
+      "autoCompact": "auto",
+      "optimizeWrite": "true",
+      "deletionVectors": "true",
+      "columnMapping": "name"
+    },
+    "serveViewColumns": 91,
+    "note": "Serve view is a pass-through SELECT * FROM curated table with 91 columns. All 91 columns are exposed to PBI even though most visuals need <10."
+  }
+}

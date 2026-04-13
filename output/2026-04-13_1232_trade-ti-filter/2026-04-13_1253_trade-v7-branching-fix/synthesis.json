@@ -1,0 +1,351 @@
+{
+  "version": "2.0",
+  "analysedAt": "2026-04-13T10:30:00Z",
+  "modelName": "ADE - Trade",
+  "analysisMode": "model-wide",
+
+  "executiveSummary": "The ADE - Trade semantic model connects 45 tables (9 DirectQuery, 29 Dual, 7 Import) to a 6.1-billion-row fact table (fact_product_option_trade_daily_snapshot_v1, 116 GB on disk) via a serve view that selects all 91 columns without filtering. Over the last 30 days, the PBI service principal executed 1.37 million queries against this model's tables, reading 1,135 TB of data. The P95 query duration is 9.8s, with the worst query taking 500s and reading 26 GB. The primary root cause is structural: PBI DirectQuery generates SQL that selects all 91 fact columns and applies date filters via JOIN to dim_date rather than direct WHERE predicates, preventing Databricks liquid clustering from pruning effectively. Three bidirectional cross-filter relationships, 77 FILTER(ALL) DAX measures generating full table scans, and 8 Dual-mode tables that could be Import further compound latency. The highest-impact quick win is creating a narrow serve view with only the 25-30 columns actually used by Trade visuals, which could reduce I/O by 60-70%. Health Score: 38/100 (Critical).",
+
+  "gitContext": {
+    "description": "Model references _dev catalogs (sales_dev, technology_dev, product_dev) in partition expressions, but production PBI queries hit non-dev catalogs (sales, technology, product). This is expected — dev vs prod environment configuration."
+  },
+
+  "databricksDailyStats": {
+    "totalQueries": 1371187,
+    "slow10s": 66987,
+    "slow30s": 9798,
+    "avgDurationS": 2.4,
+    "p50s": 0.8,
+    "p95s": 9.8,
+    "maxs": 500.8,
+    "totalReadTb": 1134.69,
+    "periodDays": 30
+  },
+
+  "healthScore": {
+    "overall": 38,
+    "grade": "Critical",
+    "pillars": {
+      "queryPerformance": {
+        "score": 30,
+        "weight": 0.35,
+        "notes": "P95 at 9.8s exceeds 5s target. 67K queries >10s in 30 days. Top query hit 500s. Avg 271M rows read per fact query."
+      },
+      "modelDesign": {
+        "score": 40,
+        "weight": 0.25,
+        "notes": "3 bidirectional relationships, 8 Dual tables that could be Import, 97-column fact table in DirectQuery, 650 unused column candidates, no aggregation tables."
+      },
+      "daxQuality": {
+        "score": 35,
+        "weight": 0.20,
+        "notes": "49 critical-complexity measures, 77 FILTER(ALL) anti-patterns generating full scans, 55 measures with 5+ estimated SQL subqueries. Average 0.9 context transitions per measure."
+      },
+      "architecture": {
+        "score": 50,
+        "weight": 0.20,
+        "notes": "Serve views are pass-through (SELECT * FROM curated). Liquid clustering exists on fact table (dim_date_sk, dim_product_option_sk) but date filter pattern prevents pushdown. Engineering BPA: 6 high findings (functions on filter columns, ROW_NUMBER instead of QUALIFY)."
+      }
+    }
+  },
+
+  "topFindings": [
+    {
+      "id": "F1",
+      "title": "Serve view selects all 91 columns — massive I/O waste",
+      "severity": "critical",
+      "impact": "high",
+      "effort": "low",
+      "quadrant": "Quick Win",
+      "layers": ["Engineering"],
+      "scope": "model-wide",
+      "reportContext": null,
+      "category": "architecture",
+      "description": "The serve view fact_product_option_trade_daily_snapshot_v1 is a pass-through SELECT * from the 91-column curated table. PBI DirectQuery selects ALL columns from every table in the model, even when visuals need only a few. With 40,732 queries/day averaging 0.85 GB each, this drives ~34.6 TB/day of I/O. A narrow serve view with only the 25-30 columns used by Trade visuals would eliminate 60-70% of bytes read.",
+      "recommendation": "1. Identify which columns are actually referenced by DAX measures and visuals in the Trade model (audit the 97 columns in the Daily Trade table definition). 2. Create a new dbt serve model: serve_fact_product_option_trade_daily_snapshot_narrow_v1.sql selecting only the required columns. 3. Update the PBI partition expression in Daily Trade to point to the new narrow view. 4. Test with a subset of visuals in PBI Desktop. 5. Deploy via standard dbt CI/CD pipeline.",
+      "estimatedImprovement": "60-70% reduction in bytes read per query (~0.85 GB to ~0.3 GB avg). Estimated annual I/O savings of ~7,600 TB.",
+      "evidenceIds": ["serve-view-passthrough", "column-overselection"],
+      "connectionModeComparison": {
+        "directQuery": "Current — 91 columns read per query, 0.85 GB avg",
+        "narrowView": "25-30 columns, ~0.3 GB avg per query",
+        "aggregationTable": "Pre-aggregated import table for common measures — sub-second",
+        "import": "Full import of 116 GB fact table — not feasible without Incremental Refresh"
+      },
+      "tradeoffs": ["Requires maintaining a separate narrow serve view alongside the existing one", "Must be updated if new measures reference additional columns", "Functionally equivalent — no risk to calculation correctness"],
+      "options": [
+        {"name": "Option A: Narrow serve view (recommended)", "description": "New dbt model with only needed columns", "pros": "Low effort, no PBI changes needed, immediate I/O reduction", "cons": "Requires dbt deploy cycle, must maintain column list"},
+        {"name": "Option B: Column-level access control", "description": "Use Databricks column masking to limit visible columns", "pros": "Centralised control", "cons": "Complex setup, runtime overhead, doesn't reduce scan"}
+      ]
+    },
+    {
+      "id": "F2",
+      "title": "Date filter via JOIN prevents liquid clustering pruning",
+      "severity": "critical",
+      "impact": "high",
+      "effort": "medium",
+      "quadrant": "Strategic Investment",
+      "layers": ["Semantic Model", "Engineering"],
+      "scope": "model-wide",
+      "reportContext": null,
+      "category": "architecture",
+      "description": "PBI DirectQuery applies date predicates by JOINing dim_date_v2 with a WHERE on calendar_date, then joining to the fact table via dim_date_sk (surrogate key). The fact table's liquid clustering on dim_date_sk cannot exploit this because the predicate is on a different column in a different table. The result: every query scans the full 6.1B rows instead of just the relevant date partition. This is the single largest latency driver.",
+      "recommendation": "1. Add a direct date column (e.g. snapshot_date as DATE) to the fact table's serve view, derived from dim_date_sk lookup. 2. Add this column to the PBI model as a hidden column with a DirectQuery storage mode. 3. Create a calculated table or relationship that allows PBI date slicers to filter directly on this column. 4. Alternatively, implement an M-level parameter filter: modify _fn_GetDataFromDBX to accept start/end date parameters and inject a WHERE clause on the serve view. 5. Update liquid clustering to include the new date column.",
+      "estimatedImprovement": "90%+ row reduction on date-filtered queries. A 2-year window filter on a 6.1B row table clustered by date could reduce scan to ~2-3B rows (current financial years only).",
+      "evidenceIds": ["date-filter-via-join", "clustering-columns"],
+      "dependencies": ["F1"],
+      "dependencyNote": "Narrow serve view (F1) should include the new date column for maximum combined benefit.",
+      "tradeoffs": ["Adding a date column to the serve view increases maintenance but is low risk", "M-level parameter filter requires PBI Desktop changes and testing across all report pages", "Must ensure slicer default values are set correctly to avoid full scans"],
+      "requiresDeepDive": true,
+      "suggestedAnalysisSteps": ["Query DESCRIBE DETAIL to measure current clustering pruning efficiency", "Test a prototype serve view with WHERE snapshot_date BETWEEN x AND y to measure row reduction", "Profile query metrics with pruned_files vs read_files after implementing the filter"]
+    },
+    {
+      "id": "F3",
+      "title": "77 FILTER(ALL) DAX measures force full table scans in DirectQuery",
+      "severity": "high",
+      "impact": "high",
+      "effort": "high",
+      "quadrant": "Strategic Investment",
+      "layers": ["Semantic Model"],
+      "scope": "model-wide",
+      "reportContext": null,
+      "category": "dax-quality",
+      "description": "77 DAX measures use the FILTER(ALL(Table)) pattern, which in DirectQuery mode generates a SQL subquery that removes all filters from the table before re-applying specific ones. Each occurrence can trigger a full table scan of the 6.1B-row fact table. Combined with context transitions (avg 0.9 per measure, up to 8 in critical measures), the worst measures generate an estimated 14 SQL subqueries each. 49 measures are rated critical complexity (score 30+).",
+      "recommendation": "1. Start with the 8 highest-complexity measures (score 44-45): Retail Sales Units Conversion % LY, Retail Sales Value OB LM, Retail Sales Value T&R LM, Intake Units WTD, Retail Physical Return Quantity WTD, etc. 2. Replace FILTER(ALL(Table), ...) with KEEPFILTERS + REMOVEFILTERS on specific columns only (e.g., CALCULATE([Measure], REMOVEFILTERS(Date[Calendar Year]), Date[Calendar Year] = \"2025\")). 3. For WTD (Week-to-Date) measures with 5+ FILTER(ALL) calls, consider pre-calculating the time intelligence logic in a calculated column or Databricks view. 4. Test each refactored measure in DAX Studio with Server Timings to verify SQL subquery reduction.",
+      "estimatedImprovement": "Each FILTER(ALL) elimination removes one full-table-scan subquery. For critical measures (14 subqueries each), refactoring could reduce subqueries by 30-50%, cutting query time significantly on complex visuals.",
+      "evidenceIds": ["filter-all-count", "critical-dax-measures"],
+      "requiresDeepDive": true,
+      "suggestedAnalysisSteps": ["Run the top 10 FILTER(ALL) measures individually in DAX Studio with Server Timings", "Capture SE (Storage Engine) queries to count actual SQL subqueries generated", "Prioritise measures that appear in the most visuals on the Trade report"],
+      "tradeoffs": ["DAX refactoring requires deep understanding of each measure's business logic", "Risk of changing calculation semantics if FILTER(ALL) intent is misunderstood", "Must be done measure-by-measure with regression testing"]
+    },
+    {
+      "id": "F4",
+      "title": "3 bidirectional cross-filter relationships increase query complexity",
+      "severity": "high",
+      "impact": "medium",
+      "effort": "low",
+      "quadrant": "Quick Win",
+      "layers": ["Semantic Model"],
+      "scope": "model-wide",
+      "reportContext": null,
+      "category": "model-design",
+      "description": "Three relationships use bidirectional cross-filtering: (1) Option <-> Option Ranking, (2) Time Period <-> Date, (3) Product Option Fabric Composition <-> Option. Bidirectional relationships create ambiguous filter paths in DirectQuery, causing the engine to generate additional SQL JOINs to resolve filter propagation in both directions. On a hub table like Option (degree 9, 2.5M rows), this multiplies the query complexity.",
+      "recommendation": "1. Option <-> Option Ranking: Change to one-direction (Option -> Option Ranking). If ranking cross-filter is needed, use CROSSFILTER() in specific DAX measures only. 2. Time Period <-> Date: Change to one-direction (Time Period -> Date). Verify time intelligence measures still work. 3. Product Option Fabric Composition <-> Option: Change to one-direction (Option -> Fabric Composition). If fabric composition needs to filter options, use CROSSFILTER() in the relevant measures.",
+      "estimatedImprovement": "10-20% reduction in SQL JOIN complexity for queries traversing these relationships. Eliminates ambiguous filter paths.",
+      "evidenceIds": ["bidirectional-relationships"],
+      "subFindings": [
+        {"relationship": "Option <-> Option Ranking", "reason": "Ranking cross-filter to options", "recommendation": "One-direction + CROSSFILTER() in ranking measures", "effort": "low"},
+        {"relationship": "Time Period <-> Date", "reason": "Financial period cross-filter to date", "recommendation": "One-direction (Time Period -> Date)", "effort": "low"},
+        {"relationship": "Product Option Fabric Composition <-> Option", "reason": "Fabric filter to options", "recommendation": "One-direction (Option -> Fabric Composition)", "effort": "low"}
+      ],
+      "tradeoffs": ["Must verify all visuals that depend on cross-filter propagation still work", "May need to add explicit CROSSFILTER() calls in a few DAX measures"]
+    },
+    {
+      "id": "F5",
+      "title": "8 Dual-mode tables should be Import (small reference tables)",
+      "severity": "high",
+      "impact": "medium",
+      "effort": "low",
+      "quadrant": "Quick Win",
+      "layers": ["Semantic Model"],
+      "scope": "model-wide",
+      "reportContext": null,
+      "category": "model-design",
+      "description": "8 tables are in Dual storage mode but contain only small reference data that would perform better as Import: Daily Financial Half to Date, Daily Financial Month to Date, Daily Financial Transform, Daily Financial Year to Date, Weekly Financial Half to Date, Weekly Financial Month to Date, Weekly Financial Transform, Weekly Financial Year to Date. These financial reference tables have <2,000 rows each but generate Databricks queries on every visual interaction. Converting to Import eliminates unnecessary round-trips.",
+      "recommendation": "1. In Tabular Editor, select each of the 8 financial reference tables. 2. Change the partition mode from Dual to Import. 3. Set up a scheduled refresh (daily is sufficient since these tables change only with financial period updates). 4. Test that financial time intelligence measures still work correctly.",
+      "estimatedImprovement": "Eliminates ~430 Databricks queries/day (54/day x 8 tables) for these reference tables. Reduces query count and latency for financial period calculations to sub-millisecond (VertiPaq cache).",
+      "evidenceIds": ["dual-mode-tables"],
+      "tradeoffs": ["Requires Incremental Refresh or scheduled dataset refresh to keep data current", "Minimal risk — these are small, slowly changing reference tables"]
+    },
+    {
+      "id": "F6",
+      "title": "650 unused column candidates inflating model and scan size",
+      "severity": "medium",
+      "impact": "medium",
+      "effort": "medium",
+      "quadrant": "Minor Improvement",
+      "layers": ["Semantic Model"],
+      "scope": "model-wide",
+      "reportContext": null,
+      "category": "model-design",
+      "description": "BPA identified 650 columns that are not referenced by any DAX measure, relationship, or sort-by expression. Wide tables compound the problem: Daily Trade has 97 columns, Product Option Country Restriction has 252 columns, UDA has 134 columns, and Option has 63 columns. Every unused column in a DirectQuery table adds to the SELECT clause and bytes read. In Import/Dual tables, unused columns consume VertiPaq memory.",
+      "recommendation": "1. Export the unused columns list from bpa-results.json. 2. Cross-reference with visual bindings from the Trade PBIX layout to identify columns used directly in visuals (not via DAX). 3. Hide columns that are truly unused (isHidden = true in Tabular Editor). 4. For DirectQuery tables, hiding alone is insufficient — the column must be removed from the model or the serve view must exclude it. 5. Prioritise: Daily Trade (97 cols, DirectQuery, 6.1B rows), Product Option Country Restriction (252 cols), UDA (134 cols).",
+      "estimatedImprovement": "Removing 50+ unused columns from the Daily Trade table could reduce I/O by 30-50% per query. Combined with F1 (narrow serve view), the total I/O reduction could reach 60-70%.",
+      "evidenceIds": ["unused-columns", "wide-tables"],
+      "dependencies": ["F1"],
+      "dependencyNote": "Unused column removal is most effective when combined with the narrow serve view (F1), which enforces the column list at the Databricks level.",
+      "tradeoffs": ["Must verify no external tools or ad-hoc queries depend on removed columns", "Consider keeping columns that may be needed for future measures"]
+    },
+    {
+      "id": "F7",
+      "title": "No aggregation tables — every query hits 6.1B-row fact at full grain",
+      "severity": "high",
+      "impact": "high",
+      "effort": "high",
+      "quadrant": "Strategic Investment",
+      "layers": ["Engineering", "Semantic Model"],
+      "scope": "model-wide",
+      "reportContext": null,
+      "category": "architecture",
+      "description": "The model has no aggregation tables. Every visual — whether showing a single KPI card or a detailed breakdown — queries the full-grain 6.1B-row fact table via DirectQuery. PBI's automatic aggregation feature could serve 80-90% of queries from a pre-aggregated Import table, falling back to DirectQuery only for drill-through to row-level detail.",
+      "recommendation": "1. Create a dbt aggregation model: agg_trade_daily_by_option_date.sql that pre-aggregates fact_product_option_trade_daily_snapshot_v1 by (dim_date_sk, dim_product_option_sk, dim_pricing_store_sk) with SUM() on all metric columns. 2. Materialise as a Delta table with daily incremental refresh. 3. Add the aggregation table to the PBI model as an Import table with an Incremental Refresh policy. 4. Configure PBI aggregations: map each metric column to its DirectQuery counterpart with SUM aggregation. 5. Set the aggregation table's detail table to Daily Trade (DirectQuery). 6. Estimated aggregation table size: ~50-100M rows (vs 6.1B), refreshable in minutes.",
+      "estimatedImprovement": "80-90% of queries served from Import aggregation (<1s) instead of DirectQuery (avg 2.4s, P95 9.8s). Reduces Databricks query volume by ~33K queries/day.",
+      "evidenceIds": ["no-aggregation-tables", "fact-table-volume"],
+      "connectionModeComparison": {
+        "directQuery": "Current — every query scans 6.1B rows, avg 2.4s, P95 9.8s",
+        "aggregation": "Pre-aggregated Import serves summary queries in <1s, DirectQuery only for drill-through",
+        "fullImport": "Not feasible — 116 GB exceeds Import limits without Incremental Refresh",
+        "incrementalRefresh": "Import with Incremental Refresh — sub-second but requires Premium and careful partition design"
+      },
+      "tradeoffs": ["Requires creating and maintaining a new dbt model + PBI aggregation mapping", "Aggregation table must be refreshed daily (adds to refresh pipeline)", "Stale data between refreshes (acceptable for Trade daily snapshot)", "Complex measures with FILTER(ALL) may not benefit from aggregations"],
+      "requiresDeepDive": true,
+      "suggestedAnalysisSteps": ["Profile which grain levels visuals actually query (page-level vs detail-level)", "Estimate aggregation table row count at different grain levels", "Test aggregation hit rate with PBI Desktop's aggregation monitoring"]
+    },
+    {
+      "id": "F8",
+      "title": "Trade report: 12 pages exceed visual density threshold (>15 visuals)",
+      "severity": "medium",
+      "impact": "medium",
+      "effort": "medium",
+      "quadrant": "Minor Improvement",
+      "layers": ["Power BI"],
+      "scope": "report-specific",
+      "reportContext": "ADE - Trade",
+      "category": "report-design",
+      "description": "All 12 pages in the Trade report exceed the 15-visual threshold. 274 total visuals across 12 pages means an average of 23 visuals per page. Each visual in DirectQuery mode generates at least one Databricks query on page load. Pages with 20+ visuals trigger 20+ concurrent queries, competing for warehouse compute and increasing page load time.",
+      "recommendation": "1. Audit each page: identify visuals that could be moved to a drill-through page or consolidated. 2. Use bookmarks to create tabbed views that load subsets of visuals. 3. For cards showing similar metrics (e.g., 8 KPI cards), consolidate into a matrix or multi-row card. 4. Disable visual interactions where cross-filtering is not needed. 5. Target: reduce to <15 visuals per primary page.",
+      "estimatedImprovement": "Reducing from 23 to 15 visuals per page would cut page-load queries by ~35%, reducing concurrent Databricks query pressure.",
+      "evidenceIds": ["visual-density"],
+      "tradeoffs": ["Requires report redesign and user acceptance testing", "Drill-through pages may require additional navigation"]
+    },
+    {
+      "id": "F9",
+      "title": "Auto-refresh enabled on Trade report",
+      "severity": "high",
+      "impact": "medium",
+      "effort": "low",
+      "quadrant": "Quick Win",
+      "layers": ["Power BI"],
+      "scope": "report-specific",
+      "reportContext": "ADE - Trade",
+      "category": "report-design",
+      "description": "The Trade report has auto-refresh enabled, which periodically re-executes all visible DirectQuery queries on a timer. With 274 visuals across 12 pages and avg query duration of 2.4s, each auto-refresh cycle generates significant Databricks load. For a daily trade snapshot that updates once per day, auto-refresh adds no value but multiplies query volume.",
+      "recommendation": "1. In Power BI Desktop, open the Trade report. 2. Go to each page's Format pane > Page refresh. 3. Disable automatic page refresh. 4. If users need a manual refresh option, add a refresh button bookmark instead.",
+      "estimatedImprovement": "Eliminates N x 274 unnecessary queries per auto-refresh cycle. For a 30-second refresh interval with 10 active users, this could save ~32,000 queries/hour during peak.",
+      "evidenceIds": ["auto-refresh-enabled"],
+      "tradeoffs": ["Users will need to manually refresh to see updated data", "For a daily snapshot, manual refresh is more appropriate"]
+    },
+    {
+      "id": "F10",
+      "title": "dim_product_option_single_valued_user_defined_attributes_v1 — slowest dimension (avg 12s, P95 40s)",
+      "severity": "high",
+      "impact": "medium",
+      "effort": "medium",
+      "quadrant": "Quick Win",
+      "layers": ["Engineering", "Semantic Model"],
+      "scope": "model-wide",
+      "reportContext": null,
+      "category": "architecture",
+      "description": "The UDA (User Defined Attributes) table averaging 12.1s per query with P95 at 40s is the slowest dimension in the model by far. Despite only 888K rows per query, the wide table (134 columns) and likely complex serve view contribute to extreme latency. With 66 queries/day, this table is a significant bottleneck when UDA-related visuals are active.",
+      "recommendation": "1. Investigate the serve view definition for dim_product_option_single_valued_user_defined_attributes_v1 — it may contain PIVOT or complex transformations causing slow execution. 2. Create a narrower serve view with only the UDA columns used in the Trade model. 3. Consider materialising this as a Delta table instead of a view if the transformation is expensive. 4. As a quick win, convert UDA from Dual to Import mode — at 888K rows, it's small enough to cache.",
+      "estimatedImprovement": "Converting to Import eliminates 66 12s-avg queries/day. Materialising the serve view could reduce P95 from 40s to <2s.",
+      "evidenceIds": ["uda-slow-queries"],
+      "tradeoffs": ["Import mode requires scheduled refresh", "Materialising view adds to dbt pipeline maintenance"]
+    },
+    {
+      "id": "F11",
+      "title": "3 pages missing date slicers — unfiltered fact table scans",
+      "severity": "medium",
+      "impact": "medium",
+      "effort": "low",
+      "quadrant": "Quick Win",
+      "layers": ["Power BI"],
+      "scope": "report-specific",
+      "reportContext": "ADE - Trade",
+      "category": "report-design",
+      "description": "3 pages in the Trade report have data-heavy visuals but no date slicer, meaning users can trigger unfiltered queries against the 6.1B-row fact table. Without date filtering, every visual on these pages scans the full 2-year default window.",
+      "recommendation": "1. Add date slicers to the 3 identified pages. 2. Set sensible default date ranges (e.g., last 4 weeks for daily trade data). 3. Consider using report-level date filters to ensure all pages have a baseline date constraint.",
+      "estimatedImprovement": "Restricting to last 4 weeks (28 days out of ~730 days) could reduce scanned rows by ~96% on these pages.",
+      "evidenceIds": ["missing-date-slicers"],
+      "tradeoffs": ["Users may need to expand the date range for historical analysis", "Report-level filters can be overridden by page-level slicers"]
+    },
+    {
+      "id": "F12",
+      "title": "Engineering: 6 dbt models with functions on filter columns preventing predicate pushdown",
+      "severity": "medium",
+      "impact": "medium",
+      "effort": "medium",
+      "quadrant": "Minor Improvement",
+      "layers": ["Engineering"],
+      "scope": "model-wide",
+      "reportContext": null,
+      "category": "engineering-bpa",
+      "description": "6 dbt models apply SQL functions (CAST, COALESCE, LOWER, etc.) on columns that are likely used in WHERE clauses or JOIN conditions. When a function wraps a column, Databricks cannot push the predicate down to the Delta file-level statistics, forcing a full file scan instead of leveraging clustering or Z-ordering.",
+      "recommendation": "1. Review each finding in engineering-bpa-results.json under rule E05. 2. Move function application to the curated layer so the serve view exposes clean columns. 3. For CAST operations, ensure data types match between tables at the curated level. 4. For COALESCE, provide default values at the curated layer.",
+      "estimatedImprovement": "Enables predicate pushdown on affected columns, improving clustering pruning efficiency from ~0% to 80-90% for those predicates.",
+      "evidenceIds": ["e05-functions-on-filter"],
+      "tradeoffs": ["Requires curated-layer changes, which have wider impact across consumers"]
+    },
+    {
+      "id": "F13",
+      "title": "19 wide tables with >50 columns in the Trade report visual bindings",
+      "severity": "medium",
+      "impact": "low",
+      "effort": "medium",
+      "quadrant": "Minor Improvement",
+      "layers": ["Power BI"],
+      "scope": "report-specific",
+      "reportContext": "ADE - Trade",
+      "category": "report-design",
+      "description": "19 visual elements in the Trade report use wide table/matrix visuals. Wide visuals bind to many columns simultaneously, each generating separate column projections in DirectQuery SQL. This amplifies the column over-selection problem described in F1.",
+      "recommendation": "1. Review each wide table/matrix visual. 2. Remove columns that are not essential for the user's analysis. 3. Use drill-through for detailed column exploration. 4. For summary pages, replace wide tables with focused KPI cards or smaller matrices.",
+      "estimatedImprovement": "Reducing visual column bindings by 30-50% would proportionally reduce DirectQuery column projections.",
+      "evidenceIds": ["wide-visuals"],
+      "tradeoffs": ["Users may prefer having all columns visible — discuss with stakeholders"]
+    }
+  ],
+
+  "implementationRoadmap": [
+    {
+      "phase": "Phase 1: Quick Wins (No Code Changes)",
+      "actions": [
+        {"action": "Disable auto-refresh on Trade report", "where": "Power BI", "finding": "F9", "impact": "High"},
+        {"action": "Convert 8 financial reference tables from Dual to Import", "where": "Semantic Model", "finding": "F5", "impact": "High"},
+        {"action": "Change 3 bidirectional relationships to one-direction", "where": "Semantic Model", "finding": "F4", "impact": "High"},
+        {"action": "Add date slicers to 3 pages missing them", "where": "Power BI", "finding": "F11", "impact": "Medium"},
+        {"action": "Convert UDA table from Dual to Import mode", "where": "Semantic Model", "finding": "F10", "impact": "Medium"}
+      ]
+    },
+    {
+      "phase": "Phase 2: Engineering — Narrow Serve View",
+      "actions": [
+        {"action": "Create narrow serve view with 25-30 columns for Trade fact table", "where": "Engineering", "finding": "F1, F6", "impact": "Critical"},
+        {"action": "Add direct date column to narrow serve view for clustering pushdown", "where": "Engineering", "finding": "F2", "impact": "Critical"},
+        {"action": "Remove functions from filter columns in 6 dbt models", "where": "Engineering", "finding": "F12", "impact": "Medium"},
+        {"action": "Update PBI partition expression to use narrow serve view", "where": "Semantic Model", "finding": "F1", "impact": "Critical"}
+      ]
+    },
+    {
+      "phase": "Phase 3: DAX Refactoring",
+      "actions": [
+        {"action": "Refactor top 8 critical FILTER(ALL) measures (score 44-45)", "where": "Semantic Model", "finding": "F3", "impact": "High"},
+        {"action": "Refactor remaining 69 FILTER(ALL) measures in batches of 10", "where": "Semantic Model", "finding": "F3", "impact": "High"},
+        {"action": "Remove/hide 650 unused columns from the model", "where": "Semantic Model", "finding": "F6", "impact": "Medium"}
+      ]
+    },
+    {
+      "phase": "Phase 4: Aggregation Tables",
+      "actions": [
+        {"action": "Create pre-aggregated dbt model for common Trade grain levels", "where": "Engineering", "finding": "F7", "impact": "Critical"},
+        {"action": "Add aggregation table to PBI model with Import mode + Incremental Refresh", "where": "Semantic Model", "finding": "F7", "impact": "Critical"},
+        {"action": "Configure PBI aggregation mappings for sum/count measures", "where": "Semantic Model", "finding": "F7", "impact": "Critical"}
+      ]
+    },
+    {
+      "phase": "Phase 5: Report Optimisation",
+      "actions": [
+        {"action": "Reduce visual count per page to <15 using bookmarks and drill-through", "where": "Power BI", "finding": "F8", "impact": "Medium"},
+        {"action": "Consolidate wide tables/matrices into focused views", "where": "Power BI", "finding": "F13", "impact": "Low"}
+      ]
+    }
+  ]
+}

@@ -110,27 +110,43 @@ Then read `output/model-taxonomy.json` and analyse:
 - **Source mapping**: PBI table name to Databricks catalog.schema.table
 - **Expression analysis**: how `_fn_GetDataFromDBX` is used, any filtering applied
 
-### Step 1b: PBIX Report Analysis (OPTIONAL — only when user explicitly names specific reports)
+### Step 1b: PBIX Report Analysis (when reports are listed in input.md)
 
 **Source**: `.pbix` files in the reports directory (path from `input.md`, typically `powerbi/reports/<ReportName>/<ReportName>.pbix`)
 
-A `.pbix` file is a ZIP archive containing:
-- `Layout` — JSON with report pages, visuals, filters, bookmarks, and visual configurations
-- `DataModelSchema` — JSON with the embedded semantic model (tables, measures, relationships)
-- `[Content_Types].xml`, `SecurityBindings`, etc.
+A `.pbix` file is a ZIP archive containing either:
+- **Legacy format**: `Report/Layout` — single UTF-16-LE encoded JSON with pages, visuals, filters
+- **PBIR format** (newer): `Report/definition/pages/<id>/page.json` + `Report/definition/pages/<id>/visuals/<vid>/visual.json`
+- Plus: `DataModelSchema`, `[Content_Types].xml`, `SecurityBindings`, etc.
 
 **How to extract and analyse**:
 ```bash
-# Extract Layout and DataModelSchema from PBIX
-mkdir -p output/pbix_extracted
-unzip -o "<path-to-report>.pbix" Layout DataModelSchema -d output/pbix_extracted 2>/dev/null || true
+# Step 1b-i: Extract Layout JSON from PBIX files (handles both legacy and PBIR formats)
+python3 scripts/extract_pbix_layouts.py \
+  --reports-dir "<pbi-repo>/powerbi/reports" \
+  --report-names "ADE - Trade,ADE - Sales" \
+  --output output/
+
+# Step 1b-ii: Run visual analysis on extracted layouts
+python3 scripts/analyse_report_visuals.py \
+  --layout-dir output/pbix_extracted/ \
+  --output output/
 ```
+
+The extraction script automatically handles both legacy PBIX format (single `Report/Layout` file) and the newer PBIR format (individual page + visual JSON files) by reconstructing a compatible Layout JSON. It resolves report name mismatches between `input.md` display names (e.g., "ADE - Trade") and filesystem directory names (e.g., "Trade/Trade.pbix") using prefix-stripping and fuzzy matching.
+
+Check `output/pbix-extraction-manifest.json` to verify which reports were successfully extracted and which could not be matched.
 
 The `Layout` JSON contains critical report-level information:
 - **Pages** (`sections[]`): page names, visual containers, visibility
 - **Visuals** (`visualContainers[]`): visual type, data roles (columns/measures bound), query definitions
 - **Filters** (`filters[]`): report-level, page-level, and visual-level filters — which columns are filtered, default values, slicer configurations
 - **Bookmarks**: saved filter/slicer states users can toggle
+
+**When this step runs automatically**:
+- `input.md` lists specific reports under "Reports to Analyse" (not just "Full")
+- The PBI repo path contains a `powerbi/reports/` directory
+- At least one report name can be matched to a .pbix file
 
 **When to use PBIX analysis**:
 - User asks about a specific report's visuals or filters
@@ -183,6 +199,24 @@ Read `output/dbt-lineage.json` and analyse:
 
 If `hasActionableFindings` is false, the report collapses this section to a one-line summary. When it IS actionable, integrate the findings directly into the relevant RCA findings.
 
+### Step 3b: Engineering Best Practice Analyser
+
+**Source**: dbt project (same path as Step 3)
+
+Run the engineering BPA against the dbt codebase:
+```bash
+python3 scripts/run_engineering_bpa.py --dbt-path "<path-to-dbt>" --taxonomy output/model-taxonomy.json --output output/
+```
+
+Read `output/engineering-bpa-results.json` and analyse:
+- **15 engineering rules** (E01-E15) checking dbt patterns that impact PBI DirectQuery performance
+- SELECT * in non-prepare models, missing liquid clustering, wide serve views, missing WHERE filters
+- Functions on filter columns preventing predicate pushdown, OR in JOIN conditions
+- ROW_NUMBER subselect instead of QUALIFY, non-atomic materialisation
+- Cross-references with `model-taxonomy.json` — only checks dbt models consumed by the PBI semantic model
+
+Findings are tagged with **Engineering** Where badge. The Health Score Architecture pillar includes engineering high findings (-1.5 each, cap -8).
+
 ### Step 4: Databricks Metadata Profiling
 
 **Source**: Databricks via MCP, PAT, or manual input (when available)
@@ -195,14 +229,37 @@ If `hasActionableFindings` is false, the report collapses this section to a one-
 
 Store volumetry in `output/databricks-profile.json` with structure:
 ```json
-{"tables": [{"fullName": "catalog.schema.table", "rowCount": N, "sizeGB": N, "numFiles": N, "clusteringColumns": [...]}]}
+{
+  "tables": [{"fullName": "catalog.schema.table", "rowCount": N, "sizeGB": N, "numFiles": N, "clusteringColumns": [...]}],
+  "tableQueryStats": [
+    {"tableName": "fact_order_line_v1", "dailyQueries": 450, "avgDurationMs": 3200, "p95DurationMs": 8500}
+  ]
+}
 ```
+
+The `tableQueryStats` array contains per-table PBI query statistics from `system.query.history` (last 30 days). Use the query from `references/system-tables-queries.md` section 6 to collect daily query count, average duration, and P95 duration for each Databricks table referenced by the PBI model. The `tableName` must match the Databricks source table name (not the PBI display name). The report generator uses this data to add volumetry columns to the Model Taxonomy and Hot Tables sections.
 
 After collecting volumetry, **re-run Step 1** with `--volumetry-file output/databricks-profile.json` to enrich the taxonomy with row counts and sizes per table. This enables the graph analysis to flag "DirectQuery hub table X with Y GB" as critical targets.
 
 See `references/system-tables-queries.md` for the exact queries to run.
 
 If Databricks MCP is available, use it to run these queries. If PAT is configured, use Python scripts with `databricks-sdk`. If neither is available, ask the user for the information or skip this step.
+
+### Step 4b: User Query Attribution
+
+**Source**: Databricks `system.query.history` (same as Step 5)
+
+Query per-user statistics from `system.query.history`:
+```bash
+python3 scripts/analyse_user_queries.py --query-data output/query-history-export.json --output output/
+```
+
+Or query Databricks directly via MCP using the SQL from `references/system-tables-queries.md` section 7, then save the results as `query-history-export.json` and run the script.
+
+Read `output/user-query-profile.json` and identify:
+- Top consumers by CPU time and query duration
+- Training candidates (users whose avg query time >2x global average)
+- Hourly distribution for peak analysis
 
 ### Step 5: Query Profiling
 
@@ -270,6 +327,36 @@ If Playwright MCP is available and user provides report URLs:
 - Capture Performance Analyzer data
 - Parse with: `python3 scripts/parse_perf_analyzer.py --input <json-file> --output output/`
 
+### Step 5c: Capacity Settings Simulation
+
+**Source**: Query history data from Step 5
+
+```bash
+python3 scripts/analyse_capacity_settings.py --query-data output/query-history-export.json --taxonomy output/model-taxonomy.json --output output/
+```
+
+Read `output/capacity-settings-analysis.json` and analyse:
+- **Query Timeout** impact at various thresholds (300s, 225s, 120s, 60s, 30s)
+- **Query Memory Limit** recommendation (start at 10%, per Microsoft specialist)
+- **Max Intermediate/Result Row Set Count** distribution
+- **Max Offline Dataset Size** relative to current model sizes
+
+### Step 5d: Workload & Capacity Analysis
+
+**Source**: Query history + optional capacity config from `input.md`
+
+```bash
+python3 scripts/analyse_workload.py --query-data output/query-history-export.json --capacity-config output/capacity-config.json --output output/
+```
+
+Read `output/workload-analysis.json` and analyse:
+- Hourly query distribution and peak-to-off-peak ratio
+- Surge protection threshold recommendations (capacity and workspace level)
+- Non-production workspaces on production capacity
+- Capacity scaling decisions (F128→F256) with pros/cons
+- Semantic model settings (Large Storage Format, Query Scale-Out) with prerequisites
+- Query scale-out candidacy and self-serve isolation recommendations
+
 ### Step 6: Best Practice Analyser (BPA)
 
 Run BPA against each model:
@@ -298,6 +385,8 @@ Reference community best practices from your knowledge:
 
 This is the core intelligence step. Combine findings from ALL previous steps.
 
+When `databricks-profile.json` includes `tableQueryStats`, use per-table query counts and durations to enrich findings — tables with high daily query counts and slow avg durations are stronger candidates for optimisation.
+
 **MANDATORY: synthesis.json must include these top-level fields:**
 
 0. `analysisMode` — `"model-wide"`, `"report-scoped"`, or `"hybrid"`. Determines how findings are scoped and tagged.
@@ -311,9 +400,13 @@ This is the core intelligence step. Combine findings from ALL previous steps.
 
 3. `databricksDailyStats` — if Databricks MCP was used, always query PBI daily stats and include:
    ```json
-   {"totalQueries": 70130, "slow10s": 2606, "slow30s": 279, "avgDurationS": 1.9, "p50s": 0.5, "p95s": 8.4, "maxs": 145.0, "totalReadTb": 59.81}
+   {"totalQueries": 70130, "distinctSessions": 4821, "avgQueriesPerSession": 14.5, "slow10s": 2606, "slow30s": 279, "pctSlow10s": 3.7, "pctSlow30s": 0.4, "avgDurationS": 1.9, "p50s": 0.5, "p95s": 8.4, "maxs": 145.0, "totalReadTb": 59.81, "pctCached": 52.7, "periodDays": 30}
    ```
-   Use this SQL to populate: `SELECT COUNT(*), ... FROM system.query.history WHERE executed_as = '<spn-id>' AND start_time >= '<today>' AND execution_status = 'FINISHED'`
+   Use the "PBI Daily Stats Summary" query from `references/system-tables-queries.md` section 3. Key fields:
+   - `distinctSessions` — `COUNT(DISTINCT session_id)`: each PBI report connection = one Databricks session
+   - `pctSlow10s` / `pctSlow30s` — percentage of total queries that are slow
+   - `pctCached` — percentage served from Databricks result cache (`from_result_cache = true`)
+   - `periodDays` — actual days covered (use `-30` for full analysis, `-1` for today snapshot)
 
 4. `topFindings` — the ranked findings list. Each finding MUST include:
    - `id`, `title`, `severity`, `impact`, `effort`, `quadrant`, `layers`
@@ -344,6 +437,18 @@ This is the core intelligence step. Combine findings from ALL previous steps.
      ```
    If there are no meaningful alternatives, omit `options`. If there are no significant trade-offs, include at least one (even "Minimal risk — functionally equivalent change").
    Omit optional fields (`connectionModeComparison`, `dependencies`, `subFindings`, `requiresDeepDive`, `suggestedAnalysisSteps`, `assignedTeam`) when not applicable to the finding.
+
+   Additional finding categories for new analysis capabilities:
+   - `"category": "capacity-settings"` — for capacity management setting recommendations (1a-1e)
+   - `"category": "workload-management"` — for surge protection and workload isolation
+   - `"category": "infrastructure"` — for capacity scaling, overage, query scale-out
+   - `"category": "engineering-bpa"` — for dbt/Databricks engineering quality issues
+   - `"category": "semantic-model-settings"` — for Large Storage Format, Query Scale-Out flags
+   - `"category": "benchmarking"` — for DAX performance testing and load testing guidance
+   - `"category": "report-design"` — for visual layer rule violations
+
+   New `Where` badges:
+   - **Capacity Admin** — changes requiring Fabric admin portal access (capacity settings, surge protection, scaling)
 
 5. `implementationRoadmap` — phased action list with Where classification. Each phase is an object with:
    - `phase`: a label like "Phase 1: Quick Wins" (use numbered phases, **NEVER use time estimates** like "Week 1-2" or "Month 2" — only suggest implementation order, not duration)
@@ -393,6 +498,16 @@ The `--run-label` parameter provides a short, LLM-generated description for the 
 This ensures each execution is self-contained and previous results are preserved. If `--run-label` is omitted, the model name is used as the label.
 
 The report template is at `references/report-template.html`. The final report must be a **single self-contained HTML file** with inline CSS.
+
+The report now includes up to 16 sections (6 new conditional sections):
+- **Query Attribution Dashboard** — per-user heat-mapped table with sortable columns (from `user-query-profile.json`)
+- **Memory & Column Analysis** — column-level memory estimates and removal candidates (from `column-memory-analysis.json`)
+- **Engineering Best Practices** — dbt/Databricks BPA findings with Engineering badges (from `engineering-bpa-results.json`)
+- **Report Visual Analysis** — PBI Inspector-style rules against PBIX Layout (from `visual-analysis.json`)
+- **Capacity Settings Analysis** — timeout/memory limit simulations with distribution charts (from `capacity-settings-analysis.json`)
+- **Workload & Infrastructure** — surge protection, capacity scaling, semantic model settings (from `workload-analysis.json`)
+
+All new sections are conditional — they only appear when their JSON input exists. The Health Score Architecture pillar now includes Engineering BPA high findings.
 
 Also produce a markdown summary checkpoint: `output/performance-diagnosis.md`
 
