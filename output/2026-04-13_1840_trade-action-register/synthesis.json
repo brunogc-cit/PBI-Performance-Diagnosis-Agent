@@ -1,0 +1,397 @@
+{
+  "version": "2.0.0",
+  "modelName": "ADE - Trade",
+  "analysisDate": "2026-04-13",
+  "scope": "model-wide",
+  "dataSources": {
+    "semanticModel": true,
+    "dbtLineage": true,
+    "databricksProfile": true,
+    "queryHistory": false,
+    "performanceAnalyzer": false,
+    "reportVisuals": true,
+    "columnMemory": true,
+    "engineeringBPA": true,
+    "antipatternTiers": true
+  },
+  "executiveSummary": "The ADE - Trade semantic model has 45 tables (9 DirectQuery, 29 Dual, 7 Import) with 801 measures across a 6-billion-row daily trade snapshot fact table. The model spans 5 Databricks catalogs (sales, product, technology, supplychain, sourcingandbuying) with all serve-layer models materialised as views. Critical performance issues stem from: (1) a massive DirectQuery fact table (6.05B rows) as the central hub with 21 relationships, (2) 49 critical-complexity DAX measures generating up to 14 estimated SQL subqueries each, (3) 228 measures using ALL/ALLEXCEPT filter clearing patterns that force full re-aggregation, (4) 11 Dual-mode tables that could safely switch to Import, (5) 650 unused column candidates inflating scan width, and (6) 12 report pages averaging 22+ visuals each without query reduction settings enabled. The combination of wide column selection, cross-catalog JOINs, and no date filtering on serve views creates severe scan amplification on every user interaction.",
+  "topFindings": [
+    {
+      "id": "RCA-01",
+      "title": "6-Billion-Row Fact Table as DirectQuery Hub",
+      "quadrant": "strategic",
+      "layers": ["Semantic Model", "dbt Models"],
+      "scope": "model-wide",
+      "severity": "critical",
+      "impact": {
+        "latency": "Every visual touching Daily Trade generates SQL scanning billions of rows. With degree 21, nearly all report pages trigger queries against this table.",
+        "cost": "Each query reads the full fact table width (97 columns) via pass-through serve view."
+      },
+      "evidence": [
+        "Daily Trade: 6,052,560,794 rows, directQuery mode, degree 21 (hub table)",
+        "97 columns in fact table, 14 identified as removal candidates",
+        "94 measure references to Daily Trade",
+        "Serve view fact_product_option_trade_daily_snapshot_v1 has no WHERE filter"
+      ],
+      "dependencies": [],
+      "dependencyNote": ""
+    },
+    {
+      "id": "RCA-02",
+      "title": "DAX Pattern Families Amplify Query Cost (320+ Measures)",
+      "quadrant": "strategic",
+      "layers": ["Semantic Model"],
+      "scope": "model-wide",
+      "severity": "critical",
+      "impact": {
+        "latency": "204 Last Year and 116 Last Week comparison measures each use SUMX + FILTER(ALL) + time intelligence, generating 10-14 SQL subqueries per measure.",
+        "cost": "Pattern families share identical anti-pattern structures — fixing the template once fixes hundreds of measures."
+      },
+      "evidence": [
+        "49 critical-complexity measures (score 44-45), each with 5-7 context transitions and 5-6 FILTER(ALL) calls",
+        "204 measures in 'Last Year Comparison' family (critical severity)",
+        "116 measures in 'Last Week Comparison' family (critical severity)",
+        "55 measures in 'Average Weekly Cover' family (critical severity)",
+        "77 total measures using FILTER(ALL) anti-pattern"
+      ],
+      "dependencies": [],
+      "dependencyNote": ""
+    },
+    {
+      "id": "RCA-03",
+      "title": "29 Dual-Mode Tables — 11 Safe to Switch to Import",
+      "quadrant": "quick win",
+      "layers": ["Semantic Model"],
+      "scope": "model-wide",
+      "severity": "high",
+      "impact": {
+        "latency": "Dual tables are refreshed in Import mode AND queried via DirectQuery, doubling processing.",
+        "cost": "11 Dual tables have no direct relationship to DirectQuery tables — safe to switch."
+      },
+      "evidence": [
+        "29 tables in Dual mode out of 45 total",
+        "11 tables safe to switch: Daily/Weekly Financial HTD, MTD, YTD, Transform; Earliest Global dates; Time Period",
+        "Daily Financial Year to Date (2.96M rows) largest unnecessarily Dual table",
+        "BPA DUAL_MODE_TABLES: 25 violations"
+      ],
+      "dependencies": [],
+      "dependencyNote": ""
+    },
+    {
+      "id": "RCA-04",
+      "title": "Cross-Catalog DirectQuery JOINs Across 5 Catalogs",
+      "quadrant": "strategic",
+      "layers": ["dbt Models", "Semantic Model"],
+      "scope": "model-wide",
+      "severity": "high",
+      "impact": {
+        "latency": "PBI generates SQL JOINing tables from sales, product, technology, supplychain, and sourcingandbuying in a single query.",
+        "cost": "Each catalog boundary adds serialisation overhead."
+      },
+      "evidence": [
+        "Source groups: dq:sales.serve (10), dq:technology.serve (15), dq:product.serve (9), dq:supplychain.serve (3), dq:sourcingandbuying.serve (1)",
+        "All serve models are pass-through views (SELECT * FROM curated_table)"
+      ],
+      "dependencies": ["RCA-03"],
+      "dependencyNote": "Switching small cross-catalog dims to Import (RCA-03) reduces cross-catalog JOINs"
+    },
+    {
+      "id": "RCA-05",
+      "title": "Report Pages Overloaded Without Query Reduction",
+      "quadrant": "quick win",
+      "layers": ["PBI Report"],
+      "scope": "report-specific",
+      "severity": "high",
+      "impact": {
+        "latency": "12 pages with 274 visuals. Topline Performance Date (31 visuals) fires 30+ simultaneous DQ requests on load. No query reduction settings enabled.",
+        "cost": "19 wide matrices project 10-43 columns, amplifying bytes per visual."
+      },
+      "evidence": [
+        "12/12 pages exceed 15-visual threshold",
+        "19 wide matrix visuals, worst: 43 projected columns",
+        "35 report-level filters (threshold: 10)",
+        "Cross-highlighting enabled, slicer/filter Apply buttons disabled",
+        "12 large embedded images"
+      ],
+      "dependencies": [],
+      "dependencyNote": ""
+    },
+    {
+      "id": "RCA-06",
+      "title": "650 Unused Column Candidates Inflate Scan Width",
+      "quadrant": "minor",
+      "layers": ["Semantic Model"],
+      "scope": "model-wide",
+      "severity": "medium",
+      "impact": {
+        "cost": "650 columns not referenced by any measure, relationship, or hierarchy. In DQ mode PBI may still request these in generated SQL.",
+        "memory": "For Dual/Import tables, unused columns consume VertiPaq memory."
+      },
+      "evidence": [
+        "650 UNUSED_COLUMNS_CANDIDATE findings in BPA",
+        "UDA: 134 columns, 118 removal candidates",
+        "Option: 63 columns, 46 removal candidates",
+        "Daily Trade: 97 columns, 14 removal candidates"
+      ],
+      "dependencies": [],
+      "dependencyNote": ""
+    },
+    {
+      "id": "RCA-07",
+      "title": "3 Bidirectional Relationships Create Ambiguous Filter Paths",
+      "quadrant": "quick win",
+      "layers": ["Semantic Model"],
+      "scope": "model-wide",
+      "severity": "high",
+      "impact": {
+        "latency": "Bidirectional cross-filtering on Option↔Option Ranking, Time Period↔Date, and Fabric Composition↔Option creates multiple filter propagation paths."
+      },
+      "evidence": [
+        "3 bidirectional relationships detected",
+        "Option ↔ Option Ranking (many:many)",
+        "Time Period ↔ Date (many:one)",
+        "Product Option Fabric Composition ↔ Option (many:one)"
+      ],
+      "dependencies": [],
+      "dependencyNote": ""
+    },
+    {
+      "id": "RCA-08",
+      "title": "dbt Serve Views Missing Clustering and Date Filters",
+      "quadrant": "quick win",
+      "layers": ["dbt Models"],
+      "scope": "model-wide",
+      "severity": "high",
+      "impact": {
+        "latency": "6 curated tables lack liquid clustering. 2 serve views over large fact tables have no WHERE filter."
+      },
+      "evidence": [
+        "E02: 6 curated tables missing liquid clustering (2.5M-44.6M rows)",
+        "E04: 2 serve views without WHERE filters",
+        "E05: 6 models with functions on filter columns",
+        "E07: 6 models using ROW_NUMBER subquery instead of QUALIFY",
+        "E15: 2 serve views recommended for materialised_view"
+      ],
+      "dependencies": [],
+      "dependencyNote": ""
+    },
+    {
+      "id": "RCA-09",
+      "title": "220 Snowflake DirectQuery Chains (Depth 4)",
+      "quadrant": "deprioritise",
+      "layers": ["Semantic Model", "dbt Models"],
+      "scope": "model-wide",
+      "severity": "medium",
+      "impact": {
+        "latency": "220 snowflake DQ chains force nested subqueries in generated SQL, with depth up to 4 levels."
+      },
+      "evidence": [
+        "220 SNOWFLAKE_DQ_CHAINS findings",
+        "Max snowflake depth: 4",
+        "Daily Trade → Option (bridge) → Product Option sub-tables"
+      ],
+      "dependencies": ["RCA-01", "RCA-04"],
+      "dependencyNote": "Flattening chains requires changes to both dbt serve layer and semantic model"
+    },
+    {
+      "id": "RCA-10",
+      "title": "115 Measures Exposed to MDX Without Need",
+      "quadrant": "minor",
+      "layers": ["Semantic Model"],
+      "scope": "model-wide",
+      "severity": "low",
+      "impact": {
+        "cost": "115 measures have isAvailableInMdx enabled — increases metadata overhead."
+      },
+      "evidence": [
+        "115 IS_AVAILABLE_IN_MDX findings in BPA"
+      ],
+      "dependencies": [],
+      "dependencyNote": ""
+    },
+    {
+      "id": "RCA-11",
+      "title": "3 Calculated Tables and 11 Unmarked Date Tables",
+      "quadrant": "minor",
+      "layers": ["Semantic Model"],
+      "scope": "model-wide",
+      "severity": "medium",
+      "impact": {
+        "latency": "Calculated tables computed at refresh. Unmarked date tables prevent auto time intelligence optimisation.",
+        "quality": "May cause incorrect time intelligence behaviour."
+      },
+      "evidence": [
+        "3 CALCULATED_TABLES findings",
+        "11 DATE_TABLE_NOT_MARKED findings",
+        "3 TIME_INTEL_ON_DQ findings"
+      ],
+      "dependencies": [],
+      "dependencyNote": ""
+    }
+  ],
+  "implementationRoadmap": [
+    {
+      "phase": "Phase 1 — Quick Wins (1-2 weeks)",
+      "actions": [
+        {
+          "action": "Enable query reduction settings in Trade report",
+          "where": "PBI Report",
+          "location": "Trade report settings",
+          "finding": "RCA-05",
+          "impact": "50-70% reduction in DQ query volume during interaction"
+        },
+        {
+          "action": "Add date WHERE filter to serve_fact_product_option_trade_daily_snapshot_v1",
+          "where": "dbt Models",
+          "location": "serve_fact_product_option_trade_daily_snapshot_v1.sql",
+          "finding": "RCA-01,RCA-08",
+          "impact": "Reduce fact scan from 6B to ~2.2B rows per query"
+        },
+        {
+          "action": "Switch 11 safe Dual tables to Import mode",
+          "where": "Semantic Model",
+          "location": "Daily Financial HTD/MTD/YTD, Weekly Financial refs, Time Period, Earliest Global dates",
+          "finding": "RCA-03",
+          "impact": "Eliminates DQ queries for 11 tables"
+        },
+        {
+          "action": "Change 3 bidirectional relationships to one-direction",
+          "where": "Semantic Model",
+          "location": "Option↔Option Ranking, Time Period↔Date, Fabric Composition↔Option",
+          "finding": "RCA-07",
+          "impact": "Removes ambiguous filter paths, simplifies query plans"
+        },
+        {
+          "action": "Add liquid clustering to 6 product curated tables",
+          "where": "dbt Models",
+          "location": "curated_dim_product_option_* contract YAMLs",
+          "finding": "RCA-08",
+          "impact": "Enables data skipping on JOIN predicates for 2.5M-44.6M row tables"
+        }
+      ]
+    },
+    {
+      "phase": "Phase 2 — Targeted Refactors (2-4 weeks)",
+      "actions": [
+        {
+          "action": "Refactor Last Year/Last Week DAX measure templates using DATEADD",
+          "where": "Semantic Model",
+          "location": "@Measures (320+ measures)",
+          "finding": "RCA-02",
+          "impact": "Reduce from 14 SQL subqueries to 2-3 per measure evaluation"
+        },
+        {
+          "action": "Remove 14 unreferenced columns from Daily Trade table",
+          "where": "Semantic Model",
+          "location": "Daily Trade (97 → 83 columns)",
+          "finding": "RCA-01,RCA-06",
+          "impact": "~14% reduction in fact table scan width"
+        },
+        {
+          "action": "Split Topline Performance pages (28-31 visuals → 12-15)",
+          "where": "PBI Report",
+          "location": "Topline Performance, Topline Performance Date pages",
+          "finding": "RCA-05",
+          "impact": "Halve simultaneous DQ queries per page load"
+        },
+        {
+          "action": "Convert small cross-catalog dimensions to Import",
+          "where": "Semantic Model",
+          "location": "Country, Territory, Warehouse, Supplier",
+          "finding": "RCA-04",
+          "impact": "Eliminates cross-catalog JOINs for small lookup tables"
+        },
+        {
+          "action": "Add column projection to serve views",
+          "where": "dbt Models",
+          "location": "serve_fact_product_option_trade_daily_snapshot_v1 and dimension serve views",
+          "finding": "RCA-04,RCA-06",
+          "impact": "Reduce bytes scanned per query by limiting column exposure"
+        }
+      ]
+    },
+    {
+      "phase": "Phase 3 — Strategic Investments (1-2 months)",
+      "actions": [
+        {
+          "action": "Create pre-aggregated materialised view for daily trade metrics",
+          "where": "dbt Models",
+          "location": "New materialised view in sales.serve",
+          "finding": "RCA-01",
+          "impact": "10-100x row reduction for aggregate visuals"
+        },
+        {
+          "action": "Refactor Average Weekly Cover measures to use pre-computed aggregates",
+          "where": "Semantic Model",
+          "location": "@Measures (55 measures)",
+          "finding": "RCA-02",
+          "impact": "Eliminates SUMX cost for weekly cover calculations"
+        },
+        {
+          "action": "Reduce matrix visual column counts across 19 wide matrices",
+          "where": "PBI Report",
+          "location": "19 matrices across 12 pages (worst: 43 columns)",
+          "finding": "RCA-05",
+          "impact": "Reduce bytes read per visual"
+        },
+        {
+          "action": "Mark Date table as Date Table and disable auto date/time",
+          "where": "Semantic Model",
+          "location": "Date (dim_date_v2)",
+          "finding": "RCA-11",
+          "impact": "Enables auto time intelligence optimisations"
+        },
+        {
+          "action": "Disable isAvailableInMdx for internal helper measures",
+          "where": "Semantic Model",
+          "location": "115 measures",
+          "finding": "RCA-10",
+          "impact": "Reduces metadata overhead"
+        }
+      ]
+    }
+  ],
+  "skippedSteps": [
+    {
+      "step": "4",
+      "name": "Databricks Metadata Profiling",
+      "reason": "Databricks MCP permission error on Technology SQL Warehouse. Volumetry from CSV used instead."
+    },
+    {
+      "step": "5",
+      "name": "Query Profiling",
+      "reason": "No Performance Analyzer export provided and Databricks query history unavailable due to permission error."
+    },
+    {
+      "step": "4b",
+      "name": "User Query Attribution",
+      "reason": "No query history data available."
+    },
+    {
+      "step": "5c",
+      "name": "Capacity Settings Simulation",
+      "reason": "No query history data available."
+    },
+    {
+      "step": "5d",
+      "name": "Workload Analysis",
+      "reason": "No query history data available."
+    }
+  ],
+  "modelProfile": {
+    "tables": 45,
+    "directQuery": 9,
+    "dual": 29,
+    "import": 7,
+    "columns": 785,
+    "measures": 801,
+    "relationships": 31,
+    "bidirectional": 3,
+    "inactive": 0,
+    "manyToMany": 0,
+    "catalogs": 5,
+    "factTableRows": 6052560794,
+    "hubTable": "Daily Trade (degree 21)",
+    "maxSnowflakeDepth": 4
+  }
+}

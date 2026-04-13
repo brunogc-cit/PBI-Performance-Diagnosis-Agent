@@ -30,6 +30,7 @@ PBI-Performance-Diagnosis-Agent/
 │   ├── audit_dax.py                   # Step 2: DAX anti-pattern scan → dax-audit.json
 │   ├── analyse_dbt_lineage.py         # Step 3: dbt serve-layer lineage → dbt-lineage.json
 │   ├── run_bpa.py                     # Step 6: BPA rule checks → bpa-results.json
+│   ├── analyse_dax_antipatterns.py    # Step 6b: compound anti-pattern tiers → dax-antipattern-tiers.json
 │   ├── parse_perf_analyzer.py         # Step 5: parse PBI Perf Analyzer JSON → perf-summary.json
 │   ├── generate_report.py             # Step 8: produce HTML report from intermediate JSONs
 │   ├── analyse_user_queries.py        # Step 4b: per-user query attribution
@@ -44,8 +45,8 @@ PBI-Performance-Diagnosis-Agent/
 ├── references/                        # Knowledge base (read-only)
 │   ├── input-template.md              # Blank input.md for new projects
 │   ├── report-template.html           # HTML/CSS template for report styling
-│   ├── bpa-rules-reference.md         # 12 BPA rules with examples and fixes
-│   ├── dax-patterns.md                # DAX anti-patterns + recommended alternatives
+│   ├── bpa-rules-reference.md         # 20 BPA rules with examples, fixes, and composite model docs
+│   ├── dax-patterns.md                # DAX anti-patterns, compound tiers, pattern families
 │   └── system-tables-queries.md       # Databricks SQL queries for metadata/volume/profiling
 │
 ├── plan/                              # Design documentation
@@ -72,6 +73,7 @@ The agent follows an 8-step workflow defined in `SKILL.md`:
 | 4 | Databricks Metadata Profiling | — (MCP/manual queries) | `databricks-profile.json` | Optional (needs Databricks) |
 | 5 | Query Profiling | `parse_perf_analyzer.py` | `perf-summary.json` / `query-profile.json` | Optional |
 | 6 | Best Practice Analyser | `run_bpa.py` | `bpa-results.json` | Needs PBI repo |
+| 6b | DAX Anti-Pattern Tiers | `analyse_dax_antipatterns.py` | `dax-antipattern-tiers.json` | Needs PBI repo |
 | 3b | Engineering BPA | `run_engineering_bpa.py` | `engineering-bpa-results.json` | Optional (needs dbt repo) |
 | 4b | User Query Attribution | `analyse_user_queries.py` | `user-query-profile.json` | Optional (needs query data) |
 | 5c | Capacity Settings Simulation | `analyse_capacity_settings.py` | `capacity-settings-analysis.json` | Optional (needs query data) |
@@ -137,6 +139,11 @@ python3 scripts/run_bpa.py \
   --model-path <path-to-PBI-model-dir> \
   --output output/
 
+# Step 6b: DAX anti-pattern tier analysis (compound severity + pattern families + dependency chains)
+python3 scripts/analyse_dax_antipatterns.py \
+  --model-path <path-to-PBI-model-dir> \
+  --output output/
+
 # Step 3b: Engineering BPA
 python3 scripts/run_engineering_bpa.py \
   --dbt-path <path-to-dbt-project> \
@@ -184,19 +191,21 @@ python3 scripts/generate_report.py \
 
 ### Script Details
 
-**`analyse_semantic_model.py`** — Parses PBI model directories (Tabular Editor JSON serialisation). Reads `database.json`, `expressions/*.json`, `tables/*/partitions/*.json`, `tables/*/<Table>.json` (extended properties), `relationships/*.json`. Extracts table storage modes, column counts, measure counts, Databricks source mapping. **New in v2**: auto-classifies tables as fact/dimension/bridge/metadata from relationship structure. Computes graph analysis (degree centrality, hub tables, snowflake depth). Accepts `--volumetry-file` for Databricks row count/size enrichment. Outputs `model-taxonomy.json`.
+**`analyse_semantic_model.py`** — Parses PBI model directories (Tabular Editor JSON serialisation). Reads `database.json`, `expressions/*.json`, `tables/*/partitions/*.json`, `tables/*/<Table>.json` (extended properties), `relationships/*.json`. Extracts table storage modes, column counts, measure counts, Databricks source mapping. **New in v2**: auto-classifies tables as fact/dimension/bridge/metadata from relationship structure. Computes graph analysis (degree centrality, hub tables, snowflake depth). **New in v3**: builds `sourceGroups` (grouping tables by effective Databricks source) and `relatedUsage` (which tables are referenced via RELATED/RELATEDTABLE) for composite model analysis. **New in v4**: `dimensionConsolidation` — detects semantically similar dimension tables via token-based name similarity (Jaccard ≥ 0.4 + shared non-generic tokens). For each candidate group, analyses column overlap, shared Databricks sources, relationship savings, and storage modes to score consolidation benefit (high/medium/low). Produces actionable recommendations rendered in the report under the Snowflake Branching section. Accepts `--volumetry-file` for Databricks row count/size enrichment. Outputs `model-taxonomy.json`.
 
 **`analyse_dax_complexity.py`** — Two-pass analysis: first collects table storage modes, then scores each measure's complexity. **New in v2**: complexity scoring prioritises context transitions (3 pts each), relationship hops (2 pts each), and FILTER(ALL) count (4 pts each) over LOC (1 pt for >30 lines). Each measure includes `contextTransitions`, `relationshipHops`, `filterAllCount`, and `estimatedSQLSubqueries`. Accepts `--taxonomy-file` for hot table enrichment with volumetry, degree, and computed `optimizationPriority` (critical/high/medium/low). Outputs `dax-complexity.json`.
 
-**`audit_dax.py`** — Scans all DAX measure expressions for 10 anti-pattern rules (FILTER_ALL, IFERROR/ISERROR, nested CALCULATE, repeated subexpression, bare division, COUNT vs COUNTROWS, missing format string, unqualified columns, no VAR, hardcoded values). Strips comments and string literals before pattern matching. Outputs `dax-audit.json`.
+**`audit_dax.py`** — Scans all DAX measure expressions for 13 anti-pattern rules (FILTER_ALL, IFERROR/ISERROR, nested CALCULATE, CROSSJOIN, repeated subexpression, bare division, COUNT vs COUNTROWS, missing format string, USERELATIONSHIP, DIVIDE_CALC, unqualified columns, no VAR, hardcoded values). Each issue includes `whyItsBad` (engine-level explanation) and `requiredActions` (list of specific fix steps). Strips comments and string literals before pattern matching. Outputs `dax-audit.json`.
 
 **`analyse_dbt_lineage.py`** — Parses dbt serve-layer SQL for `ref()` calls, WHERE filters, UNION ALL, and column counts. Reads contract YAML files for materialisation config (view/table/incremental), liquid clustering, unique keys. **New in v2**: includes a value gate that identifies `actionableFindings` (wide-serve-view, missing-filter, should-materialise, missing-clustering) and sets `hasActionableFindings` boolean. The report collapses this section when no actionable findings exist. Outputs `dbt-lineage.json`.
 
-**`run_bpa.py`** — Runs 12 Best Practice Analyser rules against PBI semantic model files (supports both JSON/TE2 and TMDL formats). Rules cover floating-point types, bidirectional relationships, dual mode tables, FILTER(ALL), IFERROR, wide tables, missing format strings, many-to-many, bare division, auto date tables, unqualified columns, unused columns. **New in v2**: each rule includes `performanceImpact` metadata (latency/cost/quality/memory) with descriptions. Output separates `ruleResults` (violations only) from `passingRules` (collapsed list). Outputs `bpa-results.json`.
+**`run_bpa.py`** — Runs 20 Best Practice Analyser rules against PBI semantic model files (supports both JSON/TE2 and TMDL formats). Original 12 rules plus 8 new rules: IS_AVAILABLE_IN_MDX, TIME_INTEL_ON_DQ, CALCULATED_TABLES, SNOWFLAKE_DQ_CHAINS, DATE_TABLE_NOT_MARKED, REDUNDANT_COLUMNS_IN_RELATED, EXCESSIVE_CALCULATED_COLUMNS, M_FOLDING_BLOCKERS. The DUAL_MODE_TABLES rule is now **source-group-aware**: checks for DirectQuery neighbours and RELATED() usage before recommending Dual→Import, adding warnings about limited relationships in composite models. Each rule includes `performanceImpact` metadata (latency/cost/quality/memory) with descriptions. Outputs `bpa-results.json`.
 
 **`parse_perf_analyzer.py`** — Parses Power BI Desktop Performance Analyzer JSON exports. Analyses visual load times, query durations, render costs. Groups visuals under User Actions. Computes summary statistics (avg, median, P95, page load, bottleneck classification). Outputs `perf-summary.json`.
 
-**`generate_report.py`** — Reads all intermediate JSONs from the output directory, reads `synthesis.json` for root cause findings with **Where** classification (dbt Models / Semantic Model / PBI Report / PBI Visual), and produces a single self-contained HTML file with inline CSS. Creates a timestamped subdirectory (`output/YYYY-MM-DD_HHMM_<run-label>/`) and moves all intermediate files there. **Key features**: Model taxonomy shows classification (fact/dim), volumetry (rows, GB), and relationship topology (hub tables, snowflake depth). DAX complexity shows context transitions as primary metric. Hot tables include volumetry, degree, and optimisation priority. BPA and Engineering BPA sections show ALL rules (performance + quality) with interactive filter buttons — users can filter by impact type (Latency/Cost/Memory/Quality) on Rule Violations and by impact type + severity (High/Medium/Low) on Detailed Findings. Report Visual Analysis sorts by severity (high→medium→low) with Report/Page column. dbt section is conditional (collapsed when no actionable findings). RCA includes scope badges (model-wide/report-specific). Detailed recommendations include affected objects, evidence blocks, impact breakdowns, connection mode comparisons, dependency chains, sub-findings, and deep-dive flags. Action Matrix shows Category + Location (specific object names) instead of just category badges. No health score — removed in favour of detailed per-section findings.
+**`analyse_dax_antipatterns.py`** — Compound anti-pattern tier analysis. Detects 9 anti-pattern flags (ITERATOR, ALL_FILTER, ROW_FILTER, SWITCH_IF, TIME_INTEL, NESTED_CALC, USERELATIONSHIP, CROSSJOIN, DIVIDE_CALC) per measure. Assigns severity tiers (Critical ≥4, High Risk 3, Medium 2, Low Risk 1, Clean 0). Groups measures into semantic pattern families (WTD, LY, Cover, etc.) with consolidated "Why it's slow" and "Required actions". Builds measure-to-measure dependency call graph and detects amplification chains (expensive measures called inside iterators). Produces priority fix order. Outputs `dax-antipattern-tiers.json`.
+
+**`generate_report.py`** — Reads all intermediate JSONs from the output directory (including `dax-antipattern-tiers.json`), reads `synthesis.json` for root cause findings with **Where** classification (dbt Models / Semantic Model / PBI Report / PBI Visual), and produces a single self-contained HTML file with inline CSS. Creates a timestamped subdirectory (`output/YYYY-MM-DD_HHMM_<run-label>/`) and moves all intermediate files there. **Key features**: Model taxonomy shows classification (fact/dim), volumetry (rows, GB), and relationship topology (hub tables, snowflake depth). DAX complexity shows context transitions as primary metric. **New in v3**: DAX Anti-Pattern Tier Analysis section renders tier summary, 9-flag catalog, pattern family cards with "Why it's slow" / "Required actions", priority fix order, and dependency chain amplification. Detailed recommendations use "Why it's bad" / "Required action" format with structured action lists (from `whyItsBad`/`requiredActions` fields). BPA detailed findings include "Why it's bad" explanation from impact descriptions. Action-Priority Matrix shows inter-finding dependencies in a "Depends on" column. Hot tables include volumetry, degree, and optimisation priority. BPA and Engineering BPA sections show ALL rules (performance + quality) with interactive filter buttons. **New in v4**: Dimension Consolidation Opportunities card in the Snowflake Branching section — renders actionable groups of semantically similar dimension tables with column overlap bars, benefit scoring, evidence bullets, and recommended consolidation actions. No health score — removed in favour of detailed per-section findings.
 
 **`run_engineering_bpa.py`** — Runs 15 engineering best practice rules against dbt SQL and contract YAMLs. Checks SELECT *, missing clustering, wide serve views, missing WHERE filters, functions on filter columns, OR in JOINs, ROW_NUMBER vs QUALIFY, non-atomic materialisation, and more. Cross-references with model-taxonomy.json to only check dbt models consumed by PBI. The report shows ALL 15 rules with interactive filter buttons by impact type (Latency/Cost/Quality). Displayed under section "dbt Best Practices". Outputs `engineering-bpa-results.json`.
 

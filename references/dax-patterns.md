@@ -631,3 +631,49 @@ RETURN
 | `IF(HASONEVALUE(...), VALUES(...))` | `SELECTEDVALUE(...)` | Cleaner, single function |
 | `FILTER(T, ...)` in `CALCULATE` | Direct predicate or `KEEPFILTERS` | Avoids materialisation |
 | Nested `CALCULATE` (3+ levels) | `VAR` + single `CALCULATE` | Readability and correctness |
+
+---
+
+## Compound Anti-Pattern Tiers
+
+The anti-pattern tier system scores each measure by how many distinct anti-pattern flags it triggers. Multiple patterns compound cost because the engine cannot reuse cached results.
+
+### 9-Flag Taxonomy
+
+| Flag | Functions | Why Expensive |
+|------|-----------|---------------|
+| ITERATOR | SUMX, AVERAGEX, RANKX, COUNTX | Row-by-row evaluation; multiplies sub-queries |
+| ALL_FILTER | ALL, ALLEXCEPT, ALLSELECTED | Clears filter context; forces full re-aggregation |
+| ROW_FILTER | FILTER() on a table | Full table scan; cannot use dictionary indexes |
+| SWITCH_IF | SWITCH(TRUE()), IF() | All branches evaluated; no short-circuiting |
+| TIME_INTEL | DATEADD, DATESINPERIOD, etc. | Creates virtual date tables; adds joins |
+| NESTED_CALC | CALCULATE inside CALCULATE | Multiple context transitions; expensive |
+| USERELATIONSHIP | USERELATIONSHIP() | Forces alternate join path; prevents caching |
+| CROSSJOIN | CROSSJOIN, GENERATE | Cartesian explosion; huge virtual tables |
+| DIVIDE_CALC | DIVIDE(CALCULATE(...)) | Prevents single-pass aggregation |
+
+### Severity Tiers
+
+| Tier | Flag Count | Description |
+|------|-----------|-------------|
+| Critical | 4+ | Worst patterns combined; extremely slow |
+| High Risk | 3 | Heavy compound cost; significant latency |
+| Medium | 2 | Noticeable latency on high-cardinality visuals |
+| Low Risk | 1 | Minor individually; expensive as dependencies |
+| Clean | 0 | No anti-patterns detected |
+
+### Pattern Families
+
+Measures are grouped into **pattern families** based on naming conventions and structural DAX fingerprint. Common families:
+
+- **WTD / YD-1 Window Measures**: SWITCH(TRUE()) + SUMX day-by-day + FILTER(ALL(Date))
+- **Average Weekly Cover Measures**: ADDCOLUMNS virtual tables + AVERAGEX + ALL(Date)
+- **LY / LM Comparison Measures**: DATE(YEAR()-1) inside SUMX + FILTER(ALL(Date))
+- **L7D Rolling Window**: DATESINPERIOD + FILTER(ALL(Date))
+- **Opening Balance**: Bridge table lookups via CALCULATETABLE + FILTER(ALL(Date))
+
+Each family has a consolidated "Why it's slow" and "Required actions" block that applies to all measures in the group.
+
+### Dependency Chain Amplification
+
+When a high-tier measure (e.g., Critical with 4+ flags) calls a lower-tier measure inside an iterator (SUMX, COUNTX, etc.), the cost is multiplied. The dependency chain analysis identifies these amplification patterns and prioritises fixing them.

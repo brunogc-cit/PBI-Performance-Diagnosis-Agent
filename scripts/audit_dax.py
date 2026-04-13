@@ -332,6 +332,12 @@ def check_filter_all(m: MeasureInfo) -> list[dict]:
             "severity": "High",
             "message": "Uses FILTER(ALL(...)) -- should use REMOVEFILTERS + direct predicate",
             "fix": "Replace FILTER(ALL(Table[Column]), ...) with REMOVEFILTERS(Table[Column]) and a direct predicate in CALCULATE",
+            "whyItsBad": "FILTER(ALL()) materialises the entire column into memory before filtering row by row. In DirectQuery this generates a full table scan subquery.",
+            "requiredActions": [
+                "Replace FILTER(ALL(Table[Col]), ...) with REMOVEFILTERS(Table[Col]) + direct predicate.",
+                "Or use KEEPFILTERS for AND filter semantics.",
+                "Test functional equivalence in DAX Studio with Server Timings.",
+            ],
             "line": _find_line(m.expression, pat),
         })
     return issues
@@ -349,6 +355,12 @@ def check_iferror_iserror(m: MeasureInfo) -> list[dict]:
             "severity": "High",
             "message": f"Uses {func}() which evaluates the expression twice, harming performance",
             "fix": "Replace with DIVIDE() for division or IF(ISBLANK(...), ...) for null checks",
+            "whyItsBad": f"{func}() evaluates the expression twice — once to check for error, once to return the result — doubling computation cost. It also masks genuine errors.",
+            "requiredActions": [
+                "Replace with DIVIDE(x, y, 0) for division-by-zero handling.",
+                "Use IF(ISBLANK(...), ...) for null checks.",
+                "Surface genuine errors during development instead of hiding them.",
+            ],
             "line": _find_line(m.expression, pat),
         })
     return issues
@@ -386,6 +398,12 @@ def check_nested_calculate(m: MeasureInfo) -> list[dict]:
             "severity": "High",
             "message": f"Contains {calc_count} CALCULATE calls -- likely deeply nested, harming readability and performance",
             "fix": "Extract inner calculations into VAR variables or separate measures to reduce nesting",
+            "whyItsBad": f"Contains {calc_count} CALCULATE calls creating multiple context transitions. In DirectQuery, each nesting level generates an additional SQL subquery.",
+            "requiredActions": [
+                "Flatten nested CALCULATE using VAR/RETURN pattern.",
+                "Use CALCULATE([Measure], filter1, filter2) instead of CALCULATE(CALCULATE(...)).",
+                "Extract inner calculations into separate reusable measures.",
+            ],
             "line": _find_line(m.expression, pat),
         })
     return issues
@@ -440,6 +458,11 @@ def check_repeated_subexpression(m: MeasureInfo) -> list[dict]:
             "severity": "Medium",
             "message": f"Repeated subexpression found ({list(found.values())[0]}x): '{sample_display}' -- extract to a VAR",
             "fix": "Use VAR to capture the repeated expression and reference the variable instead",
+            "whyItsBad": "Without VAR, the same subexpression is recalculated every time it appears, potentially doubling or tripling query cost.",
+            "requiredActions": [
+                "Wrap the repeated subexpression in a VAR statement.",
+                "Reference the VAR in all places where the subexpression was used.",
+            ],
             "line": 0,
         })
     return issues
@@ -458,6 +481,10 @@ def check_bare_division(m: MeasureInfo) -> list[dict]:
             "severity": "Medium",
             "message": "Uses '/' operator instead of DIVIDE() -- risk of division by zero",
             "fix": "Wrap in DIVIDE(numerator, denominator) for safe division",
+            "whyItsBad": "The '/' operator raises an error when the denominator is zero or BLANK. DIVIDE() handles this gracefully.",
+            "requiredActions": [
+                "Wrap division in DIVIDE(numerator, denominator, alternateResult).",
+            ],
             "line": _find_line(m.expression, orig_pat),
         })
     return issues
@@ -482,6 +509,10 @@ def check_count_vs_countrows(m: MeasureInfo) -> list[dict]:
                     "severity": "Medium",
                     "message": "Uses COUNT(Table[Column]) -- consider COUNTROWS(Table) if counting rows not specific column values",
                     "fix": "Replace COUNT('Table'[Column]) with COUNTROWS('Table') when counting all rows",
+                    "whyItsBad": "COUNT only counts non-BLANK values in a single column. COUNTROWS counts all rows and is semantically clearer.",
+                    "requiredActions": [
+                        "Replace COUNT('Table'[Column]) with COUNTROWS('Table').",
+                    ],
                     "line": _find_line(m.expression, plain_count),
                 })
                 break
@@ -497,6 +528,10 @@ def check_missing_format_string(m: MeasureInfo) -> list[dict]:
             "severity": "Medium",
             "message": "Measure has no formatString -- values may display with inconsistent formatting",
             "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
+            "whyItsBad": "Without an explicit format string, PBI uses raw floating-point display, causing inconsistencies across visuals.",
+            "requiredActions": [
+                "Add formatString property (e.g. '#,##0.00' for currency, '0.0%' for percentages).",
+            ],
             "line": 0,
         })
     return issues
@@ -519,6 +554,10 @@ def check_unqualified_columns(m: MeasureInfo) -> list[dict]:
             "severity": "Low",
             "message": f"Unqualified column references: {display} -- prefix with table name for clarity",
             "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
+            "whyItsBad": "Unqualified column names can resolve ambiguously when tables share column names.",
+            "requiredActions": [
+                "Prefix all column references with 'TableName'[ColumnName].",
+            ],
             "line": _find_line(m.expression, pat),
         })
     return issues
@@ -538,6 +577,11 @@ def check_no_variables(m: MeasureInfo) -> list[dict]:
             "severity": "Low",
             "message": f"Measure has {line_count} lines of DAX but uses no VAR statements -- consider extracting intermediate calculations",
             "fix": "Use VAR/RETURN pattern to name intermediate calculations for readability and potential performance gains",
+            "whyItsBad": "Without VAR, intermediate calculations may be re-evaluated multiple times. VARs guarantee single evaluation.",
+            "requiredActions": [
+                "Introduce VAR statements for intermediate calculations.",
+                "Use RETURN to reference the final result.",
+            ],
             "line": 0,
         })
     return issues
@@ -546,18 +590,12 @@ def check_no_variables(m: MeasureInfo) -> list[dict]:
 def check_hardcoded_values(m: MeasureInfo) -> list[dict]:
     """LOW: Literal strings or numbers in CALCULATE filter arguments."""
     cleaned = _strip_dax_comments_and_strings(m.expression)
-    # Look for CALCULATE( ... , ... = "string" ...) or ... = 123
-    # Heuristic: find quoted strings or bare numbers inside what looks like CALCULATE filter args
     issues: list[dict] = []
 
-    # Find CALCULATE calls
     calc_pat = re.compile(r"\bCALCULATE\s*\(", re.IGNORECASE)
     if not calc_pat.search(cleaned):
         return []
 
-    # Check for hardcoded string comparisons in filter context
-    # Pattern: something = "..." inside the expression (after stripping, strings are "")
-    # Instead, check the original expression for patterns like = "SomeValue" or = 123
     orig = m.expression
     hardcoded_str = re.compile(r'=\s*"[^"]+?"', re.IGNORECASE)
     hardcoded_num = re.compile(r'=\s*\d{2,}(?:\.\d+)?(?!\s*[\]\)])\b')
@@ -577,7 +615,78 @@ def check_hardcoded_values(m: MeasureInfo) -> list[dict]:
             "severity": "Low",
             "message": f"Hardcoded literals in filter context: {display} -- consider parameterising",
             "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
+            "whyItsBad": "Hardcoded literals make measures fragile and hard to maintain. Changes require editing each measure individually.",
+            "requiredActions": [
+                "Extract hardcoded values to a parameter table.",
+                "Reference the parameter table from the measure instead of literals.",
+            ],
             "line": _find_line(orig, hardcoded_str) or _find_line(orig, hardcoded_num),
+        })
+    return issues
+
+
+def check_userelationship(m: MeasureInfo) -> list[dict]:
+    """MEDIUM: USERELATIONSHIP activates an inactive relationship."""
+    pat = re.compile(r"\bUSERELATIONSHIP\s*\(", re.IGNORECASE)
+    cleaned = _strip_dax_comments_and_strings(m.expression)
+    issues: list[dict] = []
+    if pat.search(cleaned):
+        issues.append({
+            "rule": "USERELATIONSHIP",
+            "severity": "Medium",
+            "message": "Uses USERELATIONSHIP() which forces an alternate join path and prevents query caching",
+            "fix": "Evaluate whether the inactive relationship can be made active or the model restructured",
+            "whyItsBad": "USERELATIONSHIP activates an inactive relationship, forcing Databricks to use an alternate join path. This prevents query plan caching and adds overhead.",
+            "requiredActions": [
+                "Evaluate if the inactive relationship can be made the active one.",
+                "If multiple relationships are needed, consider role-playing dimensions.",
+                "As a last resort, keep USERELATIONSHIP but ensure it is not inside iterators.",
+            ],
+            "line": _find_line(m.expression, pat),
+        })
+    return issues
+
+
+def check_crossjoin(m: MeasureInfo) -> list[dict]:
+    """HIGH: CROSSJOIN / GENERATE creates cartesian products."""
+    pat = re.compile(r"\bCROSSJOIN\s*\(", re.IGNORECASE)
+    cleaned = _strip_dax_comments_and_strings(m.expression)
+    issues: list[dict] = []
+    if pat.search(cleaned):
+        issues.append({
+            "rule": "CROSSJOIN",
+            "severity": "High",
+            "message": "Uses CROSSJOIN() which creates cartesian products — huge virtual tables that explode query cost",
+            "fix": "Replace CROSSJOIN with SUMMARIZE or a physical bridge table",
+            "whyItsBad": "CROSSJOIN creates a cartesian product of two tables, producing huge virtual tables. In DirectQuery this generates extremely expensive SQL with massive intermediate result sets.",
+            "requiredActions": [
+                "Replace CROSSJOIN with SUMMARIZE or NATURALINNERJOIN where possible.",
+                "If a cross-product is genuinely needed, pre-compute it in SQL/dbt.",
+                "Consider using a physical bridge table instead.",
+            ],
+            "line": _find_line(m.expression, pat),
+        })
+    return issues
+
+
+def check_divide_calculate(m: MeasureInfo) -> list[dict]:
+    """MEDIUM: DIVIDE(CALCULATE(...), ...) prevents single-pass aggregation."""
+    pat = re.compile(r"\bDIVIDE\s*\(\s*CALCULATE\s*\(", re.IGNORECASE)
+    cleaned = _strip_dax_comments_and_strings(m.expression)
+    issues: list[dict] = []
+    if pat.search(cleaned):
+        issues.append({
+            "rule": "DIVIDE_CALC",
+            "severity": "Medium",
+            "message": "Uses DIVIDE(CALCULATE(...), ...) which prevents single-pass aggregation",
+            "fix": "Use VAR to pre-compute CALCULATE result, then DIVIDE the variable",
+            "whyItsBad": "DIVIDE(CALCULATE(...), ...) forces the engine to evaluate the CALCULATE separately from the denominator, preventing single-pass aggregation. Each part generates its own DQ query.",
+            "requiredActions": [
+                "Extract CALCULATE into a VAR variable.",
+                "Use DIVIDE(_var, denominator) in the RETURN clause.",
+                "This allows the engine to potentially combine the aggregations.",
+            ],
+            "line": _find_line(m.expression, pat),
         })
     return issues
 
@@ -587,10 +696,13 @@ ALL_CHECKS: list[tuple[str, str, callable]] = [
     ("FILTER_ALL",              "High",   check_filter_all),
     ("IFERROR_ISERROR",         "High",   check_iferror_iserror),
     ("NESTED_CALCULATE",        "High",   check_nested_calculate),
+    ("CROSSJOIN",               "High",   check_crossjoin),
     ("REPEATED_SUBEXPRESSION",  "Medium", check_repeated_subexpression),
     ("BARE_DIVISION",           "Medium", check_bare_division),
     ("COUNT_VS_COUNTROWS",      "Medium", check_count_vs_countrows),
     ("MISSING_FORMAT_STRING",   "Medium", check_missing_format_string),
+    ("USERELATIONSHIP",         "Medium", check_userelationship),
+    ("DIVIDE_CALC",             "Medium", check_divide_calculate),
     ("UNQUALIFIED_COLUMNS",     "Low",    check_unqualified_columns),
     ("NO_VARIABLES",            "Low",    check_no_variables),
     ("HARDCODED_VALUES",        "Low",    check_hardcoded_values),

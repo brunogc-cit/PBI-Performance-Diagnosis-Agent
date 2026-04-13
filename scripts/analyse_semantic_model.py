@@ -190,14 +190,46 @@ def _build_relationship_tree(
     }
 
 
+def _build_filter_adj(
+    relationships: list[dict],
+) -> dict[str, set[str]]:
+    """Build a directed adjacency following PBI filter propagation rules.
+
+    In Power BI:
+    - oneDirection: filters flow from the 'one' side (toTable) to the
+      'many' side (fromTable).  Edge: toTable → fromTable.
+    - bothDirections: filters flow both ways.  Edges in both directions.
+
+    The resulting graph answers: "starting from table X, which tables
+    receive filters transitively?"
+    """
+    filter_adj: dict[str, set[str]] = defaultdict(set)
+    for r in relationships:
+        ft = r.get("fromTable", "")   # many side
+        tt = r.get("toTable", "")     # one side
+        cross = r.get("crossFilteringBehavior", "oneDirection")
+        if not ft or not tt:
+            continue
+        # one → many (always, for both oneDirection and bothDirections)
+        filter_adj[tt].add(ft)
+        if cross == "bothDirections":
+            # many → one (only for bidirectional)
+            filter_adj[ft].add(tt)
+    return filter_adj
+
+
 def _compute_join_cascade(
     table_names: set[str],
-    adj: dict[str, set[str]],
+    filter_adj: dict[str, set[str]],
     table_modes: dict[str, str],
     classifications: dict[str, str],
 ) -> list[dict]:
     """For every table, compute how many tables are transitively pulled in
-    when a query touches it (the 'join cascade')."""
+    when a query touches it (the 'join cascade').
+
+    Uses the directed filter-propagation graph so that the cascade
+    reflects real PBI filter flow rather than treating every relationship
+    as bidirectional."""
     cascades: list[dict] = []
     for tbl in sorted(table_names):
         visited: set[str] = {tbl}
@@ -208,7 +240,7 @@ def _compute_join_cascade(
         while queue:
             node = queue.pop(0)
             nd = depth_map[node]
-            for neighbour in adj.get(node, set()):
+            for neighbour in filter_adj.get(node, set()):
                 if neighbour not in visited and neighbour in table_names:
                     visited.add(neighbour)
                     depth_map[neighbour] = nd + 1
@@ -325,9 +357,10 @@ def _compute_graph_analysis(
     total_degree = sum(gt["degree"] for gt in graph_tables)
     avg_degree = round(total_degree / len(graph_tables), 1) if graph_tables else 0
 
-    # Join cascade analysis for all tables
+    # Join cascade analysis for all tables (using directed filter graph)
+    filter_adj = _build_filter_adj(relationships)
     join_cascades = _compute_join_cascade(
-        table_names, adj, table_modes, classifications,
+        table_names, filter_adj, table_modes, classifications,
     )
 
     return {
@@ -374,6 +407,316 @@ def _merge_volumetry(tables: list[dict], volumetry_file: Path | None) -> dict[st
                 vol_map[t["name"]] = vol
 
     return vol_map
+
+
+def _compute_source_groups(tables: list[dict], relationships: list[dict]) -> dict:
+    """Group tables by their effective data source for composite model analysis.
+
+    Tables sharing the same Databricks source are in the same source group.
+    Import tables form their own group.  This enables detection of limited
+    relationships that would result from switching Dual → Import.
+    """
+    groups: dict[str, list[str]] = defaultdict(list)
+    table_to_group: dict[str, str] = {}
+
+    for t in tables:
+        cat = t.get("sourceCatalog", "")
+        schema = t.get("sourceDatabase", "")
+        mode = t.get("storageMode", "import")
+        if cat and schema and mode in ("directQuery", "dual"):
+            group_key = f"dq:{cat}.{schema}"
+        elif mode == "import":
+            group_key = "import"
+        else:
+            group_key = "import"
+        groups[group_key].append(t["name"])
+        table_to_group[t["name"]] = group_key
+
+    # Identify Dual tables that share a source group with DQ fact tables
+    dq_fact_groups: set[str] = set()
+    for t in tables:
+        if t.get("storageMode") == "directQuery":
+            dq_fact_groups.add(table_to_group.get(t["name"], ""))
+
+    dual_tables_with_dq_facts: list[dict] = []
+    for t in tables:
+        if t.get("storageMode") != "dual":
+            continue
+        group = table_to_group.get(t["name"], "")
+        has_dq_rel = False
+        for r in relationships:
+            other = r.get("toTable") if r.get("fromTable") == t["name"] else (
+                r.get("fromTable") if r.get("toTable") == t["name"] else None
+            )
+            if other:
+                other_mode = next(
+                    (tb.get("storageMode") for tb in tables if tb["name"] == other), None
+                )
+                if other_mode == "directQuery":
+                    has_dq_rel = True
+                    break
+        dual_tables_with_dq_facts.append({
+            "table": t["name"],
+            "sourceGroup": group,
+            "sharesGroupWithDQFact": group in dq_fact_groups,
+            "hasDirectRelationshipToDQ": has_dq_rel,
+            "safeToSwitchToImport": not has_dq_rel and group not in dq_fact_groups,
+        })
+
+    return {
+        "groups": {k: v for k, v in groups.items()},
+        "tableToGroup": table_to_group,
+        "dualTablesAnalysis": dual_tables_with_dq_facts,
+    }
+
+
+def _detect_dimension_consolidation(
+    tables: list[dict],
+    relationships: list[dict],
+    classifications: dict[str, str],
+    volumetry_map: dict[str, dict],
+) -> list[dict]:
+    """Detect semantically similar dimension tables that may benefit from consolidation.
+
+    Uses token-based name similarity to group dimensions whose names share
+    significant semantic tokens (e.g. "Price Status", "Product Lifecycle Status",
+    "Lifecycle Price Status", "Price Status Group").  For each candidate group,
+    analyses column overlap, shared Databricks sources, and relationship
+    structure to estimate the performance/cost benefit of merging into a
+    single dimension.
+
+    Returns a list of consolidation opportunity dicts, each containing the
+    grouped tables, evidence (shared tokens, column overlap), and an
+    estimated benefit assessment.
+    """
+    # ── 1. Collect dimension tables ──────────────────────────────────────
+    dim_tables = [t for t in tables if classifications.get(t["name"]) == "dimension"]
+    if len(dim_tables) < 2:
+        return []
+
+    # ── 2. Tokenise names ────────────────────────────────────────────────
+    # Strip common PBI prefixes, split on space/underscore, lowercase
+    _STRIP_PREFIXES = re.compile(r"^(dim[_ ]?|dimension[_ ]?)", re.IGNORECASE)
+    _NOISE_TOKENS = {"v1", "v2", "v3", "v4", "v5", "dim", "table", "lookup", "lkp"}
+
+    def _tokenise(name: str) -> set[str]:
+        clean = _STRIP_PREFIXES.sub("", name)
+        raw = re.split(r"[\s_\-]+", clean.lower())
+        return {t for t in raw if t and t not in _NOISE_TOKENS and len(t) > 1}
+
+    name_tokens: dict[str, set[str]] = {}
+    for t in dim_tables:
+        tokens = _tokenise(t["name"])
+        if tokens:
+            name_tokens[t["name"]] = tokens
+
+    # ── 3. Find groups with high token overlap ───────────────────────────
+    # Two dims are "similar" if they share >= 50% of their tokens (Jaccard)
+    # and share at least one significant (non-generic) token.
+    _GENERIC_TOKENS = {"type", "code", "key", "id", "name", "description", "group",
+                       "category", "status", "level", "flag", "indicator"}
+
+    processed: set[str] = set()
+    groups: list[list[str]] = []
+
+    dim_names = sorted(name_tokens.keys())
+    for i, name_a in enumerate(dim_names):
+        if name_a in processed:
+            continue
+        tokens_a = name_tokens[name_a]
+        group = [name_a]
+        for name_b in dim_names[i + 1:]:
+            if name_b in processed:
+                continue
+            tokens_b = name_tokens[name_b]
+            intersection = tokens_a & tokens_b
+            union = tokens_a | tokens_b
+            jaccard = len(intersection) / len(union) if union else 0
+            # Require >= 40% Jaccard AND at least one non-generic shared token
+            significant_shared = intersection - _GENERIC_TOKENS
+            if jaccard >= 0.4 and significant_shared:
+                group.append(name_b)
+        if len(group) >= 2:
+            for g in group:
+                processed.add(g)
+            groups.append(group)
+
+    if not groups:
+        return []
+
+    # ── 4. Build lookup helpers ──────────────────────────────────────────
+    table_by_name: dict[str, dict] = {t["name"]: t for t in tables}
+    rel_count: dict[str, int] = defaultdict(int)
+    for r in relationships:
+        rel_count[r.get("fromTable", "")] += 1
+        rel_count[r.get("toTable", "")] += 1
+
+    # ── 5. Analyse each group ────────────────────────────────────────────
+    opportunities: list[dict] = []
+    for group in groups:
+        group_tables = [table_by_name[n] for n in group if n in table_by_name]
+        if len(group_tables) < 2:
+            continue
+
+        # Shared tokens across the group
+        all_tokens = [name_tokens.get(t["name"], set()) for t in group_tables]
+        shared_tokens = set.intersection(*all_tokens) if all_tokens else set()
+
+        # Column overlap analysis
+        col_sets: dict[str, set[str]] = {}
+        for t in group_tables:
+            cols = {c["name"].lower() for c in t.get("columns", []) if not c.get("isHidden")}
+            col_sets[t["name"]] = cols
+
+        all_col_sets = list(col_sets.values())
+        overlapping_cols = set.intersection(*all_col_sets) if all_col_sets else set()
+        union_cols = set.union(*all_col_sets) if all_col_sets else set()
+        col_overlap_pct = round(len(overlapping_cols) / len(union_cols) * 100, 1) if union_cols else 0
+
+        # Databricks source analysis
+        sources: dict[str, str] = {}
+        for t in group_tables:
+            if t.get("sourceTable"):
+                cat = re.sub(r"_dev$", "", t.get("sourceCatalog", ""))
+                src = f"{cat}.{t.get('sourceDatabase', '')}.{t.get('sourceTable', '')}".lower()
+                sources[t["name"]] = src
+        unique_sources = set(sources.values())
+        shared_source = len(unique_sources) == 1 and len(sources) == len(group_tables)
+
+        # Storage mode analysis
+        modes = {t["storageMode"] for t in group_tables}
+
+        # Relationship reduction estimate
+        total_rels = sum(rel_count.get(t["name"], 0) for t in group_tables)
+        # If merged, we'd have ~max(individual rels) instead of sum
+        max_rels = max(rel_count.get(t["name"], 0) for t in group_tables)
+        saved_rels = total_rels - max_rels
+
+        # Volumetry
+        total_rows = 0
+        total_size_gb = 0.0
+        for t in group_tables:
+            vol = volumetry_map.get(t["name"], {})
+            if vol.get("rowCount"):
+                total_rows += vol["rowCount"]
+            if vol.get("sizeGB"):
+                total_size_gb += vol["sizeGB"]
+
+        # ── Benefit scoring ──────────────────────────────────────────
+        # Heuristic scoring: higher = more beneficial to consolidate
+        score = 0
+        reasons: list[str] = []
+
+        if col_overlap_pct >= 50:
+            score += 3
+            reasons.append(f"{col_overlap_pct}% column overlap — high structural similarity")
+        elif col_overlap_pct >= 25:
+            score += 1
+            reasons.append(f"{col_overlap_pct}% column overlap — moderate structural similarity")
+
+        if shared_source:
+            score += 3
+            reasons.append("All tables share the same Databricks source — single upstream table")
+        elif len(unique_sources) < len(group_tables) and len(sources) > 1:
+            score += 1
+            reasons.append(f"Only {len(unique_sources)} distinct Databricks sources for {len(group_tables)} tables")
+
+        if saved_rels >= 2:
+            score += 2
+            reasons.append(f"Consolidation removes ~{saved_rels} relationships from the model graph")
+        elif saved_rels == 1:
+            score += 1
+            reasons.append("Consolidation removes 1 relationship from the model graph")
+
+        if len(group_tables) >= 3:
+            score += 1
+            reasons.append(f"{len(group_tables)} similar dimensions — fragmented design pattern")
+
+        if "directQuery" in modes:
+            score += 1
+            reasons.append("Includes DirectQuery tables — fewer JOINs means fewer Databricks roundtrips")
+
+        # Determine benefit level
+        if score >= 5:
+            benefit = "high"
+        elif score >= 3:
+            benefit = "medium"
+        else:
+            benefit = "low"
+
+        # Build recommendation
+        if benefit in ("high", "medium"):
+            action = (
+                f"Consider consolidating {', '.join(t['name'] for t in group_tables)} "
+                f"into a single dimension table. "
+            )
+            if shared_source:
+                action += (
+                    "They share the same Databricks source — a single import with "
+                    "additional flag/type columns would eliminate redundant relationships. "
+                )
+            elif col_overlap_pct >= 25:
+                action += (
+                    f"With {col_overlap_pct}% column overlap, a unified dimension with "
+                    f"a discriminator column (e.g. status_type) is a natural fit. "
+                )
+            if saved_rels >= 1:
+                action += (
+                    f"This would remove ~{saved_rels} relationships, reducing snowflake "
+                    f"depth and DirectQuery JOIN complexity."
+                )
+        else:
+            action = (
+                f"These dimensions share naming patterns but have limited structural "
+                f"overlap ({col_overlap_pct}% columns). Monitor for future consolidation "
+                f"if the model grows."
+            )
+
+        opportunities.append({
+            "tables": [t["name"] for t in group_tables],
+            "sharedTokens": sorted(shared_tokens),
+            "tableCount": len(group_tables),
+            "columnOverlapPct": col_overlap_pct,
+            "overlappingColumns": sorted(overlapping_cols),
+            "uniqueColumns": len(union_cols),
+            "sharedDatabricksSource": shared_source,
+            "uniqueSources": len(unique_sources),
+            "storageModes": sorted(modes),
+            "totalRelationships": total_rels,
+            "savedRelationships": saved_rels,
+            "totalRows": total_rows if total_rows else None,
+            "totalSizeGB": round(total_size_gb, 3) if total_size_gb else None,
+            "benefit": benefit,
+            "score": score,
+            "reasons": reasons,
+            "recommendedAction": action,
+        })
+
+    # Sort by benefit score descending
+    opportunities.sort(key=lambda x: x["score"], reverse=True)
+    return opportunities
+
+
+def _compute_related_usage(tables: list[dict]) -> dict[str, list[str]]:
+    """Scan all measure expressions for RELATED() and RELATEDTABLE() usage.
+
+    Returns a mapping of table_name → list of measure names that use
+    RELATED on columns from that table.  Used to assess whether switching
+    a table to Import mode would break RELATED() cross-source.
+    """
+    related_pat = re.compile(r"\bRELATED(?:TABLE)?\s*\(\s*'?([^'\[\)]+)'?\s*\[", re.IGNORECASE)
+    usage: dict[str, list[str]] = defaultdict(list)
+
+    for t in tables:
+        for m in t.get("measures", []):
+            expr = _expr_to_str(m.get("expression", ""))
+            if not expr:
+                continue
+            for match in related_pat.finditer(expr):
+                ref_table = match.group(1).strip()
+                usage[ref_table].append(m.get("name", ""))
+
+    return dict(usage)
 
 
 def analyse_model(model_path: Path, volumetry_file: Path | None = None) -> dict:
@@ -571,9 +914,22 @@ def analyse_model(model_path: Path, volumetry_file: Path | None = None) -> dict:
                 "databricksTable": t["sourceTable"],
             })
 
+    # Source group analysis for composite model awareness
+    source_groups = _compute_source_groups(tables, relationships)
+
+    # RELATED() usage map — which columns from other tables are referenced via RELATED
+    related_usage = _compute_related_usage(tables)
+
+    # Dimension consolidation opportunities — detect semantically similar dims
+    dim_consolidation = _detect_dimension_consolidation(
+        tables, relationships, classifications, vol_map,
+    )
+
     return {
         "modelName": model_name,
         "modelPath": str(model_path),
+        "sourceGroups": source_groups,
+        "relatedUsage": related_usage,
         "statistics": {
             "totalTables": total_tables,
             "directQueryTables": dq_tables,
@@ -595,6 +951,7 @@ def analyse_model(model_path: Path, volumetry_file: Path | None = None) -> dict:
         "relationships": relationships,
         "sourceMapping": source_mapping,
         "graphAnalysis": graph_analysis,
+        "dimensionConsolidation": dim_consolidation,
     }
 
 
@@ -646,6 +1003,10 @@ def main():
     vol_count = sum(1 for t in result["tables"] if t.get("volumetry"))
     if vol_count:
         print(f"Volumetry enriched: {vol_count} tables")
+    dim_cons = result.get("dimensionConsolidation", [])
+    if dim_cons:
+        high_med = [c for c in dim_cons if c["benefit"] in ("high", "medium")]
+        print(f"Dimension consolidation: {len(dim_cons)} groups detected ({len(high_med)} high/medium benefit)")
     print(f"\nWritten: {output_file}")
 
 

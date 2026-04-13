@@ -497,6 +497,108 @@ def _render_branching_suggestions(hub_tables: list[dict], join_cascades: list[di
     </div>'''
 
 
+def _render_dim_consolidation(consolidation: list[dict]) -> str:
+    """Render dimension consolidation opportunities as an actionable card."""
+    if not consolidation:
+        return ""
+
+    # Only show groups with medium or high benefit
+    actionable = [c for c in consolidation if c.get("benefit") in ("high", "medium")]
+    if not actionable:
+        return ""
+
+    group_cards = ""
+    for grp in actionable:
+        benefit = grp["benefit"]
+        benefit_cls = "badge-high" if benefit == "high" else "badge-medium"
+
+        table_pills = " ".join(
+            f'<span class="badge badge-info" style="margin:2px">{escape(t)}</span>'
+            for t in grp["tables"]
+        )
+
+        token_pills = " ".join(
+            f'<code style="background:#e9ecef;padding:2px 6px;border-radius:3px;font-size:11px">{escape(t)}</code>'
+            for t in grp.get("sharedTokens", [])
+        )
+
+        # Column overlap bar
+        overlap_pct = grp.get("columnOverlapPct", 0)
+        overlap_colour = "var(--green)" if overlap_pct >= 50 else ("var(--amber)" if overlap_pct >= 25 else "var(--muted)")
+        overlap_bar = f'''<div style="margin:8px 0">
+          <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px">
+            <span>Column overlap</span><span>{overlap_pct}% ({len(grp.get("overlappingColumns", []))} of {grp.get("uniqueColumns", 0)} columns)</span>
+          </div>
+          <div style="background:#e9ecef;border-radius:4px;height:14px;overflow:hidden">
+            <div style="height:100%;width:{max(overlap_pct, 3):.1f}%;background:{overlap_colour};border-radius:4px;min-width:20px"></div>
+          </div>
+        </div>'''
+
+        # Evidence bullets
+        evidence_items = "".join(f"<li>{escape(r)}</li>" for r in grp.get("reasons", []))
+
+        # Relationship savings
+        saved = grp.get("savedRelationships", 0)
+        rel_info = f"<strong>{grp.get('totalRelationships', 0)}</strong> relationships across group"
+        if saved:
+            rel_info += f" &mdash; consolidation saves ~<strong>{saved}</strong>"
+
+        # Source info
+        src_info = ""
+        if grp.get("sharedDatabricksSource"):
+            src_info = '<span class="badge badge-low" style="margin-left:6px">shared Databricks source</span>'
+
+        # Volumetry
+        vol_info = ""
+        if grp.get("totalRows"):
+            vol_info += f" &middot; {grp['totalRows']:,} total rows"
+        if grp.get("totalSizeGB"):
+            vol_info += f" &middot; {grp['totalSizeGB']:.2f} GB"
+
+        # Storage modes
+        _mode_badge = {"directQuery": "badge-high", "dual": "badge-medium", "import": "badge-low"}
+        mode_pills = " ".join(
+            f'<span class="badge {_mode_badge.get(m, "badge-low")}" '
+            f'style="font-size:10px">{escape(m)}</span>'
+            for m in grp.get("storageModes", [])
+        )
+
+        group_cards += f'''<div style="border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px;background:#fff">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+            <div>
+              <span class="badge {benefit_cls}" style="font-size:11px;margin-right:6px">{benefit} benefit</span>
+              <span style="font-size:12px;color:var(--muted)">{grp['tableCount']} dimensions</span>
+              {src_info}
+            </div>
+            <div style="font-size:11px;color:var(--muted)">score {grp.get("score", 0)}/10{vol_info}</div>
+          </div>
+          <div style="margin-bottom:8px">{table_pills}</div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:6px">
+            Shared tokens: {token_pills} &middot; {mode_pills} &middot; {rel_info}
+          </div>
+          {overlap_bar}
+          <div style="font-size:12px;margin-top:8px">
+            <strong>Why consolidate:</strong>
+            <ul style="margin:4px 0 0 18px;font-size:12px">{evidence_items}</ul>
+          </div>
+          <div style="font-size:12px;margin-top:10px;padding:10px 12px;background:var(--light-bg);border-radius:6px;border-left:3px solid var(--accent)">
+            <strong>Recommended action:</strong> {escape(grp.get("recommendedAction", ""))}
+          </div>
+        </div>'''
+
+    count = len(actionable)
+    return f'''<div class="card">
+      <h3>Dimension Consolidation Opportunities
+        <span style="font-weight:400;font-size:12px;color:var(--muted);margin-left:8px">{count} actionable group{"s" if count != 1 else ""}</span>
+      </h3>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:14px">
+        Semantically similar dimension tables that could be merged into a single table to reduce
+        model complexity, eliminate redundant relationships, and lower DirectQuery JOIN cost.
+      </p>
+      {group_cards}
+    </div>'''
+
+
 def _perf_bar(name: str, time_label: str, pct: float) -> str:
     colour = "red" if pct > 30 else ("amber" if pct > 10 else "green")
     return f"""<div style="margin-bottom:10px">
@@ -673,6 +775,7 @@ def generate_html(
     column_memory = _read_json_file(source_dir / "column-memory-analysis.json") if source_dir else None
     engineering_bpa = _read_json_file(source_dir / "engineering-bpa-results.json") if source_dir else None
     visual_analysis = _read_json_file(source_dir / "visual-analysis.json") if source_dir else None
+    antipattern_tiers = _read_json_file(source_dir / "dax-antipattern-tiers.json") if source_dir else None
 
     # Build per-table query stats lookup from databricks-profile.json
     table_query_stats: dict[str, dict] = {}
@@ -720,6 +823,122 @@ def generate_html(
 
     # Engineering BPA summary — used in approach card
     eng_bpa_summary = engineering_bpa.get("summary", {}) if engineering_bpa else {}
+
+    # ── Build global action register ──
+    # Collect ALL actions from every source with unique IDs
+    action_register: list[dict] = []
+    _act_counter = 0
+
+    def _next_act_id() -> str:
+        nonlocal _act_counter
+        _act_counter += 1
+        return f"ACT-{_act_counter:03d}"
+
+    # Source 1: Synthesis implementation roadmap actions
+    if synthesis:
+        for phase in synthesis.get("implementationRoadmap", []):
+            phase_name = phase.get("phase", "")
+            for item in phase.get("actions", phase.get("items", [])):
+                if isinstance(item, dict):
+                    action_register.append({
+                        "id": _next_act_id(),
+                        "name": item.get("action", ""),
+                        "source": "Synthesis",
+                        "category": item.get("where", ""),
+                        "location": item.get("location", ""),
+                        "severity": "high" if "Phase 1" in phase_name else ("medium" if "Phase 2" in phase_name else "low"),
+                        "whyItsBad": item.get("impact", ""),
+                        "requiredAction": item.get("action", ""),
+                        "finding": item.get("finding", ""),
+                        "phase": phase_name,
+                    })
+
+    # Source 2: BPA rule violations — one action per rule (not per finding)
+    if bpa_results:
+        for r in bpa_results.get("ruleResults", []):
+            count = r.get("count", 0)
+            if count > 0:
+                action_register.append({
+                    "id": _next_act_id(),
+                    "name": f"Fix {count} {r.get('rule', '')} violations",
+                    "source": "BPA",
+                    "category": "Semantic Model",
+                    "location": f"{count} objects",
+                    "severity": r.get("severity", "medium").lower(),
+                    "whyItsBad": r.get("impactDescription", r.get("description", "")),
+                    "requiredAction": r.get("fix", r.get("recommendation", "")),
+                    "finding": r.get("rule", ""),
+                    "phase": "",
+                })
+
+    # Source 3: Engineering BPA rule violations
+    if engineering_bpa:
+        for r in engineering_bpa.get("ruleResults", []):
+            count = r.get("count", 0)
+            if count > 0:
+                action_register.append({
+                    "id": _next_act_id(),
+                    "name": f"Fix {count} {r.get('ruleId', '')} ({r.get('title', '')}) violations",
+                    "source": "Engineering BPA",
+                    "category": "dbt Models",
+                    "location": f"{count} models",
+                    "severity": r.get("severity", "medium").lower(),
+                    "whyItsBad": r.get("description", ""),
+                    "requiredAction": r.get("recommendation", ""),
+                    "finding": r.get("ruleId", ""),
+                    "phase": "",
+                })
+
+    # Source 4: Visual analysis rule violations
+    if visual_analysis:
+        for report in visual_analysis.get("reports", []):
+            for r in report.get("ruleResults", []):
+                count = r.get("count", 0)
+                if count > 0:
+                    action_register.append({
+                        "id": _next_act_id(),
+                        "name": f"Fix {count} {r.get('ruleId', '')} ({r.get('title', '')}) findings in {report.get('reportName', '')}",
+                        "source": "Visual Analysis",
+                        "category": "PBI Report",
+                        "location": report.get("reportName", ""),
+                        "severity": r.get("severity", "medium").lower(),
+                        "whyItsBad": r.get("examples", [{}])[0].get("detail", "") if r.get("examples") else "",
+                        "requiredAction": r.get("examples", [{}])[0].get("recommendation", "") if r.get("examples") else "",
+                        "finding": r.get("ruleId", ""),
+                        "phase": "",
+                    })
+
+    # Source 5: DAX audit — one action per anti-pattern rule
+    if dax_audit:
+        # antiPatternSummary is a list of {rule, severity, count}
+        ap_summary = dax_audit.get("antiPatternSummary", [])
+        # Build a lookup of whyItsBad and fix from the first measure with each rule
+        dax_rule_info: dict[str, dict] = {}
+        for m in dax_audit.get("measures", []):
+            for issue in m.get("issues", []):
+                rule = issue.get("rule", "")
+                if rule and rule not in dax_rule_info:
+                    dax_rule_info[rule] = {
+                        "whyItsBad": issue.get("whyItsBad", ""),
+                        "fix": issue.get("fix", ""),
+                    }
+        for ap in ap_summary:
+            count = ap.get("count", 0)
+            rule = ap.get("rule", "")
+            if count > 0:
+                info = dax_rule_info.get(rule, {})
+                action_register.append({
+                    "id": _next_act_id(),
+                    "name": f"Fix {count} {rule} anti-patterns",
+                    "source": "DAX Audit",
+                    "category": "Semantic Model",
+                    "location": f"{count} measures",
+                    "severity": ap.get("severity", "medium").lower(),
+                    "whyItsBad": info.get("whyItsBad", ""),
+                    "requiredAction": info.get("fix", ""),
+                    "finding": rule,
+                    "phase": "",
+                })
 
     # ── Build sections ──
     sections: list[str] = []
@@ -876,6 +1095,66 @@ def generate_html(
     {top_findings_html}
     {git_context_html}
     {dbx_daily_html}
+    """)
+
+    # ═══════════════════════════════════════════════════════
+    # SECTION: ACTION PLAN INDEX
+    # ═══════════════════════════════════════════════════════
+    if action_register:
+        sec_num += 1
+        # Group by source
+        source_counts: dict[str, int] = {}
+        severity_counts: dict[str, int] = {}
+        category_counts: dict[str, int] = {}
+        for a in action_register:
+            source_counts[a["source"]] = source_counts.get(a["source"], 0) + 1
+            severity_counts[a["severity"]] = severity_counts.get(a["severity"], 0) + 1
+            category_counts[a["category"]] = category_counts.get(a["category"], 0) + 1
+
+        # Summary badges
+        source_badges = " ".join(
+            f'<span class="badge badge-info">{escape(s)} ({c})</span>'
+            for s, c in sorted(source_counts.items())
+        )
+        sev_high = severity_counts.get("high", 0) + severity_counts.get("critical", 0)
+        sev_med = severity_counts.get("medium", 0)
+        sev_low = severity_counts.get("low", 0)
+
+        # Index table rows
+        index_rows = ""
+        for a in action_register:
+            sev = a["severity"]
+            sev_colour = "var(--red)" if sev in ("critical", "high") else ("var(--amber)" if sev == "medium" else "var(--muted)")
+            phase_badge = f'<span class="badge" style="background:rgba(7,112,207,0.1);color:var(--accent);font-size:10px">{escape(a["phase"][:20])}</span>' if a["phase"] else ""
+            index_rows += f"""<tr>
+              <td><code style="font-weight:700;color:var(--accent)">{a["id"]}</code></td>
+              <td>{escape(a["name"][:90])}</td>
+              <td><span style="color:{sev_colour};font-weight:600">{sev.title()}</span></td>
+              <td>{escape(a["category"])}</td>
+              <td>{escape(a["source"])}</td>
+              <td>{phase_badge}</td></tr>"""
+
+        sections.append(f"""
+    <h2 class="section-title">{sec_num}. Action Plan Index</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px">
+      Global index of <strong>{len(action_register)} actions</strong> collected from all analysis steps.
+      Sources: {source_badges}
+    </p>
+    <div class="metric-grid" style="margin-bottom:16px">
+      <div class="metric-card red"><div class="value">{sev_high}</div><div class="label">High / Critical</div></div>
+      <div class="metric-card amber"><div class="value">{sev_med}</div><div class="label">Medium</div></div>
+      <div class="metric-card"><div class="value">{sev_low}</div><div class="label">Low</div></div>
+      <div class="metric-card"><div class="value">{len(action_register)}</div><div class="label">Total Actions</div></div>
+    </div>
+    <div class="card">
+      <table><thead><tr>
+        <th>ID</th><th>Action</th><th>Severity</th><th>Category</th><th>Source</th><th>Phase</th>
+      </tr></thead><tbody>{index_rows}</tbody></table>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-top:8px">
+      &#8594; See the final section <strong>"Complete Action Register"</strong> for full details including
+      <em>Why it&rsquo;s bad</em> and <em>Required action</em> for each item.
+    </p>
     """)
 
     # ═══════════════════════════════════════════════════════
@@ -1177,6 +1456,11 @@ def generate_html(
                 ga["hubTables"], ga.get("joinCascades", [])
             )
 
+            # Dimension consolidation opportunities
+            dim_consolidation_html = _render_dim_consolidation(
+                taxonomy.get("dimensionConsolidation", [])
+            )
+
             graph_html = f"""
         <div class="card"><h3>Relationship Topology</h3>
           <div class="metric-grid" style="margin-bottom:16px">
@@ -1204,7 +1488,14 @@ def generate_html(
           {tree_cards}
         </div>
         {cascade_html}
-        {suggestions_html}"""
+        {suggestions_html}
+        {dim_consolidation_html}"""
+
+        # If no hub tables but we still have consolidation opportunities, render standalone
+        if not graph_html and taxonomy.get("dimensionConsolidation"):
+            standalone_cons = _render_dim_consolidation(taxonomy["dimensionConsolidation"])
+            if standalone_cons:
+                graph_html = standalone_cons
 
         qs_headers = "<th style='text-align:right'>Daily Queries</th><th style='text-align:right'>Avg Duration</th><th style='text-align:right'>P95 Duration</th>" if has_query_stats else ""
         table_count = len(taxonomy.get("tables", []))
@@ -1421,8 +1712,10 @@ def generate_html(
 
         # Build rule → impact mapping for tagging findings
         rule_impact_map: dict[str, str] = {}
+        rule_impact_desc_map: dict[str, str] = {}
         for r in all_rule_results:
             rule_impact_map[r.get("rule", "")] = r.get("performanceImpact", "quality")
+            rule_impact_desc_map[r.get("rule", "")] = r.get("impactDescription", "")
 
         # Count rules by impact type for filter badges
         impact_counts: dict[str, int] = {}
@@ -1488,11 +1781,15 @@ def generate_html(
             f_impact = rule_impact_map.get(f.get("rule", ""), "quality")
             f_sev = f.get("severity", "").lower()
             overflow = ' data-overflow="1" style="display:none"' if idx >= visible_limit else ''
+            impact_desc = rule_impact_desc_map.get(f.get("rule", ""), "")
+            detail_extra = ""
+            if impact_desc:
+                detail_extra = f'<br><span style="font-size:11px;color:var(--muted)"><strong>Why it\'s bad:</strong> {escape(impact_desc)}</span>'
             all_finding_rows += f"""<tr data-impact="{f_impact}" data-severity="{f_sev}"{overflow}>
               <td>{escape(f.get('rule', ''))}</td><td>{_badge(f.get('severity', ''))}</td>
               <td>{_impact_type_badge(f_impact)}</td>
               <td>{escape(f.get('table', ''))}</td><td>{escape(f.get('object', ''))}</td>
-              <td>{escape(f.get('message', ''))}</td></tr>"""
+              <td>{escape(f.get('message', ''))}{detail_extra}</td></tr>"""
 
         overflow_count = max(0, len(sorted_findings) - visible_limit)
         overflow_toggle = ""
@@ -1540,6 +1837,142 @@ def generate_html(
             <tbody>{all_finding_rows}</tbody></table>
           {overflow_toggle}
         </div>
+        """)
+
+    # ═══════════════════════════════════════════════════════
+    # SECTION: DAX ANTI-PATTERN TIER ANALYSIS
+    # ═══════════════════════════════════════════════════════
+    if antipattern_tiers:
+        sec_num += 1
+        ts = antipattern_tiers.get("tierSummary", {})
+        tier_rows = ""
+        for tier_key, tier_label, tier_desc in [
+            ("critical", "Critical", "4+ anti-patterns combined; extremely slow"),
+            ("highRisk", "High Risk", "3 anti-patterns; heavy use of FILTER + ALL + SWITCH"),
+            ("medium", "Medium", "2 anti-patterns; noticeable latency on high-cardinality visuals"),
+            ("lowRisk", "Low Risk", "1 anti-pattern; minor individually but expensive as dependencies"),
+            ("clean", "Clean", "No anti-patterns detected"),
+        ]:
+            td = ts.get(tier_key, {})
+            cnt = td.get("count", 0)
+            flags = td.get("flags", "0")
+            tier_rows += (
+                f"<tr><td>{_badge(tier_key)}</td>"
+                f"<td>{flags}</td><td>{cnt}</td>"
+                f"<td>{tier_desc}</td></tr>\n"
+            )
+
+        catalog_rows = ""
+        for ap in antipattern_tiers.get("antiPatternCatalog", []):
+            catalog_rows += (
+                f"<tr><td><strong>{escape(ap.get('flag', ''))}</strong></td>"
+                f"<td>{escape(', '.join(ap.get('functions', [])[:4]))}</td>"
+                f"<td>{escape(ap.get('whyExpensive', ''))}</td>"
+                f"<td>{ap.get('measureCount', 0)}</td></tr>\n"
+            )
+
+        family_cards = ""
+        for pf in antipattern_tiers.get("patternFamilies", []):
+            flag_badges = " ".join(_badge(f) for f in pf.get("flags", []))
+            examples = ", ".join(escape(e) for e in pf.get("exampleMeasures", [])[:3])
+            actions_html = "".join(
+                f"<li>{escape(a)}</li>" for a in pf.get("requiredActions", [])
+            )
+            family_cards += f"""<div class="card" style="border-left:4px solid {'var(--red)' if pf.get('tier') == 'critical' else 'var(--accent)' if pf.get('tier') == 'highRisk' else 'var(--border)'}">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <h4 style="margin:0">{escape(pf.get('name', ''))}</h4>
+                <div>{_badge(pf.get('tier', ''))} <span class="badge badge-info">{pf.get('measureCount', 0)} measures</span></div>
+              </div>
+              <div style="margin-bottom:8px">{flag_badges}</div>
+              <p style="font-size:12px;color:var(--muted);margin-bottom:4px">Examples: {examples}</p>
+              <div class="recommendation-box" style="margin:8px 0">
+                <h4 style="color:var(--red)">Why it's slow</h4>
+                <p style="font-size:12px">{escape(pf.get('whySlow', ''))}</p>
+              </div>
+              <div class="recommendation-box" style="margin:0;background:rgba(26,135,84,0.05);border-color:rgba(26,135,84,0.2)">
+                <h4 style="color:var(--green)">Required actions</h4>
+                <ul style="font-size:12px;padding-left:18px;margin:4px 0">{actions_html}</ul>
+              </div>
+            </div>"""
+
+        priority_rows = ""
+        for pfo in antipattern_tiers.get("priorityFixOrder", []):
+            priority_rows += (
+                f"<tr><td>{pfo.get('priority', '')}</td>"
+                f"<td><strong>{escape(pfo.get('action', ''))}</strong></td>"
+                f"<td>{pfo.get('measures', 0)}</td>"
+                f"<td>{_badge(pfo.get('expectedImpact', '').lower())}</td></tr>\n"
+            )
+
+        chain_rows = ""
+        for ch in antipattern_tiers.get("dependencyChains", [])[:10]:
+            chain_rows += (
+                f"<tr><td>{escape(ch.get('caller', ''))}</td>"
+                f"<td>{_badge(ch.get('callerTier', ''))}</td>"
+                f"<td>{escape(ch.get('callee', ''))}</td>"
+                f"<td>{_badge(ch.get('calleeTier', ''))}</td></tr>\n"
+            )
+
+        chain_section = ""
+        if chain_rows:
+            chain_section = f"""
+            <details style="margin-top:16px">
+              <summary style="font-weight:700;font-size:13px">Dependency Chain Amplification ({len(antipattern_tiers.get('dependencyChains', []))} chains)</summary>
+              <div class="card" style="margin-top:8px">
+                <p style="font-size:12px;color:var(--muted);margin-bottom:8px">High-tier measures calling other flagged measures inside iterators — each dependency multiplies cost.</p>
+                <table><thead><tr><th>Caller</th><th>Tier</th><th>Callee</th><th>Tier</th></tr></thead>
+                  <tbody>{chain_rows}</tbody></table>
+              </div>
+            </details>"""
+
+        crit_count = ts.get("critical", {}).get("count", 0)
+        high_count = ts.get("highRisk", {}).get("count", 0)
+        med_count = ts.get("medium", {}).get("count", 0)
+        low_count = ts.get("lowRisk", {}).get("count", 0)
+        crit_cls = "red" if crit_count > 10 else ("amber" if crit_count > 0 else "green")
+        high_cls = "red" if high_count > 10 else "amber"
+
+        sections.append(f"""
+        <h2 class="section-title">{sec_num}. DAX Anti-Pattern Tier Analysis</h2>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:12px">
+          Measures scored by how many anti-patterns they combine. Multiple patterns compound cost
+          because the engine cannot reuse cached results.
+        </p>
+        <div class="metric-grid" style="margin-bottom:16px">
+          <div class="metric-card {crit_cls}">
+            <div class="value">{crit_count}</div><div class="label">Critical (4+)</div></div>
+          <div class="metric-card {high_cls}">
+            <div class="value">{high_count}</div><div class="label">High Risk (3)</div></div>
+          <div class="metric-card amber">
+            <div class="value">{med_count}</div><div class="label">Medium (2)</div></div>
+          <div class="metric-card green">
+            <div class="value">{low_count}</div><div class="label">Low Risk (1)</div></div>
+        </div>
+
+        <div class="card">
+          <h3>Severity Tier Summary</h3>
+          <table><thead><tr><th>Tier</th><th>Flags</th><th>Count</th><th>Description</th></tr></thead>
+            <tbody>{tier_rows}</tbody></table>
+        </div>
+
+        <details style="margin-top:12px">
+          <summary style="font-weight:700;font-size:13px">Anti-Pattern Catalog (9 flags)</summary>
+          <div class="card" style="margin-top:8px">
+            <table><thead><tr><th>Flag</th><th>Functions</th><th>Why Expensive</th><th>Measures</th></tr></thead>
+              <tbody>{catalog_rows}</tbody></table>
+          </div>
+        </details>
+
+        <h3 style="margin-top:20px">Pattern Families</h3>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:12px">
+          Measures grouped by naming convention and DAX structure. Each family has a consolidated
+          "Why it's slow" and "Required actions" block.
+        </p>
+        {family_cards}
+
+        {"<div class='card' style='margin-top:16px'><h3>Priority Fix Order</h3><table><thead><tr><th>#</th><th>Action</th><th>Measures</th><th>Impact</th></tr></thead><tbody>" + priority_rows + "</tbody></table></div>" if priority_rows else ""}
+
+        {chain_section}
         """)
 
     # ═══════════════════════════════════════════════════════
@@ -1917,12 +2350,36 @@ def generate_html(
                     "phase": phase_name,
                 })
 
-        def _matrix_findings(items):
-            return "".join(
-                f"<li><strong>{escape(str(f.get('id', '')))}</strong>: {escape(str(f.get('title', '')))} "
-                f"{_where_badges(f.get('layers', []))}</li>"
-                for f in items
+        # Build findings lookup for dependency cross-referencing
+        findings_deps_lookup: dict[str, dict] = {}
+        for sf in syn_findings:
+            findings_deps_lookup[sf.get("id", "")] = {
+                "dependencies": sf.get("dependencies", []),
+                "dependencyNote": sf.get("dependencyNote", ""),
+            }
+
+        def _dep_badges(deps: list[str]) -> str:
+            if not deps:
+                return ""
+            badges = " ".join(
+                f'<span class="badge" style="background:rgba(108,117,125,0.12);color:#6c757d;font-size:10px">&#8594; {escape(d)}</span>'
+                for d in deps
             )
+            return f' <span style="margin-left:4px">{badges}</span>'
+
+        def _matrix_findings(items):
+            parts = []
+            for f in items:
+                fid = str(f.get("id", ""))
+                deps = findings_deps_lookup.get(fid, {}).get("dependencies", [])
+                dep_html = ""
+                if deps:
+                    dep_html = f' <span style="font-size:11px;color:var(--muted)">— depends on {", ".join(escape(d) for d in deps)}</span>'
+                parts.append(
+                    f"<li><strong>{escape(fid)}</strong>: {escape(str(f.get('title', '')))} "
+                    f"{_where_badges(f.get('layers', []))}{dep_html}</li>"
+                )
+            return "".join(parts)
 
         def _matrix_actions_table(actions):
             if not actions:
@@ -1930,9 +2387,16 @@ def generate_html(
             rows = ""
             for a in actions:
                 ref = f"[{escape(a['finding'])}] " if a.get("finding") else ""
-                rows += f"<tr><td>{ref}<strong>{escape(a['action'])}</strong></td><td>{a['where_html']}</td></tr>\n"
+                # Resolve dependencies from the finding references
+                fids = [fid.strip() for fid in a.get("finding", "").split(",") if fid.strip()]
+                deps_set: list[str] = []
+                for fid in fids:
+                    fdeps = findings_deps_lookup.get(fid, {}).get("dependencies", [])
+                    deps_set.extend(fdeps)
+                dep_col = _dep_badges(list(dict.fromkeys(deps_set))) if deps_set else '<span style="color:var(--muted);font-size:11px">—</span>'
+                rows += f"<tr><td>{ref}<strong>{escape(a['action'])}</strong></td><td>{a['where_html']}</td><td>{dep_col}</td></tr>\n"
             return f"""<table class="matrix-actions-table" style="width:100%;border-collapse:collapse">
-              <thead><tr><th style="text-align:left;font-size:11px;padding:4px 10px">Action</th><th style="text-align:left;font-size:11px;padding:4px 10px">Category / Location</th></tr></thead>
+              <thead><tr><th style="text-align:left;font-size:11px;padding:4px 10px">Action</th><th style="text-align:left;font-size:11px;padding:4px 10px">Category / Location</th><th style="text-align:left;font-size:11px;padding:4px 10px">Depends on</th></tr></thead>
               <tbody>{rows}</tbody></table>"""
 
         def _matrix_box(key, title, subtitle, colour_bg, colour_border, colour_title, icon, findings, actions):
@@ -2149,19 +2613,35 @@ def generate_html(
 
             sev_colour = "var(--red)" if sev in ("critical", "high") else ("var(--amber)" if sev == "medium" else "var(--green)")
 
+            # Use whyItsBad from synthesis if available, otherwise fall back to desc
+            why_bad = escape(str(f.get("whyItsBad", ""))) or desc
+            required_actions = f.get("requiredActions", [])
+            if required_actions:
+                actions_list = "".join(f"<li>{escape(str(a))}</li>" for a in required_actions)
+                rec_box = f"""<div class="recommendation-box" style="margin:0;background:rgba(26,135,84,0.05);border-color:rgba(26,135,84,0.2)">
+        <h4 style="color:var(--green)">Required action</h4>
+        <ul style="padding-left:18px;margin:4px 0">{actions_list}</ul>
+        {"<p style='margin-top:8px'><strong>Estimated improvement:</strong> " + est + "</p>" if est else ""}
+      </div>"""
+            else:
+                rec_box = f"""<div class="recommendation-box" style="margin:0">
+        <h4>Required action</h4>
+        <p>{rec}</p>
+        {"<p style='margin-top:8px'><strong>Estimated improvement:</strong> " + est + "</p>" if est else ""}
+      </div>"""
+
             detail_cards += f"""
     <div class="card" style="border-left:4px solid {sev_colour}">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <h3 style="margin:0">{fid}: {title}</h3>
         <div>{_badge(sev)} {_scope_badge(scope)} {where_html}</div>
       </div>
-      <p style="font-size:13px;margin-bottom:12px"><strong>Problem:</strong> {desc}</p>
-      {affected_html}
-      <div class="recommendation-box" style="margin:0">
-        <h4>How to Fix</h4>
-        <p>{rec}</p>
-        {"<p style='margin-top:8px'><strong>Estimated improvement:</strong> " + est + "</p>" if est else ""}
+      <div class="recommendation-box" style="margin-bottom:12px;background:rgba(220,53,69,0.05);border-color:rgba(220,53,69,0.2)">
+        <h4 style="color:var(--red)">Why it's bad</h4>
+        <p style="font-size:13px">{why_bad}</p>
       </div>
+      {affected_html}
+      {rec_box}
       <div style="display:flex;gap:24px;margin-top:12px;font-size:13px">
         <span><strong>Impact:</strong> {impact}</span>
         <span><strong>Effort:</strong> {effort}</span>
@@ -2206,6 +2686,48 @@ def generate_html(
     """)
 
     # (Implementation Roadmap is now merged into the Action-Priority Matrix section above)
+
+    # ═══════════════════════════════════════════════════════
+    # SECTION: COMPLETE ACTION REGISTER (final section)
+    # ═══════════════════════════════════════════════════════
+    if action_register:
+        sec_num += 1
+        register_rows = ""
+        for a in action_register:
+            sev = a["severity"]
+            sev_colour = "var(--red)" if sev in ("critical", "high") else ("var(--amber)" if sev == "medium" else "var(--muted)")
+            why = escape(a.get("whyItsBad", "") or "—")
+            req = escape(a.get("requiredAction", "") or "—")
+            cat_badge = _where_badges([a["category"]]) if a["category"] else ""
+            src_badge = f'<span class="badge" style="background:rgba(108,117,125,0.1);color:#6c757d;font-size:10px">{escape(a["source"])}</span>'
+            loc = escape(a.get("location", "") or "—")
+            finding_ref = escape(a.get("finding", "") or "—")
+            register_rows += f"""<tr>
+              <td style="white-space:nowrap"><code style="font-weight:700;color:var(--accent)">{a["id"]}</code></td>
+              <td><strong>{escape(a["name"])}</strong><br>
+                <span style="font-size:11px;color:var(--muted)">Location: {loc} &middot; Finding: {finding_ref}</span></td>
+              <td><span style="color:{sev_colour};font-weight:600">{sev.title()}</span></td>
+              <td>{cat_badge} {src_badge}</td>
+              <td style="font-size:12px">{why}</td>
+              <td style="font-size:12px">{req}</td></tr>"""
+
+        sections.append(f"""
+    <h2 class="section-title">{sec_num}. Complete Action Register</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">
+      Full detail for all <strong>{len(action_register)} actions</strong> identified across the analysis.
+      Each action includes the rationale (<em>Why it&rsquo;s bad</em>) and the specific steps required (<em>Required action</em>).
+    </p>
+    <div class="card" style="overflow-x:auto">
+      <table style="min-width:900px"><thead><tr>
+        <th style="width:70px">ID</th>
+        <th style="width:280px">Action</th>
+        <th style="width:70px">Severity</th>
+        <th style="width:130px">Category / Source</th>
+        <th style="width:250px">Why it&rsquo;s bad</th>
+        <th style="width:250px">Required action</th>
+      </tr></thead><tbody>{register_rows}</tbody></table>
+    </div>
+    """)
 
     # ═══════════════════════════════════════════════════════
     # ASSEMBLE — wrap sections in collapsible <details>, build TOC & approach
@@ -2379,7 +2901,7 @@ function _resetBpaOverflow(tableId) {{
 </body>
 </html>"""
 
-    return html
+    return html, action_register
 
 
 def main():
@@ -2412,7 +2934,7 @@ def main():
     bpa_results = _read_json_file(input_dir / "bpa-results.json")
     dbt_lineage = _read_json_file(input_dir / "dbt-lineage.json")
 
-    html = generate_html(
+    html, action_register = generate_html(
         model_name=args.model_name,
         taxonomy=taxonomy,
         dax_complexity=dax_complexity,
@@ -2427,13 +2949,38 @@ def main():
     with open(output_file, "w", encoding="utf-8") as f:
         f.write(html)
 
+    # Write action register CSV alongside the HTML
+    if action_register:
+        import csv
+        csv_file = run_dir / f"{safe_name}_Action_Register.csv"
+        with open(csv_file, "w", newline="", encoding="utf-8") as cf:
+            writer = csv.writer(cf)
+            writer.writerow(["ID", "Action", "Severity", "Category", "Source",
+                             "Location", "Finding", "Phase",
+                             "Why it's bad", "Required action"])
+            for a in action_register:
+                writer.writerow([
+                    a.get("id", ""),
+                    a.get("name", ""),
+                    a.get("severity", ""),
+                    a.get("category", ""),
+                    a.get("source", ""),
+                    a.get("location", ""),
+                    a.get("finding", ""),
+                    a.get("phase", ""),
+                    a.get("whyItsBad", ""),
+                    a.get("requiredAction", ""),
+                ])
+        print(f"Action register CSV: {csv_file}")
+
     # Move intermediate JSON files into the run subdirectory
     json_files = ["model-taxonomy.json", "dax-audit.json", "dax-complexity.json",
                   "dbt-lineage.json", "bpa-results.json", "synthesis.json",
                   "query-profile.json", "perf-summary.json", "databricks-profile.json",
                   "user-query-profile.json", "capacity-settings-analysis.json",
                   "workload-analysis.json", "column-memory-analysis.json",
-                  "engineering-bpa-results.json", "visual-analysis.json"]
+                  "engineering-bpa-results.json", "visual-analysis.json",
+                  "dax-antipattern-tiers.json"]
     moved = []
     for jf in json_files:
         src = input_dir / jf

@@ -383,6 +383,26 @@ Reference community best practices from your knowledge:
 - Databricks connector best practices for Power BI
 - VertiPaq vs DirectQuery trade-off guidance
 
+**Dual-to-Import Smart Analysis:** When the BPA flags `DUAL_MODE_TABLES`, do NOT blindly recommend switching to Import. The enhanced rule already checks for DirectQuery neighbours and RELATED() usage. When reviewing the BPA output:
+- If `has_dq_neighbour = true` and `used_via_related = true` → the table is effectively part of the DQ source group. Switching to Import would create **limited relationships** that break `RELATED()` calls and disable bidirectional filtering. Keep Dual mode unless RELATED() dependencies are first refactored.
+- If `has_dq_neighbour = true` but `used_via_related = false` → switching MAY be safe but still creates a limited relationship. Recommend cautiously.
+- If `has_dq_neighbour = false` → safe to switch to Import. Include this in Quick Wins.
+
+In the synthesis, always explain the composite model implications when recommending storage mode changes.
+
+### Step 6b: DAX Anti-Pattern Tier Analysis
+
+Run the compound anti-pattern tier analysis:
+```bash
+python3 scripts/analyse_dax_antipatterns.py --model-path "<path-to-model>" --output output/
+```
+
+Read `output/dax-antipattern-tiers.json` and use the results to:
+- Include tier summary in the executive summary (e.g., "46 critical-tier measures with 4+ anti-patterns")
+- Create findings for each pattern family with "Why it's slow" and "Required actions" from the JSON
+- Reference dependency chains when discussing amplification risk
+- Include the priority fix order in the implementation roadmap
+
 ### Step 7: Cross-Reference and Synthesis
 
 This is the core intelligence step. Combine findings from ALL previous steps.
@@ -426,7 +446,9 @@ When `databricks-profile.json` includes `tableQueryStats`, use per-table query c
      ```
      Include ALL relevant object types. Never say "3 pages" — say which 3. Never say "77 measures" without listing the top examples. The reader must know exactly what to look at without further investigation.
    - `description` — what the problem is and why it matters (2-3 sentences). **MUST name specific objects.** Instead of "3 data-heavy pages lack a date slicer", write "The Topline Performance, Weekly Trade Overview, and Seasonality Overview pages contain pivotTable and tableEx visuals but no date slicer, meaning every visual queries the full 2-year date range." Pull exact names from analysis JSON outputs (visual-analysis.json, model-taxonomy.json, bpa-results.json, dbt-lineage.json, etc.).
+   - `whyItsBad` — a concise explanation of **why** this issue degrades performance, phrased from the engine's perspective. Example: "FILTER(ALL(Date)) materialises the entire date column and scans row by row, generating a full table scan subquery in DirectQuery." This field is rendered as a red "Why it's bad" box in the HTML report. If omitted, the report falls back to `description`.
    - `recommendation` — **detailed implementation instructions**: step-by-step how to fix it, which files to change, what code/config to modify. **Name specific objects**: which pages need slicers, which tables need column changes, which dbt models to modify, which measures to refactor. Be specific enough that the reader can act on it without further research.
+   - `requiredActions` — a list of strings, each a single concrete action step. These render as a structured `<ul>` in the HTML report under "Required action". Example: `["Add pre-computed Is_WTD flag to Date table.", "Replace SUMX + FILTER with CALCULATE using the boolean flag.", "Remove SWITCH(TRUE()) branching."]`. When present, the `requiredActions` list is preferred over the narrative `recommendation` for display. Always include both fields.
    - `estimatedImprovement` — quantified expected gain (e.g., "90% row reduction", "query time from 33s to ~3-5s")
    - `evidenceIds` — list of `claimId` strings linking to evidence in `query-profile.json`. Every factual claim MUST have supporting evidence.
    - `impactBreakdown` — (when Databricks data available) time split: `{"planning": "0.5s", "execution": "130s", "delivery": "20s"}`
@@ -500,6 +522,14 @@ Build **recommendation quadrant** (effort vs impact):
 - **Deprioritise**: high effort, low impact
 
 Every finding and recommendation MUST include the **Where** category badge(s) AND the specific location (object name). When a recommendation spans multiple layers (e.g., create a narrow dbt view AND update the PBI relationship), list all applicable badges with their respective locations.
+
+**Pattern Family Analysis:** When `dax-antipattern-tiers.json` is available, use the pattern families to create grouped findings. Instead of listing individual measures, group them by family (e.g., "13 WTD/YD-1 Window Measures") and include:
+- The family's `whySlow` as the finding's `whyItsBad`
+- The family's `requiredActions` as the finding's `requiredActions`
+- The family's example measures in `affectedObjects.measures`
+- The family's tier as the severity indicator
+
+This produces findings that match the structure of expert-written performance tickets with clear "Why it's bad" and "Required action" format.
 
 Generate trade-off explanations in non-technical language.
 

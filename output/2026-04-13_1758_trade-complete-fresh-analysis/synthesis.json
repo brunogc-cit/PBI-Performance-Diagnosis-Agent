@@ -1,0 +1,509 @@
+{
+  "version": "2.0.0",
+  "modelName": "ADE - Trade",
+  "analysisDate": "2026-04-13",
+  "scope": "model-wide",
+  "dataSources": {
+    "semanticModel": true,
+    "dbtLineage": true,
+    "databricksProfile": true,
+    "queryHistory": false,
+    "performanceAnalyzer": false,
+    "reportVisuals": true,
+    "columnMemory": true,
+    "engineeringBPA": true,
+    "antipatternTiers": true
+  },
+  "executiveSummary": "The ADE - Trade semantic model has 45 tables (9 DirectQuery, 29 Dual, 7 Import) with 801 measures across a 6-billion-row daily trade snapshot fact table. The model spans 5 Databricks catalogs (sales, product, technology, supplychain, sourcingandbuying) with all serve-layer models materialised as views. Critical performance issues stem from: (1) a massive DirectQuery fact table (6.05B rows) as the central hub with 21 relationships, (2) 49 critical-complexity DAX measures generating up to 14 estimated SQL subqueries each, (3) 228 measures using ALL/ALLEXCEPT filter clearing patterns that force full re-aggregation, (4) 11 Dual-mode tables that could safely switch to Import, (5) 650 unused column candidates inflating scan width, and (6) 12 report pages averaging 22+ visuals each without query reduction settings enabled. The combination of wide column selection, cross-catalog JOINs, and no date filtering on serve views creates severe scan amplification on every user interaction.",
+  "rootCauseFindings": [
+    {
+      "id": "RCA-01",
+      "title": "6-Billion-Row Fact Table as DirectQuery Hub",
+      "where": "Semantic Model",
+      "scope": "model-wide",
+      "severity": "critical",
+      "impact": {
+        "latency": "Every visual touching Daily Trade generates SQL scanning billions of rows. With degree 21 (most connected table), nearly all report pages trigger queries against this table.",
+        "cost": "Each query reads the full fact table width (97 columns) via pass-through serve view, multiplied by the number of visuals per page."
+      },
+      "evidence": [
+        "Daily Trade: 6,052,560,794 rows, directQuery mode, degree 21 (hub table)",
+        "97 columns in fact table, 14 identified as removal candidates",
+        "94 measure references to Daily Trade",
+        "Serve view fact_product_option_trade_daily_snapshot_v1 has no WHERE filter"
+      ],
+      "recommendations": [
+        {
+          "action": "Add date-based WHERE filter to serve_fact_product_option_trade_daily_snapshot_v1",
+          "effort": "low",
+          "impact": "high",
+          "detail": "Filter to rolling 2-year window (matching PBI date slicer range) to reduce scan from 6B to ~2.2B rows (~960 days × 6.3M rows/day)"
+        },
+        {
+          "action": "Create a pre-aggregated materialised view for common trade metrics",
+          "effort": "medium",
+          "impact": "high",
+          "detail": "Aggregate daily trade by date + product option + territory to reduce row count by 10-100x for most visuals"
+        },
+        {
+          "action": "Remove 14 unreferenced columns from the Daily Trade table in the semantic model",
+          "effort": "low",
+          "impact": "medium",
+          "detail": "Reduces bytes scanned per query. Physical Retail Return columns (9 columns) and other unreferenced columns add ~166 GB estimated scan overhead"
+        }
+      ]
+    },
+    {
+      "id": "RCA-02",
+      "title": "DAX Pattern Families Amplify Query Cost",
+      "where": "Semantic Model",
+      "scope": "model-wide",
+      "severity": "critical",
+      "impact": {
+        "latency": "204 Last Year comparison measures and 116 Last Week comparison measures each use SUMX + FILTER(ALL) + time intelligence, generating 10-14 SQL subqueries per measure evaluation.",
+        "cost": "Pattern families share identical anti-pattern structures — fixing the template once fixes hundreds of measures."
+      },
+      "evidence": [
+        "49 critical-complexity measures (score 44-45), each with 5-7 context transitions and 5-6 FILTER(ALL) calls",
+        "204 measures in 'Last Year Comparison' family (critical severity)",
+        "116 measures in 'Last Week Comparison' family (critical severity)",
+        "55 measures in 'Average Weekly Cover' family (critical severity)",
+        "77 total measures using FILTER(ALL) anti-pattern",
+        "Top measure generates 14 estimated SQL subqueries"
+      ],
+      "recommendations": [
+        {
+          "action": "Refactor Last Year/Last Week measure templates to use CALCULATE with DATEADD instead of SUMX + FILTER(ALL)",
+          "effort": "medium",
+          "impact": "critical",
+          "detail": "Replace SUMX(FILTER(ALL(Date), ...), CALCULATE(...)) with CALCULATE([BaseMeasure], DATEADD(Date[calendar_date], -1, YEAR)). Eliminates row-by-row iteration and full table filter clearing. Fixes 320+ measures via template change."
+        },
+        {
+          "action": "Refactor Average Weekly Cover measures to pre-compute weekly aggregates",
+          "effort": "medium",
+          "impact": "high",
+          "detail": "55 measures use iterator patterns over weekly windows. Pre-computing weekly aggregates in a calculated table or materialised view eliminates the SUMX cost."
+        },
+        {
+          "action": "Extract repeated CALCULATE subexpressions into VAR statements",
+          "effort": "low",
+          "impact": "medium",
+          "detail": "108 measures have repeated subexpressions. Using VAR guarantees single evaluation, potentially halving subquery count."
+        }
+      ]
+    },
+    {
+      "id": "RCA-03",
+      "title": "29 Dual-Mode Tables Cause Double Processing",
+      "where": "Semantic Model",
+      "scope": "model-wide",
+      "severity": "high",
+      "impact": {
+        "latency": "Dual tables are refreshed in Import mode AND queried via DirectQuery, doubling processing during refresh cycles.",
+        "cost": "11 Dual tables have no direct relationship to DirectQuery tables and can safely switch to Import without functionality loss."
+      },
+      "evidence": [
+        "29 tables in Dual mode out of 45 total",
+        "11 tables safe to switch to Import: Daily Financial Half/Month/Year to Date, Daily/Weekly Financial Transform, Earliest Global dates, Time Period, Weekly Financial references",
+        "Daily Financial Half to Date (2.2M rows) and Daily Financial Year to Date (2.96M rows) are the largest unnecessarily Dual tables",
+        "BPA rule DUAL_MODE_TABLES flagged 25 violations"
+      ],
+      "recommendations": [
+        {
+          "action": "Switch 11 safe Dual tables to Import mode",
+          "effort": "low",
+          "impact": "high",
+          "detail": "Tables with no direct DQ relationship: Daily Financial Half/Month/Year to Date, Daily/Weekly Financial Transform, Earliest Global Available To Sell Date, Earliest Global Go Live Date, Time Period, Weekly Financial Half/Month/Year to Date. Eliminates unnecessary DQ queries for these tables."
+        },
+        {
+          "action": "Evaluate remaining 18 Dual tables for Import conversion",
+          "effort": "medium",
+          "impact": "medium",
+          "detail": "Small dimension tables (Price Status: 6 rows, Pricing Store: 19 rows, etc.) could be Import if RELATED() usage is verified. Requires measure-by-measure audit."
+        }
+      ]
+    },
+    {
+      "id": "RCA-04",
+      "title": "Cross-Catalog DirectQuery JOINs",
+      "where": "dbt Models",
+      "scope": "model-wide",
+      "severity": "high",
+      "impact": {
+        "latency": "PBI generates SQL that JOINs tables from 5 different Databricks catalogs (sales, product, technology, supplychain, sourcingandbuying) in a single query. Cross-catalog JOINs prevent query optimisation and increase network overhead.",
+        "cost": "Each catalog boundary adds serialisation overhead. The SQL Warehouse must coordinate across multiple storage locations."
+      },
+      "evidence": [
+        "Source groups span 5 catalogs: dq:sales.serve (10 tables), dq:technology.serve (15 tables), dq:product.serve (9 tables), dq:supplychain.serve (3 tables), dq:sourcingandbuying.serve (1 table)",
+        "Daily Trade hub (sales.serve) has relationships to tables in all 5 catalogs",
+        "All serve models are pass-through views (SELECT * FROM curated_table)"
+      ],
+      "recommendations": [
+        {
+          "action": "Convert small cross-catalog dimension tables to Import mode",
+          "effort": "low",
+          "impact": "high",
+          "detail": "Country (255 rows), Territory (5 rows), Warehouse (20 rows), Supplier (6,474 rows) from non-sales catalogs are small enough for Import. Eliminates cross-catalog JOINs for these tables."
+        },
+        {
+          "action": "Add column projection to serve views",
+          "effort": "medium",
+          "impact": "medium",
+          "detail": "Replace SELECT * with explicit column lists in serve views. Currently all 97 fact columns are exposed when PBI only references ~83 in measures."
+        }
+      ]
+    },
+    {
+      "id": "RCA-05",
+      "title": "Report Visuals Overloaded Without Query Reduction",
+      "where": "PBI Report",
+      "scope": "report-specific",
+      "severity": "high",
+      "impact": {
+        "latency": "12 pages with 274 total visuals. Pages like 'Topline Performance Date' (31 visuals) and 'Topline Performance' (28 visuals) fire 20-30+ simultaneous DirectQuery requests on page load. Without query reduction settings, every slicer change and cross-highlight fires additional queries.",
+        "cost": "19 wide matrix visuals project 10-43 columns each, amplifying bytes read per visual."
+      },
+      "evidence": [
+        "12/12 pages exceed 15-visual threshold (V01: 12 findings)",
+        "19 wide matrix visuals (V06), worst case: 43 projected columns",
+        "35 report-level filters (V03, threshold: 10)",
+        "Query reduction: cross-highlighting enabled, slicer/filter Apply buttons disabled",
+        "12 large embedded images (V08)"
+      ],
+      "recommendations": [
+        {
+          "action": "Enable query reduction settings: disable cross-highlighting, enable Apply buttons on slicers and filters",
+          "effort": "low",
+          "impact": "high",
+          "detail": "In PBI Desktop → File → Options → Report settings → Query reduction. This alone can reduce DQ query volume by 50-70% during user interaction."
+        },
+        {
+          "action": "Split heavy pages using bookmarks or drillthrough",
+          "effort": "medium",
+          "impact": "high",
+          "detail": "Topline Performance (28 visuals) and Daily Trade Overview (22 visuals) should be split. Use bookmarks to show/hide visual groups, or drillthrough pages for detail views."
+        },
+        {
+          "action": "Reduce matrix column counts",
+          "effort": "low",
+          "impact": "medium",
+          "detail": "19 matrices exceed 10 columns. The 43-column matrix on Topline Performance is a major query amplifier. Use conditional columns or drillthrough for rarely-used fields."
+        }
+      ]
+    },
+    {
+      "id": "RCA-06",
+      "title": "650 Unused Column Candidates Inflate Scan Width",
+      "where": "Semantic Model",
+      "scope": "model-wide",
+      "severity": "medium",
+      "impact": {
+        "cost": "BPA identified 650 columns not referenced by any measure, relationship, or hierarchy. In DirectQuery mode, PBI may still request these columns in generated SQL, increasing bytes read.",
+        "memory": "For Dual/Import tables, unused columns consume VertiPaq memory during refresh."
+      },
+      "evidence": [
+        "650 UNUSED_COLUMNS_CANDIDATE findings in BPA",
+        "UDA table: 134 columns, 118 removal candidates",
+        "Option table: 63 columns, 46 removal candidates",
+        "Daily Trade: 97 columns, 14 removal candidates (estimated 166 GB scan savings)"
+      ],
+      "recommendations": [
+        {
+          "action": "Hide or remove unreferenced columns from the semantic model",
+          "effort": "medium",
+          "impact": "medium",
+          "detail": "Start with Daily Trade (14 columns, highest impact due to 6B rows), then UDA (118 columns), then Option (46 columns). Mark columns as hidden first to test for user-facing dependencies."
+        }
+      ]
+    },
+    {
+      "id": "RCA-07",
+      "title": "3 Bidirectional Relationships Create Ambiguous Filter Paths",
+      "where": "Semantic Model",
+      "scope": "model-wide",
+      "severity": "high",
+      "impact": {
+        "latency": "Bidirectional cross-filtering on Option↔Option Ranking, Time Period↔Date, and Product Option Fabric Composition↔Option creates multiple filter propagation paths. The engine must evaluate all paths, increasing query complexity."
+      },
+      "evidence": [
+        "3 bidirectional relationships detected",
+        "Option.Dim Product Option Sk ↔ Option Ranking.dim_product_option_sk",
+        "Time Period.dim_date_sk ↔ Date.Dim Date Sk",
+        "Product Option Fabric Composition.Dim Product Option Sk ↔ Option.Dim Product Option Sk"
+      ],
+      "recommendations": [
+        {
+          "action": "Change bidirectional relationships to one-direction where possible",
+          "effort": "low",
+          "impact": "high",
+          "detail": "Review each relationship to determine if bidirectional filtering is required. Use CROSSFILTER() in DAX for specific measures that need reverse filtering instead of model-level bidirectional."
+        }
+      ]
+    },
+    {
+      "id": "RCA-08",
+      "title": "dbt Serve Views Missing Clustering and Date Filters",
+      "where": "dbt Models",
+      "scope": "model-wide",
+      "severity": "high",
+      "impact": {
+        "latency": "6 curated tables backing Trade-consumed serve views lack liquid clustering. 2 serve views over large fact tables have no WHERE filter, exposing the full table history to every PBI query."
+      },
+      "evidence": [
+        "E02: 6 curated tables missing liquid clustering (product.curated dimensions with 2.5M-44.6M rows)",
+        "E04: 2 serve views over large tables without WHERE filters",
+        "E05: 6 models with functions on filter columns preventing predicate pushdown",
+        "E07: 6 models using ROW_NUMBER subquery instead of QUALIFY",
+        "E15: 2 serve views recommended for materialised_view conversion"
+      ],
+      "recommendations": [
+        {
+          "action": "Add liquid clustering to 6 curated product dimension tables",
+          "effort": "low",
+          "impact": "high",
+          "detail": "dim_product_option_country_restriction, dim_product_option_fabric_composition, dim_product_option_multi_valued_uda, dim_product_option_single_valued_uda, dim_product_option_in_store, dim_product_option_in_warehouse. Cluster by dim_product_option_sk for JOIN predicate pushdown."
+        },
+        {
+          "action": "Add date WHERE filter to fact serve view",
+          "effort": "low",
+          "impact": "critical",
+          "detail": "serve_fact_product_option_trade_daily_snapshot_v1 should filter to rolling 2-3 year window. Reduces scan from 6B rows (960 days since 2023-09-04) to match actual PBI date range."
+        },
+        {
+          "action": "Convert 2 high-traffic serve views to materialised views",
+          "effort": "medium",
+          "impact": "high",
+          "detail": "E15 flagged 2 serve views that would benefit from materialisation. Pre-computed results eliminate view-expansion overhead."
+        }
+      ]
+    },
+    {
+      "id": "RCA-09",
+      "title": "220 Snowflake DirectQuery Chains Multiply Subqueries",
+      "where": "Semantic Model",
+      "scope": "model-wide",
+      "severity": "medium",
+      "impact": {
+        "latency": "BPA identified 220 snowflake DQ chains — sequences of DirectQuery tables connected through relationships. Each chain forces nested subqueries in generated SQL, with depth up to 4 levels."
+      },
+      "evidence": [
+        "220 SNOWFLAKE_DQ_CHAINS findings",
+        "Max snowflake depth: 4",
+        "Hub table Daily Trade connects to chains through Option (bridge, degree 9) to Product Option sub-tables",
+        "Each relationship hop adds a nested subquery with full column projection"
+      ],
+      "recommendations": [
+        {
+          "action": "Flatten the deepest DQ chains by denormalising into the serve view",
+          "effort": "high",
+          "impact": "high",
+          "detail": "The Daily Trade → Option → Product Option In Store/Warehouse/Pricing Store chains (depth 3-4) should be pre-joined in the serve layer. This eliminates 2-3 levels of nested subqueries."
+        },
+        {
+          "action": "Convert leaf-node dimension tables in chains to Import",
+          "effort": "medium",
+          "impact": "medium",
+          "detail": "Tables at the end of DQ chains (Stock Age Band: 1,043 rows, Inventory Status: 22 rows) can be Import without significant freshness impact, breaking the DQ chain."
+        }
+      ]
+    },
+    {
+      "id": "RCA-10",
+      "title": "115 Measures Exposed to MDX Without Need",
+      "where": "Semantic Model",
+      "scope": "model-wide",
+      "severity": "low",
+      "impact": {
+        "cost": "115 measures have isAvailableInMdx enabled but may not need Excel/SSRS connectivity. Each MDX-visible measure increases metadata overhead."
+      },
+      "evidence": [
+        "115 IS_AVAILABLE_IN_MDX findings in BPA"
+      ],
+      "recommendations": [
+        {
+          "action": "Disable isAvailableInMdx for internal/helper measures",
+          "effort": "low",
+          "impact": "low",
+          "detail": "Review measures and disable MDX availability for those not consumed by Excel or SSRS connections."
+        }
+      ]
+    },
+    {
+      "id": "RCA-11",
+      "title": "3 Calculated Tables and 11 Unmarked Date Tables",
+      "where": "Semantic Model",
+      "scope": "model-wide",
+      "severity": "medium",
+      "impact": {
+        "latency": "3 calculated tables (ALB Bracket, column_selector, OptionConditionSelector) are computed at refresh time. 11 date-related tables not marked as date tables prevents auto time intelligence optimisation.",
+        "quality": "Unmarked date tables may cause incorrect time intelligence behaviour."
+      },
+      "evidence": [
+        "3 CALCULATED_TABLES findings",
+        "11 DATE_TABLE_NOT_MARKED findings",
+        "3 TIME_INTEL_ON_DQ findings — time intelligence functions used on DirectQuery tables"
+      ],
+      "recommendations": [
+        {
+          "action": "Mark primary date table as Date Table in the model",
+          "effort": "low",
+          "impact": "medium",
+          "detail": "Mark Date (dim_date_v2) as the model's date table. This enables auto date/time optimisations and prevents PBI from creating hidden auto-date tables."
+        }
+      ]
+    }
+  ],
+  "actionMatrix": [
+    {
+      "priority": 1,
+      "action": "Enable query reduction settings in Trade report",
+      "category": "PBI Report",
+      "location": "Trade report settings",
+      "effort": "low",
+      "impact": "high",
+      "estimatedImprovement": "50-70% reduction in DQ query volume during interaction"
+    },
+    {
+      "priority": 2,
+      "action": "Add date WHERE filter to serve_fact_product_option_trade_daily_snapshot_v1",
+      "category": "dbt Models",
+      "location": "serve_fact_product_option_trade_daily_snapshot_v1.sql",
+      "effort": "low",
+      "impact": "critical",
+      "estimatedImprovement": "Reduce fact scan from 6B to ~2.2B rows per query"
+    },
+    {
+      "priority": 3,
+      "action": "Switch 11 safe Dual tables to Import mode",
+      "category": "Semantic Model",
+      "location": "Daily Financial HTD/MTD/YTD, Weekly Financial refs, Time Period, Earliest Global dates",
+      "effort": "low",
+      "impact": "high",
+      "estimatedImprovement": "Eliminates DQ queries for 11 tables, reduces refresh double-processing"
+    },
+    {
+      "priority": 4,
+      "action": "Refactor Last Year/Last Week DAX templates",
+      "category": "Semantic Model",
+      "location": "@Measures (320+ measures)",
+      "effort": "medium",
+      "impact": "critical",
+      "estimatedImprovement": "Reduce from 14 SQL subqueries to 2-3 per measure evaluation"
+    },
+    {
+      "priority": 5,
+      "action": "Change 3 bidirectional relationships to one-direction",
+      "category": "Semantic Model",
+      "location": "Option↔Option Ranking, Time Period↔Date, Fabric Composition↔Option",
+      "effort": "low",
+      "impact": "high",
+      "estimatedImprovement": "Removes ambiguous filter paths, simplifies query plans"
+    },
+    {
+      "priority": 6,
+      "action": "Add liquid clustering to 6 product curated tables",
+      "category": "dbt Models",
+      "location": "curated_dim_product_option_* tables",
+      "effort": "low",
+      "impact": "high",
+      "estimatedImprovement": "Enables data skipping on JOIN predicates for 2.5M-44.6M row tables"
+    },
+    {
+      "priority": 7,
+      "action": "Remove 14 unreferenced columns from Daily Trade",
+      "category": "Semantic Model",
+      "location": "Daily Trade table (97 → 83 columns)",
+      "effort": "low",
+      "impact": "medium",
+      "estimatedImprovement": "~14% reduction in fact table scan width"
+    },
+    {
+      "priority": 8,
+      "action": "Split Topline Performance page (28-31 visuals)",
+      "category": "PBI Report",
+      "location": "Topline Performance, Topline Performance Date pages",
+      "effort": "medium",
+      "impact": "high",
+      "estimatedImprovement": "Reduce simultaneous DQ queries from 28-31 to 12-15 per page load"
+    },
+    {
+      "priority": 9,
+      "action": "Create pre-aggregated materialised view for daily trade",
+      "category": "dbt Models",
+      "location": "New materialised view in sales.serve",
+      "effort": "medium",
+      "impact": "high",
+      "estimatedImprovement": "10-100x row reduction for aggregate visuals"
+    },
+    {
+      "priority": 10,
+      "action": "Flatten deep DQ chains by denormalising Option sub-tables",
+      "category": "dbt Models",
+      "location": "serve_dim_product_option_v1 and related serve views",
+      "effort": "high",
+      "impact": "high",
+      "estimatedImprovement": "Eliminates 2-3 levels of nested subqueries per visual"
+    },
+    {
+      "priority": 11,
+      "action": "Convert small cross-catalog dimensions to Import",
+      "category": "Semantic Model",
+      "location": "Country, Territory, Warehouse, Supplier tables",
+      "effort": "low",
+      "impact": "medium",
+      "estimatedImprovement": "Eliminates cross-catalog JOINs for small lookup tables"
+    },
+    {
+      "priority": 12,
+      "action": "Reduce matrix visual column counts",
+      "category": "PBI Report",
+      "location": "19 matrix visuals across 12 pages",
+      "effort": "low",
+      "impact": "medium",
+      "estimatedImprovement": "Reduce bytes read per visual by limiting column projection"
+    }
+  ],
+  "skippedSteps": [
+    {
+      "step": "4",
+      "name": "Databricks Metadata Profiling",
+      "reason": "Databricks MCP permission error on Technology SQL Warehouse. Volumetry from CSV used instead."
+    },
+    {
+      "step": "5",
+      "name": "Query Profiling",
+      "reason": "No Performance Analyzer export provided and Databricks query history unavailable due to permission error."
+    },
+    {
+      "step": "4b",
+      "name": "User Query Attribution",
+      "reason": "No query history data available."
+    },
+    {
+      "step": "5c",
+      "name": "Capacity Settings Simulation",
+      "reason": "No query history data available."
+    },
+    {
+      "step": "5d",
+      "name": "Workload Analysis",
+      "reason": "No query history data available."
+    }
+  ],
+  "modelProfile": {
+    "tables": 45,
+    "directQuery": 9,
+    "dual": 29,
+    "import": 7,
+    "columns": 785,
+    "measures": 801,
+    "relationships": 31,
+    "bidirectional": 3,
+    "inactive": 0,
+    "manyToMany": 0,
+    "catalogs": 5,
+    "factTableRows": 6052560794,
+    "hubTable": "Daily Trade (degree 21)",
+    "maxSnowflakeDepth": 4
+  }
+}

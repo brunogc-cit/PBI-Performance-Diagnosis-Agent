@@ -479,35 +479,129 @@ def rule_avoid_bidirectional(md: ModelData) -> list[Finding]:
 
 
 def rule_dual_mode_tables(md: ModelData) -> list[Finding]:
-    """Flag tables in Dual mode, especially hidden ones or those with no relationships."""
-    # Build set of tables involved in relationships
+    """Flag tables in Dual mode with source-group-aware recommendations.
+
+    Analyses whether switching Dual → Import would create limited (cross-source)
+    relationships.  Checks for RELATED() usage that would break.
+    """
     rel_tables: set[str] = set()
     for r in md.relationships:
         rel_tables.add(r.get("fromTable", ""))
         rel_tables.add(r.get("toTable", ""))
 
+    # Build DQ neighbour set for each table
+    dq_tables: set[str] = set()
+    table_modes: dict[str, str] = {}
+    for t in md.tables:
+        modes = {str(p.get("mode", "")).lower() for p in t["partitions"]}
+        if "directquery" in modes:
+            dq_tables.add(t["name"])
+            table_modes[t["name"]] = "directQuery"
+        elif "dual" in modes:
+            table_modes[t["name"]] = "dual"
+        else:
+            table_modes[t["name"]] = "import"
+
+    # Build adjacency: which tables is each table directly related to
+    adj: dict[str, set[str]] = {}
+    for r in md.relationships:
+        ft = r.get("fromTable", "")
+        tt = r.get("toTable", "")
+        if ft and tt:
+            adj.setdefault(ft, set()).add(tt)
+            adj.setdefault(tt, set()).add(ft)
+
+    # Check RELATED/RELATEDTABLE usage in measure expressions
+    related_pat = re.compile(r"\bRELATED(?:TABLE)?\s*\(\s*'?([^'\[\)]+)'?\s*\[", re.IGNORECASE)
+    tables_used_via_related: set[str] = set()
+    for t in md.tables:
+        for m in t["measures"]:
+            expr = _expr_to_str(m.get("expression", ""))
+            if not expr:
+                continue
+            for match in related_pat.finditer(expr):
+                tables_used_via_related.add(match.group(1).strip())
+
     findings: list[Finding] = []
     for t in md.tables:
         for p in t["partitions"]:
-            if str(p.get("mode", "")).lower() == "dual":
-                is_hidden = t["json"].get("isHidden", False)
-                has_rels = t["name"] in rel_tables
-                if is_hidden or not has_rels:
-                    reason = "hidden" if is_hidden else "has no relationships"
-                    findings.append({
-                        "rule": "DUAL_MODE_TABLES",
-                        "severity": "High",
-                        "category": "Performance",
-                        "table": t["name"],
-                        "object": p.get("name", "?"),
-                        "objectType": "partition",
-                        "message": (
-                            f"Table '{t['name']}' uses Dual storage mode but is {reason}. "
-                            "Dual mode causes double processing during refresh."
-                        ),
-                        "fix": "Switch partition mode to 'import' or 'directQuery' as appropriate.",
-                    })
-                break  # one finding per table is enough
+            if str(p.get("mode", "")).lower() != "dual":
+                continue
+
+            is_hidden = t["json"].get("isHidden", False)
+            has_rels = t["name"] in rel_tables
+            neighbours = adj.get(t["name"], set())
+            has_dq_neighbour = bool(neighbours & dq_tables)
+            used_via_related = t["name"] in tables_used_via_related
+
+            if is_hidden and not has_rels:
+                findings.append({
+                    "rule": "DUAL_MODE_TABLES",
+                    "severity": "High",
+                    "category": "Performance",
+                    "table": t["name"],
+                    "object": p.get("name", "?"),
+                    "objectType": "partition",
+                    "message": (
+                        f"Table '{t['name']}' uses Dual storage mode but is hidden and "
+                        "has no relationships. Dual mode causes double processing during refresh."
+                    ),
+                    "fix": "Switch partition mode to 'import' — no risk of limited relationships.",
+                })
+            elif has_dq_neighbour and used_via_related:
+                findings.append({
+                    "rule": "DUAL_MODE_TABLES",
+                    "severity": "Medium",
+                    "category": "Performance",
+                    "table": t["name"],
+                    "object": p.get("name", "?"),
+                    "objectType": "partition",
+                    "message": (
+                        f"Table '{t['name']}' is Dual mode and directly related to DirectQuery "
+                        f"tables ({', '.join(sorted(neighbours & dq_tables)[:3])}). "
+                        "DAX measures use RELATED() on this table's columns. "
+                        "WARNING: Switching to Import would create a limited relationship — "
+                        "RELATED() calls would break and bidirectional filtering would stop working."
+                    ),
+                    "fix": (
+                        "Keep Dual mode unless RELATED() dependencies are first refactored "
+                        "to use TREATAS or LOOKUPVALUE. Evaluate each RELATED() reference before switching."
+                    ),
+                })
+            elif has_dq_neighbour:
+                findings.append({
+                    "rule": "DUAL_MODE_TABLES",
+                    "severity": "Medium",
+                    "category": "Performance",
+                    "table": t["name"],
+                    "object": p.get("name", "?"),
+                    "objectType": "partition",
+                    "message": (
+                        f"Table '{t['name']}' is Dual mode and directly related to DirectQuery "
+                        f"tables. Switching to Import would create a limited (cross-source) "
+                        "relationship with reduced functionality."
+                    ),
+                    "fix": (
+                        "If the table is small and changes infrequently, switching to Import "
+                        "with scheduled refresh may be beneficial — but verify that no measures "
+                        "use RELATED() on this table's columns first."
+                    ),
+                })
+            elif not has_rels:
+                findings.append({
+                    "rule": "DUAL_MODE_TABLES",
+                    "severity": "High",
+                    "category": "Performance",
+                    "table": t["name"],
+                    "object": p.get("name", "?"),
+                    "objectType": "partition",
+                    "message": (
+                        f"Table '{t['name']}' uses Dual storage mode but has no relationships. "
+                        "Dual mode causes double processing during refresh."
+                    ),
+                    "fix": "Switch partition mode to 'import' — no risk of limited relationships.",
+                })
+            break
     return findings
 
 
@@ -695,6 +789,369 @@ def _scan_measures(md: ModelData, rule: str, severity: str,
                 })
     return findings
 
+
+# ---------------------------------------------------------------------------
+# New BPA Rules (v3)
+# ---------------------------------------------------------------------------
+
+def rule_is_available_in_mdx(md: ModelData) -> list[Finding]:
+    """Flag non-attribute columns with isAvailableInMdx = true (default).
+
+    On large DirectQuery models this forces extra metadata/memory overhead.
+    Only display/attribute columns (names, codes, descriptions) should have
+    this enabled.
+    """
+    _ATTRIBUTE_HINTS = {"name", "description", "label", "title", "code", "display",
+                        "category", "type", "status", "group", "text"}
+    findings: list[Finding] = []
+    for t in md.tables:
+        modes = {str(p.get("mode", "")).lower() for p in t["partitions"]}
+        is_dq = "directquery" in modes or "dual" in modes
+        if not is_dq:
+            continue
+        for col in t["columns"]:
+            mdx = col.get("isAvailableInMdx", True)
+            if mdx is False:
+                continue
+            col_name = col.get("name", "")
+            col_lower = col_name.lower()
+            is_attribute = any(hint in col_lower for hint in _ATTRIBUTE_HINTS)
+            is_key = col_lower.endswith("_sk") or col_lower.endswith("_id") or col_lower.endswith("_key") or col_lower.endswith("id")
+            is_hidden = col.get("isHidden", False)
+            if (is_key or is_hidden) and not is_attribute:
+                findings.append({
+                    "rule": "IS_AVAILABLE_IN_MDX",
+                    "severity": "High",
+                    "category": "Performance",
+                    "table": t["name"],
+                    "object": col_name,
+                    "objectType": "column",
+                    "message": (
+                        f"Column '{col_name}' in DirectQuery table '{t['name']}' has "
+                        "isAvailableInMdx = true but appears to be a key/hidden column, "
+                        "not a display attribute. This forces extra metadata and memory structures."
+                    ),
+                    "fix": "Set isAvailableInMdx = false in Tabular Editor for all non-attribute columns.",
+                })
+    return findings
+
+
+def rule_time_intel_on_dq(md: ModelData) -> list[Finding]:
+    """Flag time intelligence functions in measures that reference DirectQuery tables.
+
+    Functions like DATEADD, SAMEPERIODLASTYEAR, DATESINPERIOD generate multiple
+    DQ queries on large fact tables, triggering full scans and severe latency.
+    """
+    _TIME_INTEL_PAT = re.compile(
+        r"\b(DATEADD|SAMEPERIODLASTYEAR|DATESINPERIOD|DATESYTD|DATESMTD|DATESQTD|"
+        r"PARALLELPERIOD|PREVIOUSMONTH|PREVIOUSYEAR|PREVIOUSQUARTER|"
+        r"NEXTMONTH|NEXTYEAR|NEXTQUARTER|OPENINGBALANCEMONTH|CLOSINGBALANCEMONTH|"
+        r"TOTALMTD|TOTALYTD|TOTALQTD)\s*\(",
+        re.IGNORECASE,
+    )
+    dq_tables = {
+        t["name"] for t in md.tables
+        if any(str(p.get("mode", "")).lower() in ("directquery", "dual") for p in t["partitions"])
+    }
+    if not dq_tables:
+        return []
+
+    findings: list[Finding] = []
+    for t in md.tables:
+        for m in t["measures"]:
+            expr = _expr_to_str(m.get("expression", ""))
+            if not expr:
+                continue
+            ti_match = _TIME_INTEL_PAT.search(expr)
+            if not ti_match:
+                continue
+            measure_host_is_dq = t["name"] in dq_tables
+            refs_dq_table = any(
+                dq_name in expr for dq_name in dq_tables
+            )
+            if measure_host_is_dq or refs_dq_table:
+                func_name = ti_match.group(1).upper()
+                findings.append({
+                    "rule": "TIME_INTEL_ON_DQ",
+                    "severity": "High",
+                    "category": "Performance",
+                    "table": t["name"],
+                    "object": m.get("name", "?"),
+                    "objectType": "measure",
+                    "message": (
+                        f"Measure '{m.get('name')}' uses {func_name}() on a DirectQuery-connected table. "
+                        "Time intelligence functions generate multiple DQ queries and can trigger full table scans."
+                    ),
+                    "fix": (
+                        "Rewrite to use pre-computed date bridge tables or "
+                        "replace DAX time intelligence with joins to pre-shifted date keys."
+                    ),
+                })
+    return findings
+
+
+def rule_calculated_tables(md: ModelData) -> list[Finding]:
+    """Flag calculated tables in the model.
+
+    Calculated tables re-evaluate on every refresh, block query caching,
+    and increase maintenance overhead.
+    """
+    findings: list[Finding] = []
+    for t in md.tables:
+        for p in t["partitions"]:
+            source = p.get("source", {})
+            if source.get("type", "").lower() == "calculated":
+                findings.append({
+                    "rule": "CALCULATED_TABLES",
+                    "severity": "High",
+                    "category": "Performance",
+                    "table": t["name"],
+                    "object": t["name"],
+                    "objectType": "table",
+                    "message": (
+                        f"Table '{t['name']}' is a calculated table. "
+                        "Calculated tables re-evaluate on every refresh, block query caching, "
+                        "and increase model maintenance overhead."
+                    ),
+                    "fix": "Replace with a static import table or move the logic upstream into SQL/dbt.",
+                })
+                break
+    return findings
+
+
+def rule_snowflake_dq_chains(md: ModelData) -> list[Finding]:
+    """Flag snowflake (multi-hop) dimension chains in DirectQuery.
+
+    Chained joins (e.g., Fact -> DimA -> DimB) force multi-hop DQ queries
+    and prevent aggregation push-down.
+    """
+    dq_or_dual = set()
+    table_modes: dict[str, str] = {}
+    for t in md.tables:
+        modes = {str(p.get("mode", "")).lower() for p in t["partitions"]}
+        if "directquery" in modes:
+            table_modes[t["name"]] = "directQuery"
+            dq_or_dual.add(t["name"])
+        elif "dual" in modes:
+            table_modes[t["name"]] = "dual"
+            dq_or_dual.add(t["name"])
+        else:
+            table_modes[t["name"]] = "import"
+
+    adj: dict[str, set[str]] = {}
+    for r in md.relationships:
+        ft = r.get("fromTable", "")
+        tt = r.get("toTable", "")
+        if ft and tt:
+            adj.setdefault(ft, set()).add(tt)
+            adj.setdefault(tt, set()).add(ft)
+
+    findings: list[Finding] = []
+    reported_chains: set[str] = set()
+    for start in dq_or_dual:
+        visited = {start}
+        queue: list[tuple[str, list[str]]] = [(start, [start])]
+        while queue:
+            node, path = queue.pop(0)
+            for neighbour in adj.get(node, set()):
+                if neighbour in visited:
+                    continue
+                if neighbour not in dq_or_dual:
+                    continue
+                new_path = path + [neighbour]
+                visited.add(neighbour)
+                if len(new_path) >= 3:
+                    chain_key = " → ".join(sorted(new_path[:3]))
+                    if chain_key not in reported_chains:
+                        reported_chains.add(chain_key)
+                        chain_str = " → ".join(new_path[:4])
+                        findings.append({
+                            "rule": "SNOWFLAKE_DQ_CHAINS",
+                            "severity": "Medium",
+                            "category": "Performance",
+                            "table": start,
+                            "object": chain_str,
+                            "objectType": "relationship",
+                            "message": (
+                                f"DirectQuery snowflake chain detected: {chain_str}. "
+                                "Multi-hop joins force chained DQ queries and prevent aggregation push-down."
+                            ),
+                            "fix": (
+                                "Flatten snowflake tables into the import layer or "
+                                "ensure attributes are resolved in a single hop."
+                            ),
+                        })
+                if len(new_path) < 5:
+                    queue.append((neighbour, new_path))
+    return findings
+
+
+def rule_date_table_not_marked(md: ModelData) -> list[Finding]:
+    """Flag tables that look like date tables but are not marked as such.
+
+    Not marking date tables disables time intelligence optimisations
+    and prevents efficient date filter caching.
+    """
+    _DATE_HINTS = {"date", "calendar", "dim_date", "dimdate", "fiscal", "time_period"}
+    _DATE_COL_HINTS = {"date", "calendar_date", "fulldate", "datekey", "date_key"}
+
+    findings: list[Finding] = []
+    for t in md.tables:
+        tname_lower = t["json"].get("name", t["name"]).lower().replace(" ", "_")
+        looks_like_date = any(hint in tname_lower for hint in _DATE_HINTS)
+        has_date_col = any(
+            c.get("name", "").lower().replace(" ", "_") in _DATE_COL_HINTS
+            or c.get("dataType", "").lower() in ("dateTime", "datetime")
+            for c in t["columns"]
+        )
+        if not (looks_like_date or has_date_col):
+            continue
+        data_category = t["json"].get("dataCategory", "")
+        is_marked = data_category.lower() == "time" if data_category else False
+        cols_marked = any(
+            c.get("dataCategory", "").lower() == "time" or
+            c.get("isKey", False)
+            for c in t["columns"]
+        )
+        if not is_marked and not cols_marked:
+            findings.append({
+                "rule": "DATE_TABLE_NOT_MARKED",
+                "severity": "Medium",
+                "category": "Performance",
+                "table": t["name"],
+                "object": t["name"],
+                "objectType": "table",
+                "message": (
+                    f"Table '{t['name']}' appears to be a date/calendar table but is not "
+                    "marked as a Date Table. This disables time intelligence optimisations "
+                    "and efficient date filter caching."
+                ),
+                "fix": (
+                    "Mark the table as a Date Table in Power BI Desktop or Tabular Editor "
+                    "and ensure it has a contiguous date column."
+                ),
+            })
+    return findings
+
+
+def rule_redundant_columns_in_related(md: ModelData) -> list[Finding]:
+    """Flag the same key column appearing on both sides of a relationship.
+
+    Duplicated keys inflate DirectQuery payload and increase query cost/memory.
+    """
+    findings: list[Finding] = []
+    table_columns: dict[str, set[str]] = {}
+    for t in md.tables:
+        table_columns[t["name"]] = {c.get("name", "") for c in t["columns"]}
+
+    for r in md.relationships:
+        from_table = r.get("fromTable", "")
+        to_table = r.get("toTable", "")
+        from_col = r.get("fromColumn", "")
+        to_col = r.get("toColumn", "")
+        if from_col == to_col:
+            continue
+        from_cols = table_columns.get(from_table, set())
+        to_cols = table_columns.get(to_table, set())
+        dupes = from_cols & to_cols
+        rel_keys = {from_col, to_col}
+        redundant = dupes - rel_keys
+        for col_name in sorted(redundant):
+            if col_name.lower().endswith("_sk") or col_name.lower().endswith("_id") or col_name.lower().endswith("_key"):
+                findings.append({
+                    "rule": "REDUNDANT_COLUMNS_IN_RELATED",
+                    "severity": "Medium",
+                    "category": "Performance",
+                    "table": from_table,
+                    "object": f"{col_name} (in both {from_table} and {to_table})",
+                    "objectType": "column",
+                    "message": (
+                        f"Key column '{col_name}' exists in both '{from_table}' and '{to_table}' "
+                        "which are related. This duplicated key inflates DQ payload and increases query cost."
+                    ),
+                    "fix": (
+                        "Remove the redundant column from the fact/child table and "
+                        "use the dimension table as the single source of truth."
+                    ),
+                })
+    return findings
+
+
+def rule_excessive_calculated_columns(md: ModelData) -> list[Finding]:
+    """Flag tables with more than 5 calculated columns.
+
+    Calculated columns are computed at refresh and stored in memory,
+    increasing VertiPaq footprint.
+    """
+    findings: list[Finding] = []
+    for t in md.tables:
+        calc_cols = [
+            c for c in t["columns"]
+            if c.get("type", "").lower() == "calculated"
+            or c.get("expression")  # columns with expressions are calculated
+        ]
+        if len(calc_cols) > 5:
+            col_names = [c.get("name", "?") for c in calc_cols[:5]]
+            findings.append({
+                "rule": "EXCESSIVE_CALCULATED_COLUMNS",
+                "severity": "Low",
+                "category": "Performance",
+                "table": t["name"],
+                "object": f"{len(calc_cols)} calculated columns",
+                "objectType": "table",
+                "message": (
+                    f"Table '{t['name']}' has {len(calc_cols)} calculated columns "
+                    f"(e.g. {', '.join(col_names)}). Calculated columns are computed at refresh "
+                    "and stored in memory, increasing VertiPaq footprint."
+                ),
+                "fix": "Move logic to SQL/dbt upstream or convert to measures where appropriate.",
+            })
+    return findings
+
+
+def rule_m_folding_blockers(md: ModelData) -> list[Finding]:
+    """Flag M/Power Query expressions that block query folding.
+
+    Complex M steps prevent the PBI engine from pushing transformations
+    to the source, forcing full data pulls.
+    """
+    _BLOCKING_FUNS = [
+        "Table.AddColumn", "Table.TransformColumns", "Table.TransformColumnTypes",
+        "Table.FillDown", "Table.FillUp", "Table.Sort", "Table.Buffer",
+        "List.Generate", "List.Accumulate", "Table.Group",
+        "Table.Pivot", "Table.Unpivot", "Table.Combine",
+    ]
+    _BLOCKING_PAT = re.compile(
+        r"\b(" + "|".join(re.escape(f) for f in _BLOCKING_FUNS) + r")\b",
+        re.IGNORECASE,
+    )
+
+    findings: list[Finding] = []
+    for t in md.tables:
+        for p in t["partitions"]:
+            source = p.get("source", {})
+            expr = _expr_to_str(source.get("expression", ""))
+            if not expr:
+                continue
+            matches = _BLOCKING_PAT.findall(expr)
+            if matches:
+                unique_fns = sorted(set(m for m in matches))
+                findings.append({
+                    "rule": "M_FOLDING_BLOCKERS",
+                    "severity": "Low",
+                    "category": "Performance",
+                    "table": t["name"],
+                    "object": ", ".join(unique_fns),
+                    "objectType": "partition",
+                    "message": (
+                        f"Table '{t['name']}' uses M functions that block query folding: "
+                        f"{', '.join(unique_fns)}. This prevents pushing transformations "
+                        "to the data source, forcing full data pulls."
+                    ),
+                    "fix": "Rewrite transformations to be foldable or push logic upstream to SQL/dbt.",
+                })
+    return findings
+
 # ---------------------------------------------------------------------------
 # Statistics helpers
 # ---------------------------------------------------------------------------
@@ -803,6 +1260,38 @@ RULE_PERFORMANCE_IMPACT: dict[str, dict] = {
         "impact": "cost",
         "description": "Hidden/unused columns are still included in DirectQuery SQL. Increases read bytes and cost per query.",
     },
+    "IS_AVAILABLE_IN_MDX": {
+        "impact": "memory",
+        "description": "MDX exposure on non-attribute columns forces extra metadata and memory structures. On large DirectQuery models this increases model load time and query overhead.",
+    },
+    "TIME_INTEL_ON_DQ": {
+        "impact": "latency",
+        "description": "Time intelligence functions on DirectQuery tables generate multiple DQ queries per evaluation. On large fact tables this triggers full scans and severe latency.",
+    },
+    "CALCULATED_TABLES": {
+        "impact": "latency",
+        "description": "Calculated tables re-evaluate on every refresh, block query caching, and increase model maintenance overhead.",
+    },
+    "SNOWFLAKE_DQ_CHAINS": {
+        "impact": "latency",
+        "description": "Multi-hop DirectQuery joins prevent aggregation push-down and force chained subqueries. Each hop adds a nested SQL subquery.",
+    },
+    "DATE_TABLE_NOT_MARKED": {
+        "impact": "latency",
+        "description": "Unmarked date tables disable time intelligence optimisations and prevent efficient date filter caching in the storage engine.",
+    },
+    "REDUNDANT_COLUMNS_IN_RELATED": {
+        "impact": "cost",
+        "description": "Duplicated key columns across related tables inflate DirectQuery payload. The same data is read and transferred multiple times per query.",
+    },
+    "EXCESSIVE_CALCULATED_COLUMNS": {
+        "impact": "memory",
+        "description": "Calculated columns are computed at refresh and stored in memory, increasing VertiPaq footprint and refresh time.",
+    },
+    "M_FOLDING_BLOCKERS": {
+        "impact": "latency",
+        "description": "M functions that block query folding force full data pulls from the source instead of pushing transformations server-side.",
+    },
 }
 
 ALL_RULES = [
@@ -818,6 +1307,14 @@ ALL_RULES = [
     ("AUTO_DATE_TABLES", rule_auto_date_tables),
     ("DAX_COLUMNS_NOT_FULLY_QUALIFIED", rule_dax_columns_not_fully_qualified),
     ("UNUSED_COLUMNS_CANDIDATE", rule_unused_columns_candidate),
+    ("IS_AVAILABLE_IN_MDX", rule_is_available_in_mdx),
+    ("TIME_INTEL_ON_DQ", rule_time_intel_on_dq),
+    ("CALCULATED_TABLES", rule_calculated_tables),
+    ("SNOWFLAKE_DQ_CHAINS", rule_snowflake_dq_chains),
+    ("DATE_TABLE_NOT_MARKED", rule_date_table_not_marked),
+    ("REDUNDANT_COLUMNS_IN_RELATED", rule_redundant_columns_in_related),
+    ("EXCESSIVE_CALCULATED_COLUMNS", rule_excessive_calculated_columns),
+    ("M_FOLDING_BLOCKERS", rule_m_folding_blockers),
 ]
 
 

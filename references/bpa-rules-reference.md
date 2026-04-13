@@ -512,7 +512,7 @@ Column `FactSales[InternalBatchId]` exists in the model but is not referenced by
 |---|---------|----------|----------|
 | 1 | `AVOID_FLOATING_POINT_DATA_TYPES` | High | Column Types |
 | 2 | `AVOID_BIDIRECTIONAL_RELATIONSHIPS` | High | Relationships |
-| 3 | `DUAL_MODE_TABLES` | High | Storage Mode |
+| 3 | `DUAL_MODE_TABLES` | High/Medium | Storage Mode |
 | 4 | `FILTER_ALL_ANTIPATTERN` | Medium | DAX Patterns |
 | 5 | `AVOID_IFERROR` | Medium | DAX Patterns |
 | 6 | `WIDE_TABLES` | Medium | Table Design |
@@ -522,3 +522,149 @@ Column `FactSales[InternalBatchId]` exists in the model but is not referenced by
 | 10 | `AUTO_DATE_TABLES` | Low | Model Settings |
 | 11 | `DAX_COLUMNS_NOT_FULLY_QUALIFIED` | Low | DAX Patterns |
 | 12 | `UNUSED_COLUMNS_CANDIDATE` | Low | Column Usage |
+| 13 | `IS_AVAILABLE_IN_MDX` | High | Performance |
+| 14 | `TIME_INTEL_ON_DQ` | High | Performance |
+| 15 | `CALCULATED_TABLES` | High | Performance |
+| 16 | `SNOWFLAKE_DQ_CHAINS` | Medium | Performance |
+| 17 | `DATE_TABLE_NOT_MARKED` | Medium | Performance |
+| 18 | `REDUNDANT_COLUMNS_IN_RELATED` | Medium | Performance |
+| 19 | `EXCESSIVE_CALCULATED_COLUMNS` | Low | Performance |
+| 20 | `M_FOLDING_BLOCKERS` | Low | Performance |
+
+---
+
+## New Rules (v3)
+
+### 13. IS_AVAILABLE_IN_MDX
+
+| Field | Value |
+|-------|-------|
+| **ID** | `IS_AVAILABLE_IN_MDX` |
+| **Severity** | High |
+| **Impact** | Memory |
+
+**What it checks:** Flags non-attribute columns (keys, hidden columns, IDs) in DirectQuery/Dual tables that have `isAvailableInMdx = true` (the default).
+
+**Why it's bad:** MDX exposure forces the engine to maintain additional metadata and memory structures. On large DirectQuery models this increases model load time and query overhead.
+
+**Required action:** Bulk-select all non-attribute columns in Tabular Editor. Set `isAvailableInMdx = false`. Leave only display attributes (names, codes, descriptions) enabled.
+
+### 14. TIME_INTEL_ON_DQ
+
+| Field | Value |
+|-------|-------|
+| **ID** | `TIME_INTEL_ON_DQ` |
+| **Severity** | High |
+| **Impact** | Latency |
+
+**What it checks:** Flags DAX time intelligence functions (DATEADD, SAMEPERIODLASTYEAR, DATESINPERIOD, etc.) in measures that reference DirectQuery or Dual tables.
+
+**Why it's bad:** Time intelligence functions generate multiple DQ queries per evaluation. On large fact tables this triggers full scans and severe latency.
+
+**Required action:** Rewrite measures to use pre-computed date bridge tables. Replace DAX time intelligence with joins to pre-shifted date keys.
+
+### 15. CALCULATED_TABLES
+
+| Field | Value |
+|-------|-------|
+| **ID** | `CALCULATED_TABLES` |
+| **Severity** | High |
+| **Impact** | Latency |
+
+**What it checks:** Detects tables with `source.type = "calculated"`.
+
+**Why it's bad:** Calculated tables re-evaluate on every refresh, block query caching, and increase model maintenance overhead.
+
+**Required action:** Replace with static import tables or parameters. Move logic upstream into SQL/dbt.
+
+### 16. SNOWFLAKE_DQ_CHAINS
+
+| Field | Value |
+|-------|-------|
+| **ID** | `SNOWFLAKE_DQ_CHAINS` |
+| **Severity** | Medium |
+| **Impact** | Latency |
+
+**What it checks:** Detects chains of 3+ DirectQuery/Dual tables connected via relationships (snowflake architecture in DQ).
+
+**Why it's bad:** Chained joins force multi-hop DQ queries and prevent aggregation push-down. Each hop adds a nested SQL subquery.
+
+**Required action:** Flatten snowflake tables into the import layer. Ensure attributes are resolved in a single hop.
+
+### 17. DATE_TABLE_NOT_MARKED
+
+| Field | Value |
+|-------|-------|
+| **ID** | `DATE_TABLE_NOT_MARKED` |
+| **Severity** | Medium |
+| **Impact** | Latency |
+
+**What it checks:** Detects tables that look like date/calendar tables (by name or column types) but are not marked as Date Tables.
+
+**Why it's bad:** Disables time intelligence optimisations. Prevents efficient date filter caching.
+
+**Required action:** Mark the table as a Date Table in Power BI Desktop or Tabular Editor. Ensure it has a contiguous date column.
+
+### 18. REDUNDANT_COLUMNS_IN_RELATED
+
+| Field | Value |
+|-------|-------|
+| **ID** | `REDUNDANT_COLUMNS_IN_RELATED` |
+| **Severity** | Medium |
+| **Impact** | Cost |
+
+**What it checks:** Detects key columns (ending in `_sk`, `_id`, `_key`) that exist in both sides of a relationship.
+
+**Why it's bad:** Duplicated keys inflate DirectQuery payload. The same data is read and transferred multiple times per query.
+
+**Required action:** Remove redundant columns from the fact/child table. Use dimension tables as the single source of truth.
+
+### 19. EXCESSIVE_CALCULATED_COLUMNS
+
+| Field | Value |
+|-------|-------|
+| **ID** | `EXCESSIVE_CALCULATED_COLUMNS` |
+| **Severity** | Low |
+| **Impact** | Memory |
+
+**What it checks:** Flags tables with more than 5 calculated columns.
+
+**Why it's bad:** Calculated columns are computed at refresh and stored in memory, increasing VertiPaq footprint and refresh time.
+
+**Required action:** Move logic to SQL/dbt upstream. Convert to measures where appropriate.
+
+### 20. M_FOLDING_BLOCKERS
+
+| Field | Value |
+|-------|-------|
+| **ID** | `M_FOLDING_BLOCKERS` |
+| **Severity** | Low |
+| **Impact** | Latency |
+
+**What it checks:** Detects M/Power Query functions in partition expressions that are known to block query folding (e.g., `Table.AddColumn`, `Table.Buffer`, `Table.Sort`, `List.Generate`).
+
+**Why it's bad:** Complex M steps prevent the PBI engine from pushing transformations to the source, forcing full data pulls.
+
+**Required action:** Rewrite transformations to be foldable or push logic upstream to SQL/dbt.
+
+---
+
+## Composite Model Awareness
+
+### Source Groups
+
+Tables in a Power BI composite model belong to **source groups** determined by their data source connection. Tables sharing the same Databricks catalog+schema in DirectQuery mode are in the same source group.
+
+### Limited Relationships
+
+When tables from different source groups are related (e.g., an Import dimension to a DirectQuery fact), the relationship becomes **limited**:
+- `RELATED()` and `RELATEDTABLE()` may not work or produce incorrect results
+- Bidirectional cross-filtering is disabled across the boundary
+- Row-level security filters may not propagate
+
+### Dual-to-Import Decision Tree
+
+1. **No relationships to DQ tables → Safe to Import** (Quick Win)
+2. **Has DQ relationships but no RELATED() usage → Cautiously switchable** (verify with DAX Studio)
+3. **Has DQ relationships AND RELATED() usage → Keep Dual** (refactor RELATED() first)
+4. **Hidden and no relationships → Safe to Import** (no functional impact)
