@@ -144,6 +144,87 @@ def _priority_badge(priority: str) -> str:
     return f'<span class="badge {cls}">{escape(priority)}</span>'
 
 
+def _hot_table_optimisation_tips(ht: dict) -> list[str]:
+    """Generate specific optimisation tips for a hot table based on its characteristics."""
+    tips: list[str] = []
+    mode = ht.get("storageMode", "unknown")
+    rows = ht.get("rowCount") or 0
+    refs = ht.get("referenceCount", 0)
+    degree = ht.get("degree", 0)
+    size_gb = ht.get("sizeGB") or 0
+
+    if mode == "directQuery":
+        if rows > 1_000_000_000:
+            tips.append(
+                "<b>Create aggregation tables</b> &mdash; pre-aggregate at grain "
+                "(e.g. daily/weekly) to avoid scanning billions of rows per query. "
+                "Configure as Import with automatic fallback to DirectQuery for detail-level visuals."
+            )
+        elif rows > 100_000_000:
+            tips.append(
+                "<b>Consider Dual mode</b> &mdash; switching from DirectQuery to Dual "
+                "allows the engine to cache results for dimension-side joins, reducing "
+                "redundant Databricks queries on repeated page loads."
+            )
+        tips.append(
+            "<b>Column pruning</b> &mdash; remove hidden or unreferenced columns "
+            "from the model. Each column in a DirectQuery table adds to the generated "
+            "SQL SELECT clause, increasing scan width and query duration."
+        )
+        if refs > 50:
+            tips.append(
+                f"<b>Simplify DAX references</b> &mdash; this table is referenced by "
+                f"{refs} measures. Consolidate similar measures or use calculation groups "
+                f"to reduce the number of independent queries hitting Databricks."
+            )
+
+    elif mode == "dual":
+        tips.append(
+            "<b>Evaluate Import mode</b> &mdash; Dual tables fall back to DirectQuery "
+            "when joined with DirectQuery fact tables. If this table changes infrequently, "
+            "switching to Import with scheduled refresh avoids repeated Databricks scans."
+        )
+        if refs > 100:
+            tips.append(
+                f"<b>High reference count ({refs})</b> &mdash; ensure the In-Memory cache "
+                f"is effective by enabling Large Storage Format and reviewing refresh schedules. "
+                f"A stale cache forces fallback to DirectQuery on every query."
+            )
+
+    elif mode == "import":
+        if size_gb > 1:
+            tips.append(
+                f"<b>Enable incremental refresh</b> &mdash; at {_fmt_gb(size_gb)}, full "
+                f"refresh is expensive. Partition by date and only refresh the most recent "
+                f"window to reduce refresh time and memory pressure."
+            )
+        if refs > 100:
+            tips.append(
+                f"<b>Review column cardinality</b> &mdash; with {refs} measure references, "
+                f"high-cardinality columns consume disproportionate memory. Consider removing "
+                f"or hashing columns not used in slicers/filters."
+            )
+
+    if degree >= 10:
+        tips.append(
+            f"<b>Hub table (degree {degree})</b> &mdash; this table is joined by many "
+            f"others, amplifying the cost of every scan. Consider denormalising frequently-"
+            f"used attributes into fact tables to reduce relationship hops and simplify "
+            f"generated SQL."
+        )
+    elif degree >= 5:
+        tips.append(
+            f"<b>High fan-out (degree {degree})</b> &mdash; multiple relationships increase "
+            f"the number of JOIN operations in generated SQL. Review whether all relationships "
+            f"are actively used by visuals; remove inactive ones to simplify query plans."
+        )
+
+    if not tips:
+        tips.append("No specific optimisation required &mdash; monitor query performance over time.")
+
+    return tips
+
+
 def _fmt_rows(n) -> str:
     """Format row count with appropriate unit."""
     if n is None:
@@ -486,6 +567,18 @@ CSS = """
     details { margin-top:16px; }
     details summary { cursor:pointer; font-weight:600; color:var(--accent); padding:8px 0; font-size:13px; }
     details summary:hover { text-decoration:underline; }
+    .filter-bar { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+    .filter-btn { display:inline-block; padding:4px 14px; border-radius:14px; font-size:11px; font-weight:700; letter-spacing:0.3px; cursor:pointer; border:1.5px solid var(--border); background:#fff; color:var(--muted); transition:all 0.15s; user-select:none; }
+    .filter-btn:hover { border-color:var(--accent); color:var(--accent); }
+    .filter-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+    .filter-btn.active-latency { background:rgba(192,57,43,0.12); border-color:var(--red); color:var(--red); }
+    .filter-btn.active-cost { background:rgba(212,160,23,0.15); border-color:var(--amber); color:var(--amber); }
+    .filter-btn.active-memory { background:rgba(26,135,84,0.12); border-color:var(--green); color:var(--green); }
+    .filter-btn.active-quality { background:rgba(7,112,207,0.12); border-color:var(--accent); color:var(--accent); }
+    .filter-btn.active-high { background:rgba(192,57,43,0.12); border-color:var(--red); color:var(--red); }
+    .filter-btn.active-medium { background:rgba(212,160,23,0.15); border-color:var(--amber); color:var(--amber); }
+    .filter-btn.active-low { background:rgba(26,135,84,0.12); border-color:var(--green); color:var(--green); }
+    .filter-count { font-size:10px; font-weight:400; margin-left:2px; opacity:0.8; }
     .report-footer { margin-top:48px; padding-top:20px; border-top:1px solid var(--border); font-size:12px; color:var(--muted); text-align:center; }
     .tooltip-wrap { position:relative; cursor:help; border-bottom:1px dashed currentColor; }
     .tooltip-wrap::after { content:attr(data-tooltip); position:absolute; bottom:120%; left:50%; transform:translateX(-50%); background:var(--dark); color:#fff; padding:10px 14px; border-radius:6px; font-size:11px; line-height:1.5; white-space:pre-line; min-width:320px; max-width:420px; opacity:0; pointer-events:none; transition:opacity 0.2s; z-index:100; box-shadow:0 4px 12px rgba(0,0,0,0.2); }
@@ -762,7 +855,7 @@ def generate_html(
 
     sections.append(f"""
     <h2 class="section-title">{sec_num}. Executive Summary</h2>
-    <div class="metric-grid">
+    <div class="metric-grid" style="grid-template-columns:repeat(3,1fr); max-width:900px; margin-left:auto; margin-right:auto">
       <div class="metric-card {'red' if dq_tables > 5 else 'amber' if dq_tables > 0 else 'green'}">
         <div class="value">{total_tables}</div>
         <div class="label">Total Tables</div>
@@ -1236,8 +1329,9 @@ def generate_html(
         measures_high_subq = dax_s.get("measuresWithHighSubqueries", 0)
         measures_filter_all = dax_s.get("measuresWithFilterAll", 0)
 
-        # Hot tables — enriched
+        # Hot tables — enriched with optimisation tips
         ht_has_qs = bool(table_query_stats) and taxonomy is not None
+        ht_col_count = 7 + (2 if ht_has_qs else 0)
         hot_table_rows = ""
         for ht in dax_complexity.get("hotTables", [])[:10]:
             priority = ht.get("optimizationPriority", "low")
@@ -1263,6 +1357,14 @@ def generate_html(
               <td>{_fmt_gb(ht.get('sizeGB'))}</td>
               <td>{ht.get('degree', '-')}</td>
               <td>{_priority_badge(priority)}</td>{ht_qs_cells}</tr>"""
+            # Optimisation tips row
+            tips = _hot_table_optimisation_tips(ht)
+            tips_html = "".join(f"<li>{t}</li>" for t in tips)
+            hot_table_rows += f"""<tr class="ht-tips-row">
+              <td colspan="{ht_col_count}" style="padding:8px 14px 14px 28px;border-bottom:2px solid var(--border);background:var(--light-bg)">
+                <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.3px;color:var(--muted);margin-bottom:4px">Optimisation Opportunities</div>
+                <ul style="margin:0;padding-left:18px;font-size:12px;color:var(--dark);line-height:1.7">{tips_html}</ul>
+              </td></tr>"""
 
         sections.append(f"""
         <h2 class="section-title">{sec_num}. DAX Complexity Report</h2>
@@ -1309,121 +1411,168 @@ def generate_html(
         """)
 
     # ═══════════════════════════════════════════════════════
-    # SECTION: BPA FINDINGS (collapsible)
+    # SECTION: BPA FINDINGS (full analysis with filters)
     # ═══════════════════════════════════════════════════════
     if bpa_results:
         sec_num += 1
         all_rule_results = bpa_results.get("ruleResults", [])
         passing_rules = bpa_results.get("passingRules", [])
-
-        # Filter to performance-related rules only (latency, cost, memory)
-        _PERF_IMPACTS = {"latency", "cost", "memory"}
-        perf_rules = [r for r in all_rule_results if r.get("performanceImpact", "") in _PERF_IMPACTS]
-        perf_rule_names = {r.get("rule", "") for r in perf_rules}
-        quality_rules = [r for r in all_rule_results if r.get("performanceImpact", "") not in _PERF_IMPACTS]
-
-        # Filter findings to only performance-related rules
         all_findings = bpa_results.get("findings", [])
-        findings = [f for f in all_findings if f.get("rule", "") in perf_rule_names]
 
-        # Rule violations table — only performance-impacting rules
-        sorted_rules = sorted(perf_rules, key=lambda r: r.get("count", 0), reverse=True)
+        # Build rule → impact mapping for tagging findings
+        rule_impact_map: dict[str, str] = {}
+        for r in all_rule_results:
+            rule_impact_map[r.get("rule", "")] = r.get("performanceImpact", "quality")
+
+        # Count rules by impact type for filter badges
+        impact_counts: dict[str, int] = {}
+        for r in all_rule_results:
+            imp = r.get("performanceImpact", "quality")
+            impact_counts[imp] = impact_counts.get(imp, 0) + 1
+
+        # Rule violations table — ALL rules, sorted by count
+        sorted_rules = sorted(all_rule_results, key=lambda r: r.get("count", 0), reverse=True)
         rule_rows = ""
         for r in sorted_rules:
-            impact = r.get("performanceImpact", "")
-            impact_badge = _impact_type_badge(impact) if impact else ""
+            impact = r.get("performanceImpact", "quality")
+            impact_badge = _impact_type_badge(impact)
             impact_desc = escape(r.get("impactDescription", ""))
-            rule_rows += f"""<tr>
+            rule_rows += f"""<tr data-impact="{impact}">
               <td>{escape(r.get('rule', ''))}</td>
               <td>{r.get('count', 0)}</td>
               <td>{impact_badge}</td>
               <td style="font-size:12px;color:var(--muted)">{impact_desc}</td></tr>"""
 
-        # Quality rules collapsed at the bottom
-        quality_html = ""
-        if quality_rules:
-            q_names = ", ".join(r.get("rule", "") for r in quality_rules)
-            quality_html = f'<p style="font-size:12px;color:var(--muted);margin-top:12px">{len(quality_rules)} non-performance rules excluded (quality only): {escape(q_names)}</p>'
+        # Filter buttons for Rule Violations
+        rule_filter_btns = f'<span class="filter-btn active" data-filter-value="all" onclick="bpaFilter(\'bpa-rule-bar\',\'bpa-rule-table\',\'impact\',\'all\')">All<span class="filter-count">({len(sorted_rules)})</span></span>'
+        for imp_type in ["latency", "cost", "memory", "quality"]:
+            cnt = impact_counts.get(imp_type, 0)
+            if cnt > 0:
+                rule_filter_btns += f'<span class="filter-btn" data-filter-value="{imp_type}" onclick="bpaFilter(\'bpa-rule-bar\',\'bpa-rule-table\',\'impact\',\'{imp_type}\')">{imp_type.title()}<span class="filter-count">({cnt})</span></span>'
 
         # Passing rules summary
         passing_html = ""
         if passing_rules:
             passing_html = f'<p style="font-size:13px;color:var(--green);margin-top:12px">&#10003; {len(passing_rules)} rules passed (no violations): {", ".join(passing_rules)}</p>'
 
-        # Split findings: High always shown, 10 Medium shown, rest collapsed
-        high_findings = [f for f in findings if f.get("severity", "").lower() == "high"]
-        medium_findings = [f for f in findings if f.get("severity", "").lower() == "medium"]
-        low_findings = [f for f in findings if f.get("severity", "").lower() == "low"]
+        # --- Detailed Findings with filters ---
+        # Tag each finding with its impact type
+        findings = all_findings  # show ALL findings
 
-        def _finding_row(f):
-            return f"""<tr>
+        # Count findings by impact and severity for filter badges
+        finding_impact_counts: dict[str, int] = {}
+        finding_severity_counts: dict[str, int] = {}
+        for f in findings:
+            f_impact = rule_impact_map.get(f.get("rule", ""), "quality")
+            finding_impact_counts[f_impact] = finding_impact_counts.get(f_impact, 0) + 1
+            sev = f.get("severity", "").lower()
+            finding_severity_counts[sev] = finding_severity_counts.get(sev, 0) + 1
+
+        # Sort findings: High first, then Medium, then Low
+        severity_order = {"high": 0, "medium": 1, "low": 2}
+        sorted_findings = sorted(findings, key=lambda f: severity_order.get(f.get("severity", "").lower(), 3))
+
+        def _finding_row_tagged(f):
+            f_impact = rule_impact_map.get(f.get("rule", ""), "quality")
+            f_sev = f.get("severity", "").lower()
+            return f"""<tr data-impact="{f_impact}" data-severity="{f_sev}">
               <td>{escape(f.get('rule', ''))}</td><td>{_badge(f.get('severity', ''))}</td>
+              <td>{_impact_type_badge(f_impact)}</td>
               <td>{escape(f.get('table', ''))}</td><td>{escape(f.get('object', ''))}</td>
               <td>{escape(f.get('message', ''))}</td></tr>"""
 
-        visible_rows = "".join(_finding_row(f) for f in high_findings)
-        visible_rows += "".join(_finding_row(f) for f in medium_findings[:10])
-        visible_count = len(high_findings) + min(10, len(medium_findings))
+        # All rows in a single table — first 20 visible, rest hidden with data-overflow
+        visible_limit = 20
+        all_finding_rows = ""
+        for idx, f in enumerate(sorted_findings):
+            f_impact = rule_impact_map.get(f.get("rule", ""), "quality")
+            f_sev = f.get("severity", "").lower()
+            overflow = ' data-overflow="1" style="display:none"' if idx >= visible_limit else ''
+            all_finding_rows += f"""<tr data-impact="{f_impact}" data-severity="{f_sev}"{overflow}>
+              <td>{escape(f.get('rule', ''))}</td><td>{_badge(f.get('severity', ''))}</td>
+              <td>{_impact_type_badge(f_impact)}</td>
+              <td>{escape(f.get('table', ''))}</td><td>{escape(f.get('object', ''))}</td>
+              <td>{escape(f.get('message', ''))}</td></tr>"""
 
-        collapsed_rows = "".join(_finding_row(f) for f in medium_findings[10:])
-        collapsed_rows += "".join(_finding_row(f) for f in low_findings)
-        collapsed_count = len(medium_findings[10:]) + len(low_findings)
+        overflow_count = max(0, len(sorted_findings) - visible_limit)
+        overflow_toggle = ""
+        if overflow_count > 0:
+            overflow_toggle = f'<div style="margin-top:12px"><a href="#" id="bpa-detail-toggle" style="font-size:13px;font-weight:600;color:var(--accent)" onclick="toggleBpaOverflow(event)">Show {overflow_count} more findings...</a></div>'
 
-        collapsed_html = ""
-        if collapsed_count > 0:
-            collapsed_html = f"""
-        <details>
-          <summary>Show {collapsed_count} more findings ({len(medium_findings) - min(10, len(medium_findings))} medium, {len(low_findings)} low)...</summary>
-          <table><thead><tr><th>Rule</th><th>Severity</th><th>Table</th><th>Object</th><th>Detail</th></tr></thead>
-            <tbody>{collapsed_rows}</tbody></table>
-        </details>"""
+        # Filter buttons for Detailed Findings — impact type + severity
+        detail_filter_btns_impact = f'<span class="filter-btn active" data-filter-value="all" onclick="bpaFilter(\'bpa-detail-bar-impact\',\'bpa-detail-table\',\'impact\',\'all\')">All<span class="filter-count">({len(findings)})</span></span>'
+        for imp_type in ["latency", "cost", "memory", "quality"]:
+            cnt = finding_impact_counts.get(imp_type, 0)
+            if cnt > 0:
+                detail_filter_btns_impact += f'<span class="filter-btn" data-filter-value="{imp_type}" onclick="bpaFilter(\'bpa-detail-bar-impact\',\'bpa-detail-table\',\'impact\',\'{imp_type}\')">{imp_type.title()}<span class="filter-count">({cnt})</span></span>'
+
+        detail_filter_btns_severity = f'<span class="filter-btn active" data-filter-value="all" onclick="bpaFilter(\'bpa-detail-bar-severity\',\'bpa-detail-table\',\'severity\',\'all\')">All<span class="filter-count">({len(findings)})</span></span>'
+        for sev in ["high", "medium", "low"]:
+            cnt = finding_severity_counts.get(sev, 0)
+            if cnt > 0:
+                detail_filter_btns_severity += f'<span class="filter-btn" data-filter-value="{sev}" onclick="bpaFilter(\'bpa-detail-bar-severity\',\'bpa-detail-table\',\'severity\',\'{sev}\')">{sev.title()}<span class="filter-count">({cnt})</span></span>'
 
         sections.append(f"""
-        <h2 class="section-title">{sec_num}. Best Practice Findings (Performance)</h2>
-        <div class="card"><h3>Rule Violations &mdash; Performance Impact Only</h3>
-          <table><thead><tr><th>Rule</th><th>Violations</th><th>Impact Type</th><th>Performance Impact</th></tr></thead>
+        <h2 class="section-title">{sec_num}. Best Practice Findings</h2>
+        <div class="card">
+          <h3>Rule Violations</h3>
+          <div class="filter-bar" id="bpa-rule-bar">
+            <span style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;padding:5px 0">Impact:</span>
+            {rule_filter_btns}
+          </div>
+          <table id="bpa-rule-table"><thead><tr><th>Rule</th><th>Violations</th><th>Impact Type</th><th>Performance Impact</th></tr></thead>
             <tbody>{rule_rows}</tbody></table>
-          {quality_html}
           {passing_html}
         </div>
         <div class="card">
-          <h3>Detailed Findings ({len(findings)} performance-related — showing {visible_count})</h3>
-          <table><thead><tr><th>Rule</th><th>Severity</th><th>Table</th><th>Object</th><th>Detail</th></tr></thead>
-            <tbody>{visible_rows}</tbody></table>
-          {collapsed_html}
+          <h3>Detailed Findings (<span id="bpa-detail-table-count">{len(findings)}</span> total)</h3>
+          <div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:4px">
+            <div class="filter-bar" id="bpa-detail-bar-impact">
+              <span style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;padding:5px 0">Impact:</span>
+              {detail_filter_btns_impact}
+            </div>
+            <div class="filter-bar" id="bpa-detail-bar-severity">
+              <span style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;padding:5px 0">Severity:</span>
+              {detail_filter_btns_severity}
+            </div>
+          </div>
+          <table id="bpa-detail-table"><thead><tr><th>Rule</th><th>Severity</th><th>Impact</th><th>Table</th><th>Object</th><th>Detail</th></tr></thead>
+            <tbody>{all_finding_rows}</tbody></table>
+          {overflow_toggle}
         </div>
         """)
 
     # ═══════════════════════════════════════════════════════
-    # SECTION: dbt BEST PRACTICES (Performance)
+    # SECTION: dbt BEST PRACTICES (full analysis with filters)
     # ═══════════════════════════════════════════════════════
     if engineering_bpa:
         sec_num += 1
         eng_rules = engineering_bpa.get("ruleResults", [])
         eng_passing = engineering_bpa.get("passingRules", [])
 
-        # Filter to performance-related rules only (latency, cost — exclude quality)
-        _ENG_PERF_IMPACTS = {"latency", "cost"}
-        perf_eng_rules = [r for r in eng_rules if r.get("impact", r.get("performanceImpact", "")) in _ENG_PERF_IMPACTS]
-        quality_eng_rules = [r for r in eng_rules if r.get("impact", r.get("performanceImpact", "")) not in _ENG_PERF_IMPACTS]
+        # Summary across ALL rules
+        eng_high = sum(r["count"] for r in eng_rules if r.get("severity") == "high")
+        eng_medium = sum(r["count"] for r in eng_rules if r.get("severity") == "medium")
+        eng_low = sum(r["count"] for r in eng_rules if r.get("severity") == "low")
+        eng_total = eng_high + eng_medium + eng_low
 
-        # Recompute summary for performance-only rules
-        eng_perf_high = sum(r["count"] for r in perf_eng_rules if r.get("severity") == "high")
-        eng_perf_medium = sum(r["count"] for r in perf_eng_rules if r.get("severity") == "medium")
-        eng_perf_low = sum(r["count"] for r in perf_eng_rules if r.get("severity") == "low")
-        eng_perf_total = eng_perf_high + eng_perf_medium + eng_perf_low
+        # Count rules by impact type for filter badges
+        eng_impact_counts: dict[str, int] = {}
+        for r in eng_rules:
+            imp = r.get("impact", r.get("performanceImpact", "quality"))
+            eng_impact_counts[imp] = eng_impact_counts.get(imp, 0) + 1
 
-        # Sort by count descending
-        sorted_eng_rules = sorted(perf_eng_rules, key=lambda r: r.get("count", 0), reverse=True)
+        # Sort ALL rules by count descending
+        sorted_eng_rules = sorted(eng_rules, key=lambda r: r.get("count", 0), reverse=True)
 
         eng_rows = ""
         for rule in sorted_eng_rules:
             examples_html = ""
             for ex in rule.get("examples", [])[:3]:
                 examples_html += f"<div style='font-size:11px;color:var(--muted);margin-top:4px'>{escape(ex.get('model', ''))} → {escape(ex.get('detail', ''))}</div>"
-            impact = rule.get("impact", rule.get("performanceImpact", ""))
+            impact = rule.get("impact", rule.get("performanceImpact", "quality"))
             impact_badge = _impact_type_badge(impact) if impact else ""
-            eng_rows += f"""<tr>
+            eng_rows += f"""<tr data-impact="{impact}">
               <td><strong>{escape(rule.get('ruleId', ''))}</strong></td>
               <td>{escape(rule.get('title', ''))}{examples_html}</td>
               <td>{_badge(rule.get('severity', 'medium'))}</td>
@@ -1432,11 +1581,12 @@ def generate_html(
               <td style="font-size:12px">{escape(rule.get('recommendation', ''))}</td>
             </tr>"""
 
-        # Quality rules excluded note
-        quality_html = ""
-        if quality_eng_rules:
-            q_names = ", ".join(f"{r.get('ruleId', '')}: {r.get('title', '')}" for r in quality_eng_rules)
-            quality_html = f'<p style="font-size:12px;color:var(--muted);margin-top:12px">{len(quality_eng_rules)} non-performance rules excluded (quality only): {escape(q_names)}</p>'
+        # Filter buttons for Engineering BPA
+        eng_filter_btns = f'<span class="filter-btn active" data-filter-value="all" onclick="bpaFilter(\'eng-bpa-bar\',\'eng-bpa-table\',\'impact\',\'all\')">All<span class="filter-count">({len(sorted_eng_rules)})</span></span>'
+        for imp_type in ["latency", "cost", "memory", "quality"]:
+            cnt = eng_impact_counts.get(imp_type, 0)
+            if cnt > 0:
+                eng_filter_btns += f'<span class="filter-btn" data-filter-value="{imp_type}" onclick="bpaFilter(\'eng-bpa-bar\',\'eng-bpa-table\',\'impact\',\'{imp_type}\')">{imp_type.title()}<span class="filter-count">({cnt})</span></span>'
 
         passing_html = ""
         if eng_passing:
@@ -1444,20 +1594,23 @@ def generate_html(
             passing_html = f"<details><summary>Passing rules ({len(eng_passing)})</summary><p style='font-size:12px;color:var(--muted);margin-top:8px'>{escape(passing_items)}</p></details>"
 
         sections.append(f"""
-        <h2 class="section-title">{sec_num}. dbt Best Practices (Performance) {'<span class="badge badge-high">dbt Models</span>' if eng_perf_high > 0 else ''}</h2>
+        <h2 class="section-title">{sec_num}. dbt Best Practices {'<span class="badge badge-high">dbt Models</span>' if eng_high > 0 else ''}</h2>
         <div class="metric-grid">
-          <div class="metric-card red"><div class="value">{eng_perf_high}</div><div class="label">High</div></div>
-          <div class="metric-card amber"><div class="value">{eng_perf_medium}</div><div class="label">Medium</div></div>
-          <div class="metric-card green"><div class="value">{eng_perf_low}</div><div class="label">Low</div></div>
-          <div class="metric-card"><div class="value">{eng_perf_total}</div><div class="label">Total Findings</div></div>
+          <div class="metric-card red"><div class="value">{eng_high}</div><div class="label">High</div></div>
+          <div class="metric-card amber"><div class="value">{eng_medium}</div><div class="label">Medium</div></div>
+          <div class="metric-card green"><div class="value">{eng_low}</div><div class="label">Low</div></div>
+          <div class="metric-card"><div class="value">{eng_total}</div><div class="label">Total Findings</div></div>
         </div>
         <div class="card">
-          <h3>Rule Violations &mdash; Performance Impact Only</h3>
-          <table>
+          <h3>Rule Violations</h3>
+          <div class="filter-bar" id="eng-bpa-bar">
+            <span style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;padding:5px 0">Impact:</span>
+            {eng_filter_btns}
+          </div>
+          <table id="eng-bpa-table">
             <thead><tr><th>Rule</th><th>Description</th><th>Severity</th><th>Impact</th><th>Count</th><th>Recommendation</th></tr></thead>
             <tbody>{eng_rows}</tbody>
           </table>
-          {quality_html}
           {passing_html}
         </div>
         """)
@@ -2091,7 +2244,7 @@ def generate_html(
         ("DAX Measures Analysis", bool(dax_complexity), "Complexity scoring, anti-pattern detection, context transitions"),
         ("Best Practice Analyser (BPA)", bool(bpa_results), f"{bpa_total} findings across 12 rules"),
         ("dbt Source Code (Serve + Curated)", bool(dbt_lineage), "Lineage, materialisation, clustering, column pruning"),
-        ("dbt Best Practices (Performance)", bool(engineering_bpa), f"{eng_bpa_summary.get('totalFindings', 0)} findings across 15 rules" if engineering_bpa else ""),
+        ("dbt Best Practices", bool(engineering_bpa), f"{eng_bpa_summary.get('totalFindings', 0)} findings across 15 rules" if engineering_bpa else ""),
         ("Databricks Metadata & Volumetry", bool(dbx_profile), "Row counts, table sizes, query statistics"),
         ("Databricks Query History", bool(query_profile or user_query_profile), "Per-user attribution, duration profiling"),
         ("Capacity Settings Simulation", bool(capacity_settings), "Timeout, memory limit, row set thresholds",
@@ -2170,6 +2323,55 @@ def generate_html(
   </div>
 <script>
 document.querySelectorAll('.sortable-th').forEach(th=>{{th.addEventListener('click',()=>{{const t=th.closest('table'),i=Array.from(th.parentNode.children).indexOf(th),rows=Array.from(t.querySelectorAll('tbody tr')),a=th.dataset.sort!=='asc';th.dataset.sort=a?'asc':'desc';rows.sort((x,y)=>{{const va=x.children[i]?.dataset.val||x.children[i]?.textContent||'',vb=y.children[i]?.dataset.val||y.children[i]?.textContent||'',na=parseFloat(va),nb=parseFloat(vb);if(!isNaN(na)&&!isNaN(nb))return a?na-nb:nb-na;return a?va.localeCompare(vb):vb.localeCompare(va)}});rows.forEach(r=>t.querySelector('tbody').appendChild(r))}})}});
+
+function bpaFilter(barId, tableId, attr, value) {{
+  var bar = document.getElementById(barId);
+  bar.querySelectorAll('.filter-btn').forEach(function(b){{ b.classList.remove('active','active-latency','active-cost','active-memory','active-quality','active-high','active-medium','active-low'); }});
+  var clicked = bar.querySelector('[data-filter-value="'+value+'"]');
+  if(clicked){{ clicked.classList.add('active'); if(value!=='all') clicked.classList.add('active-'+value); }}
+  var rows = document.querySelectorAll('#'+tableId+' tbody tr');
+  var shown = 0;
+  /* Collect active filters from both filter bars for this table */
+  var impactBar = document.getElementById(tableId.replace('table','bar-impact'));
+  var sevBar = document.getElementById(tableId.replace('table','bar-severity'));
+  var impactVal = 'all', sevVal = 'all';
+  if(impactBar){{ var a=impactBar.querySelector('.filter-btn.active'); if(a) impactVal=a.getAttribute('data-filter-value')||'all'; }}
+  if(sevBar){{ var a=sevBar.querySelector('.filter-btn.active'); if(a) sevVal=a.getAttribute('data-filter-value')||'all'; }}
+  var isFiltered = (impactVal!=='all' || sevVal!=='all');
+  rows.forEach(function(r){{
+    var matchImpact = (impactVal==='all' || r.getAttribute('data-impact')===impactVal);
+    var matchSev = (sevVal==='all' || r.getAttribute('data-severity')===sevVal);
+    if(matchImpact && matchSev){{
+      r.style.display=''; shown++;
+    }} else {{
+      r.style.display='none';
+    }}
+  }});
+  /* Update overflow toggle visibility */
+  var toggle = document.getElementById(tableId.replace('table','toggle'));
+  if(toggle){{
+    if(isFiltered){{ toggle.style.display='none'; }}
+    else {{ toggle.style.display=''; _resetBpaOverflow(tableId); }}
+  }}
+  var counter = document.getElementById(tableId+'-count');
+  if(counter) counter.textContent = shown;
+}}
+
+function toggleBpaOverflow(e) {{
+  e.preventDefault();
+  var rows = document.querySelectorAll('#bpa-detail-table tbody tr[data-overflow]');
+  var link = document.getElementById('bpa-detail-toggle');
+  var showing = rows[0] && rows[0].style.display !== 'none';
+  rows.forEach(function(r){{ r.style.display = showing ? 'none' : ''; }});
+  link.textContent = showing ? 'Show ' + rows.length + ' more findings...' : 'Show first 20 only';
+}}
+
+function _resetBpaOverflow(tableId) {{
+  var rows = document.querySelectorAll('#'+tableId+' tbody tr[data-overflow]');
+  rows.forEach(function(r){{ r.style.display = 'none'; }});
+  var toggle = document.getElementById('bpa-detail-toggle');
+  if(toggle) toggle.textContent = 'Show ' + rows.length + ' more findings...';
+}}
 </script>
 </body>
 </html>"""
