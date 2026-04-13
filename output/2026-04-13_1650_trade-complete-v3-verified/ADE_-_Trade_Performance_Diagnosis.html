@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Performance Diagnosis: ADE - Trade</title>
+  <style>
+    :root { --dark:#2d2d2d; --accent:#0770cf; --green:#1a8754; --amber:#d4a017; --red:#c0392b; --light-bg:#f8f9fa; --border:#dee2e6; --text:#333; --muted:#6c757d; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; color:var(--text); background:var(--light-bg); line-height:1.6; font-size:14px; }
+    .report-header { background:var(--dark); color:#fff; padding:32px 40px 24px; }
+    .report-header h1 { font-size:24px; font-weight:600; margin-bottom:8px; }
+    .report-header .metadata { font-size:13px; color:#adb5bd; display:flex; gap:24px; flex-wrap:wrap; }
+    .container { max-width:1200px; margin:0 auto; padding:32px 40px 60px; }
+    .section-title { font-size:18px; font-weight:600; color:var(--dark); margin:0; padding:0; }
+    .metric-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+    .metric-card { background:#fff; border:1px solid var(--border); border-radius:8px; padding:20px; text-align:center; }
+    .metric-card .value { font-size:28px; font-weight:700; color:var(--dark); line-height:1.2; }
+    .metric-card .label { font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted); margin-top:6px; }
+    .metric-card .sub { font-size:12px; color:var(--muted); margin-top:4px; }
+    .metric-card.green .value { color:var(--green); }
+    .metric-card.amber .value { color:var(--amber); }
+    .metric-card.red .value { color:var(--red); }
+    .card { background:#fff; border:1px solid var(--border); border-radius:8px; padding:24px; margin-bottom:20px; box-shadow:0 1px 3px rgba(0,0,0,0.06); }
+    .card h3 { font-size:15px; font-weight:600; margin-bottom:12px; color:var(--dark); }
+    table { width:100%; border-collapse:collapse; font-size:13px; }
+    thead th { background:var(--light-bg); text-transform:uppercase; font-size:11px; font-weight:700; letter-spacing:0.5px; color:var(--muted); padding:10px 14px; text-align:left; border-bottom:2px solid var(--border); }
+    tbody td { padding:10px 14px; border-bottom:1px solid var(--border); }
+    tbody tr:nth-child(even) { background:var(--light-bg); }
+    tbody tr:hover { background:#e9ecef; }
+    .badge { display:inline-block; padding:3px 10px; border-radius:12px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.3px; }
+    .badge-high { background:rgba(192,57,43,0.12); color:var(--red); }
+    .badge-medium { background:rgba(212,160,23,0.15); color:var(--amber); }
+    .badge-low { background:rgba(26,135,84,0.12); color:var(--green); }
+    .badge-info { background:rgba(7,112,207,0.12); color:var(--accent); }
+    .note-box { background:#fff8e1; border-left:4px solid var(--amber); border-radius:0 6px 6px 0; padding:14px 18px; margin:16px 0; font-size:13px; }
+    .note-box strong { color:var(--amber); }
+    .recommendation-box { background:linear-gradient(135deg,rgba(7,112,207,0.08),rgba(7,112,207,0.03)); border:1px solid rgba(7,112,207,0.2); border-radius:8px; padding:20px 24px; margin:16px 0; }
+    .recommendation-box h4 { color:var(--accent); margin-bottom:8px; font-size:14px; }
+    .recommendation-box p { font-size:13px; margin-bottom:8px; }
+    .matrix-wrapper { position:relative; margin:24px 0 24px 48px; }
+    .matrix-y-label { position:absolute; left:-48px; top:50%; transform:rotate(-90deg) translateX(-50%); transform-origin:0 0; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--muted); white-space:nowrap; }
+    .matrix-x-label { text-align:center; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-top:8px; }
+    .matrix-grid { display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:12px; }
+    .matrix-box { border-radius:8px; padding:20px; min-height:120px; position:relative; }
+    .matrix-box h3 { margin-bottom:4px; font-size:14px; font-weight:700; }
+    .matrix-box .matrix-subtitle { font-size:11px; color:var(--muted); margin-bottom:12px; }
+    .matrix-box .matrix-count { display:inline-block; background:rgba(255,255,255,0.7); border-radius:12px; padding:2px 10px; font-size:11px; font-weight:700; margin-bottom:8px; }
+    .matrix-box ul { list-style:none; padding:0; margin:0; }
+    .matrix-box li { margin-bottom:6px; font-size:13px; line-height:1.4; }
+    .matrix-box details summary { font-size:13px; color:inherit; padding:4px 0; }
+    .matrix-box details summary:hover { text-decoration:underline; }
+    .matrix-actions-table { margin-top:8px; font-size:12px; }
+    .matrix-actions-table td { padding:6px 10px; }
+    .matrix-actions-table tr:nth-child(even) { background:rgba(255,255,255,0.4); }
+    .matrix-arrow-right { position:absolute; bottom:-22px; left:50%; font-size:14px; color:var(--muted); }
+    .matrix-arrow-up { position:absolute; left:-28px; top:50%; font-size:14px; color:var(--muted); }
+    details { margin-top:16px; }
+    details summary { cursor:pointer; font-weight:600; color:var(--accent); padding:8px 0; font-size:13px; }
+    details summary:hover { text-decoration:underline; }
+    .filter-bar { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+    .filter-btn { display:inline-block; padding:4px 14px; border-radius:14px; font-size:11px; font-weight:700; letter-spacing:0.3px; cursor:pointer; border:1.5px solid var(--border); background:#fff; color:var(--muted); transition:all 0.15s; user-select:none; }
+    .filter-btn:hover { border-color:var(--accent); color:var(--accent); }
+    .filter-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+    .filter-btn.active-latency { background:rgba(192,57,43,0.12); border-color:var(--red); color:var(--red); }
+    .filter-btn.active-cost { background:rgba(212,160,23,0.15); border-color:var(--amber); color:var(--amber); }
+    .filter-btn.active-memory { background:rgba(26,135,84,0.12); border-color:var(--green); color:var(--green); }
+    .filter-btn.active-quality { background:rgba(7,112,207,0.12); border-color:var(--accent); color:var(--accent); }
+    .filter-btn.active-high { background:rgba(192,57,43,0.12); border-color:var(--red); color:var(--red); }
+    .filter-btn.active-medium { background:rgba(212,160,23,0.15); border-color:var(--amber); color:var(--amber); }
+    .filter-btn.active-low { background:rgba(26,135,84,0.12); border-color:var(--green); color:var(--green); }
+    .filter-count { font-size:10px; font-weight:400; margin-left:2px; opacity:0.8; }
+    .report-footer { margin-top:48px; padding-top:20px; border-top:1px solid var(--border); font-size:12px; color:var(--muted); text-align:center; }
+    .tooltip-wrap { position:relative; cursor:help; border-bottom:1px dashed currentColor; }
+    .tooltip-wrap::after { content:attr(data-tooltip); position:absolute; bottom:120%; left:50%; transform:translateX(-50%); background:var(--dark); color:#fff; padding:10px 14px; border-radius:6px; font-size:11px; line-height:1.5; white-space:pre-line; min-width:320px; max-width:420px; opacity:0; pointer-events:none; transition:opacity 0.2s; z-index:100; box-shadow:0 4px 12px rgba(0,0,0,0.2); }
+    .tooltip-wrap:hover::after { opacity:1; }
+    .heat-green { background: rgba(26,135,84,0.15); }
+    .heat-yellow { background: rgba(212,160,23,0.15); }
+    .heat-red { background: rgba(192,57,43,0.15); }
+    .sortable-th { cursor: pointer; user-select: none; }
+    .sortable-th:hover { background: #dee2e6; }
+    .sortable-th::after { content: ' \25B4\25BE'; font-size: 10px; color: var(--muted); }
+    .bar-container { background:#e9ecef; border-radius:4px; height:18px; overflow:hidden; }
+    .bar-fill { height:100%; border-radius:4px; min-width:2px; }
+    .pros-cons-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .pros-cons-grid ul { list-style:none; padding:0; }
+    .pros-cons-grid li { margin-bottom:8px; font-size:13px; padding-left:20px; position:relative; }
+    .pros-cons-grid li::before { position:absolute; left:0; }
+    .pros-list li::before { content:'\2713'; color:var(--green); }
+    .cons-list li::before { content:'\2717'; color:var(--red); }
+    .report-section { margin-bottom:8px; border:1px solid var(--border); border-radius:8px; background:#fff; }
+    .report-section > summary { list-style:none; cursor:pointer; padding:16px 24px; font-size:18px; font-weight:600; color:var(--dark); border-bottom:3px solid transparent; display:flex; align-items:center; gap:12px; user-select:none; }
+    .report-section > summary:hover { background:var(--light-bg); }
+    .report-section > summary::before { content:'\25B6'; font-size:12px; color:var(--accent); transition:transform 0.2s; flex-shrink:0; }
+    .report-section[open] > summary { border-bottom-color:var(--accent); }
+    .report-section[open] > summary::before { transform:rotate(90deg); }
+    .report-section > summary::-webkit-details-marker { display:none; }
+    .report-section > .section-body { padding:24px; }
+    .toc-card { background:#fff; border:1px solid var(--border); border-radius:8px; padding:20px 24px; margin-bottom:24px; }
+    .toc-card h3 { font-size:15px; font-weight:600; margin-bottom:12px; color:var(--dark); }
+    .toc-list { list-style:none; padding:0; columns:2; column-gap:24px; }
+    .toc-list li { margin-bottom:6px; font-size:13px; break-inside:avoid; }
+    .toc-list a { color:var(--accent); text-decoration:none; }
+    .toc-list a:hover { text-decoration:underline; }
+    .approach-card { background:#fff; border:1px solid var(--border); border-radius:8px; padding:24px; margin-bottom:24px; }
+    .approach-card h3 { font-size:15px; font-weight:600; margin-bottom:12px; color:var(--dark); }
+    .approach-card ul { padding-left:20px; font-size:13px; }
+    .approach-card li { margin-bottom:6px; }
+    .input-badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; margin-right:6px; }
+    .input-active { background:rgba(26,135,84,0.12); color:var(--green); }
+    .input-inactive { background:rgba(0,0,0,0.06); color:var(--muted); }
+    /* Snowflake tree visualisation */
+    .sf-tree { list-style:none; padding-left:0; margin:0; }
+    .sf-tree .sf-tree { padding-left:24px; border-left:2px solid var(--border); margin-left:8px; }
+    .sf-node { padding:6px 0; position:relative; }
+    .sf-node::before { content:''; position:absolute; left:-24px; top:16px; width:20px; height:0; border-top:2px solid var(--border); }
+    .sf-tree > .sf-node:first-child::before { display:none; }
+    .sf-tree > .sf-tree > .sf-node::before { display:block; }
+    .sf-node-label { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:6px; font-size:12px; font-weight:600; border:1px solid var(--border); background:#fff; }
+    .sf-node-label.sf-root { background:var(--dark); color:#fff; border-color:var(--dark); font-size:13px; padding:6px 14px; }
+    .sf-node-label.sf-dq { border-color:var(--red); background:rgba(192,57,43,0.06); }
+    .sf-node-label.sf-dual { border-color:var(--amber); background:rgba(212,160,23,0.06); }
+    .sf-node-label.sf-import { border-color:var(--green); background:rgba(26,135,84,0.06); }
+    .sf-edge-info { font-size:10px; color:var(--muted); font-weight:400; margin-left:4px; }
+    .sf-edge-bidi { color:var(--red); font-weight:600; }
+    .sf-depth-bar { display:flex; align-items:center; gap:4px; margin-bottom:6px; }
+    .sf-depth-segment { height:22px; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:#fff; min-width:24px; }
+    .sf-depth-label { font-size:11px; color:var(--muted); min-width:54px; font-weight:600; }
+    .cascade-card { background:linear-gradient(135deg,rgba(192,57,43,0.06),rgba(212,160,23,0.03)); border:1px solid rgba(192,57,43,0.15); border-radius:8px; padding:16px 20px; margin:12px 0; }
+    .cascade-card h4 { font-size:13px; font-weight:700; color:var(--red); margin-bottom:8px; }
+    .cascade-card p { font-size:12px; margin-bottom:6px; }
+    .cascade-table td { font-size:12px; }
+    .sf-suggestion { background:linear-gradient(135deg,rgba(26,135,84,0.08),rgba(26,135,84,0.02)); border:1px solid rgba(26,135,84,0.2); border-radius:8px; padding:16px 20px; margin:12px 0; }
+    .sf-suggestion h4 { font-size:13px; font-weight:700; color:var(--green); margin-bottom:8px; }
+    .sf-suggestion ul { padding-left:18px; font-size:12px; }
+    .sf-suggestion li { margin-bottom:6px; }
+    @media (max-width:768px) { .metric-grid,.quadrant-grid { grid-template-columns:1fr; } .container { padding:16px 20px 40px; } .sf-tree .sf-tree { padding-left:16px; } }
+    @media print { body { background:#fff; font-size:12px; } .card { box-shadow:none; break-inside:avoid; } .report-section { break-inside:avoid; } .report-section[open] > summary { break-after:avoid; } .tooltip-wrap::after { display:none; } .report-section > summary::before { content:''; } }
+</style>
+</head>
+<body>
+  <div class="report-header">
+    <h1>Performance Diagnosis: ADE - Trade</h1>
+    <div class="metadata">
+      <span>13 Apr 2026</span>
+      <span>PBI Performance Diagnosis Agent</span>
+      <span>Mode: Hybrid</span>
+    </div>
+  </div>
+  <div class="container">
+    
+    <div class="approach-card">
+      <h3>Analysis Approach</h3>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">
+        This report was produced by the <strong>PBI Performance Diagnosis Agent</strong> using an automated
+        2-source analysis pipeline. The agent examines the full stack &mdash; from Databricks
+        infrastructure through dbt data pipelines to the Power BI semantic model and report layer &mdash;
+        to identify performance bottlenecks and produce evidence-backed recommendations.
+      </p>
+      <h4 style="font-size:13px;margin-bottom:8px">Data Sources &amp; Tools</h4>
+      <ul><li><span class="input-badge input-inactive">Skipped</span> <strong>Semantic Model (Tabular Editor JSON)</strong></li>
+<li><span class="input-badge input-inactive">Skipped</span> <strong>DAX Measures Analysis</strong></li>
+<li><span class="input-badge input-inactive">Skipped</span> <strong>Best Practice Analyser (BPA)</strong></li>
+<li><span class="input-badge input-inactive">Skipped</span> <strong>dbt Source Code (Serve + Curated)</strong></li>
+<li><span class="input-badge input-inactive">Skipped</span> <strong>dbt Best Practices</strong></li>
+<li><span class="input-badge input-inactive">Skipped</span> <strong>Databricks Metadata &amp; Volumetry</strong></li>
+<li><span class="input-badge input-inactive">Skipped</span> <strong>Databricks Query History</strong></li>
+<li><span class="input-badge input-inactive">Skipped</span> <strong>Capacity Settings Simulation</strong> &mdash; Requires query history export (JSON/CSV) with per-query memory and row-set metrics; system.query.history does not expose memory consumption per statement</li>
+<li><span class="input-badge input-inactive">Skipped</span> <strong>Workload &amp; Infrastructure Analysis</strong> &mdash; Requires Fabric Admin API data (capacity CU consumption, surge protection config, workspace-to-capacity mapping) which cannot be queried programmatically; needs manual export from the Fabric Admin Portal</li>
+<li><span class="input-badge input-inactive">Skipped</span> <strong>Column Memory Estimation</strong> &mdash; Requires Databricks volumetry at column level (per-column cardinality and byte width); DESCRIBE DETAIL only provides table-level stats, not column-level storage estimates</li>
+<li><span class="input-badge input-active">Active</span> <strong>PBIX Visual Layer Analysis</strong> &mdash; 67 visual rule findings</li>
+<li><span class="input-badge input-active">Active</span> <strong>Synthesis &amp; Cross-Reference</strong> &mdash; Root cause analysis, implementation roadmap</li>
+</ul>
+    </div>
+    <div class="toc-card">
+      <h3>Table of Contents</h3>
+      <ol class="toc-list"><li><a href="#sec-1">1. Executive Summary</a></li>
+<li><a href="#sec-2">2. Report Visual Analysis PBI Report</a></li>
+<li><a href="#sec-3">3. Action-Priority Matrix</a></li>
+<li><a href="#sec-4">4. Detailed Recommendations</a></li>
+</ol>
+    </div>
+    
+    <details id="sec-1" class="report-section"><summary>1. Executive Summary</summary><div class="section-body">
+    
+    <div class="metric-grid" style="grid-template-columns:repeat(3,1fr); max-width:900px; margin-left:auto; margin-right:auto">
+      <div class="metric-card green">
+        <div class="value">0</div>
+        <div class="label">Total Tables</div>
+        <div class="sub">0 DirectQuery, 0 Dual</div>
+      </div>
+      <div class="metric-card">
+        <div class="value">0</div>
+        <div class="label">Total Measures</div>
+        <div class="sub">0 critical, 0 high</div>
+      </div>
+      <div class="metric-card green">
+        <div class="value">0</div>
+        <div class="label">BPA Findings</div>
+        <div class="sub">0 high, 0 medium</div>
+      </div>
+    </div>
+    <div class='card'><p>The ADE - Trade semantic model (45 tables, 801 measures, 31 relationships) drives 1.24 million daily queries against Databricks, with 5.1% exceeding 10 seconds and 0.8% exceeding 30 seconds. The main fact table (fact_product_option_trade_daily_snapshot_v1, ~116.5 GB, DirectQuery) is a hub with degree 21 and generates the bulk of query load at 42,764 queries/day. The slowest queries read up to 6 billion rows (19.6 GB) to return fewer than 5,000 rows — a scan amplification ratio exceeding 1,000,000:1. Real PBI-generated SQL confirms all 91 columns are selected from the fact table even when visuals need only 1-2 aggregated values. 49 critical-complexity DAX measures generate 14+ SQL subqueries each via nested CALCULATE and FILTER(ALL) patterns. 77 measures use FILTER(ALL) which forces full table scans. The #1 recommendation is to create a narrow serve view with only the ~23 columns referenced by PBI, combined with refactoring the top FILTER(ALL) measures to use KEEPFILTERS or explicit column filters.</p></div>
+    
+    <div class="card">
+      <h3>Key Findings &amp; Recommended Actions (14 total — 2 critical, 3 high)</h3>
+      
+          <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)">
+            <div style="min-width:36px;text-align:center">
+              <span style="font-weight:700;font-size:15px;color:var(--dark)">F1</span><br>
+              <span class="badge badge-high">critical</span>
+            </div>
+            <div style="flex:1">
+              <div style="font-weight:600;font-size:13px;margin-bottom:4px">Column Over-Selection on Fact Table (91 cols vs ~23 needed)</div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Create a narrow serve view serve_fact_trade_daily_narrow_v1 in dbt containing only the ~23 columns actually referenced by PBI measures: dim_date_sk, dim_product_option_sk, dim_pricing_store_sk, dim...</div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <span class="badge badge-high">dbt Models</span> <span class="badge badge-medium">Semantic Model</span>
+                <span style='font-size:11px;color:var(--green);font-weight:600'>60-75% reduction in read_bytes per query. Query time reduction from avg 2.5s to ~0.8-1.2s.</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)">
+            <div style="min-width:36px;text-align:center">
+              <span style="font-weight:700;font-size:15px;color:var(--dark)">F2</span><br>
+              <span class="badge badge-high">critical</span>
+            </div>
+            <div style="flex:1">
+              <div style="font-weight:600;font-size:13px;margin-bottom:4px">FILTER(ALL) Anti-Pattern in 77 Measures Forcing Full Table Scans</div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Refactor the top 20 FILTER(ALL) measures to use KEEPFILTERS or explicit column-level filters. For WTD/MTD/HTD/YTD measures, replace FILTER(ALL(Date), Date[financial_year_week_id] = ...) with CALCUL...</div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <span class="badge badge-medium">Semantic Model</span>
+                <span style='font-size:11px;color:var(--green);font-weight:600'>50-80% reduction in rows scanned for affected measures. P95 query time reduction from 10.2s to ~3-5s.</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)">
+            <div style="min-width:36px;text-align:center">
+              <span style="font-weight:700;font-size:15px;color:var(--dark)">F3</span><br>
+              <span class="badge badge-high">high</span>
+            </div>
+            <div style="flex:1">
+              <div style="font-weight:600;font-size:13px;margin-bottom:4px">Date Filter via JOIN Instead of Direct WHERE on Fact Table</div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Option A: Add a calculated column to the fact table with the actual calendar_date (or a calendar_date filter column) and create a direct relationship, enabling PBI to filter directly on the fact. O...</div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <span class="badge badge-medium">Semantic Model</span> <span class="badge badge-high">dbt Models</span>
+                <span style='font-size:11px;color:var(--green);font-weight:600'>90%+ row reduction on date-filtered queries. Queries that read 4.4B rows should drop to ~10-50M rows.</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)">
+            <div style="min-width:36px;text-align:center">
+              <span style="font-weight:700;font-size:15px;color:var(--dark)">F4</span><br>
+              <span class="badge badge-high">high</span>
+            </div>
+            <div style="flex:1">
+              <div style="font-weight:600;font-size:13px;margin-bottom:4px">3 Bidirectional Cross-Filter Relationships on DirectQuery Tables</div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:4px">For each bidirectional relationship, evaluate whether bidirectional filtering is needed: (1) Option ↔ Option Ranking — if only used for ranking display, switch to single-direction and use CROSSFILT...</div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <span class="badge badge-medium">Semantic Model</span>
+                <span style='font-size:11px;color:var(--green);font-weight:600'>10-20% reduction in SQL subquery count for queries touching these relationships.</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)">
+            <div style="min-width:36px;text-align:center">
+              <span style="font-weight:700;font-size:15px;color:var(--dark)">F5</span><br>
+              <span class="badge badge-high">high</span>
+            </div>
+            <div style="flex:1">
+              <div style="font-weight:600;font-size:13px;margin-bottom:4px">49 Critical-Complexity DAX Measures Generating 14+ SQL Subqueries</div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Consolidate time intelligence into shared base measures. Create a single WTD base measure using CALCULATE with KEEPFILTERS, then reference it from all WTD variants (Retail Sales Value WTD, Retail R...</div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <span class="badge badge-medium">Semantic Model</span>
+                <span style='font-size:11px;color:var(--green);font-weight:600'>60-70% reduction in SQL subquery count for time intelligence measures.</span>
+              </div>
+            </div>
+          </div>
+      <p style='font-size:12px;color:var(--muted);margin-top:12px;text-align:center'>See section Detailed Recommendations for full implementation guides.</p>
+    </div>
+    
+    
+    <div class="card">
+      <h3>Databricks PBI Query Load
+        <span style="font-weight:400;font-size:12px;color:var(--muted);margin-left:12px">last 29d</span></h3>
+      <div class="metric-grid">
+        <div class="metric-card red">
+          <div class="value">1.4M</div>
+          <div class="label">Total PBI Queries</div>
+          <div class="sub">from spn-ade-pbi</div>
+        </div>
+        <div class="metric-card">
+          <div class="value">185.7K</div>
+          <div class="label">Report Sessions</div>
+          <div class="sub">~7.7 queries/session</div>
+        </div>
+        <div class="metric-card amber">
+          <div class="value">73.9K <span style="font-size:14px;font-weight:400">(5.1%)</span></div>
+          <div class="label">Slow &gt;10s</div>
+          <div class="sub">10.8K &gt;30s (0.8%)</div>
+        </div>
+        <div class="metric-card red">
+          <div class="value">1233.5 TB</div>
+          <div class="label">Data Read</div>
+          <div class="sub">P95: 10.2s, max: 706s</div>
+        </div>
+        <div class="metric-card">
+          <div class="value">2.6s</div>
+          <div class="label">Avg Query Duration</div>
+          <div class="sub">P50: 0.9s</div>
+        </div>
+        <div class="metric-card green">
+          <div class="value">52.7%</div>
+          <div class="label">Cache Hit Rate</div>
+          <div class="sub">queries served from cache</div>
+        </div>
+      </div>
+    </div>
+    </div></details>
+<details id="sec-2" class="report-section"><summary>2. Report Visual Analysis <span class="badge badge-info">PBI Report</span></summary><div class="section-body">
+        
+        <div class="metric-grid">
+          <div class="metric-card"><div class="value">23</div><div class="label">Pages Analysed</div></div>
+          <div class="metric-card"><div class="value">441</div><div class="label">Total Visuals</div></div>
+          <div class="metric-card red"><div class="value">0</div><div class="label">High</div></div>
+          <div class="metric-card amber"><div class="value">44</div><div class="label">Medium</div></div>
+        </div>
+        <div class="card">
+          <table>
+            <thead><tr><th>Severity</th><th>Rule</th><th>Report / Page</th><th>Recommendation</th></tr></thead>
+            <tbody><tr>
+                      <td><span class="badge badge-medium">medium</span></td>
+                      <td><strong>V03</strong>: Excessive report-level filters</td>
+                      <td>Ranking View of Trade / (report-level)</td>
+                      <td style="font-size:12px">Consolidate report-level filters. Move page-specific filters to page level</td>
+                    </tr><tr>
+                      <td><span class="badge badge-medium">medium</span></td>
+                      <td><strong>V01</strong>: Too many visuals per page</td>
+                      <td>Sales / Overview</td>
+                      <td style="font-size:12px">Split into sub-pages or use bookmarks to show/hide groups of visuals</td>
+                    </tr><tr>
+                      <td><span class="badge badge-medium">medium</span></td>
+                      <td><strong>V01</strong>: Too many visuals per page</td>
+                      <td>Sales / Overview Date</td>
+                      <td style="font-size:12px">Split into sub-pages or use bookmarks to show/hide groups of visuals</td>
+                    </tr><tr>
+                      <td><span class="badge badge-medium">medium</span></td>
+                      <td><strong>V01</strong>: Too many visuals per page</td>
+                      <td>Sales / In Day View</td>
+                      <td style="font-size:12px">Split into sub-pages or use bookmarks to show/hide groups of visuals</td>
+                    </tr><tr>
+                      <td><span class="badge badge-medium">medium</span></td>
+                      <td><strong>V02</strong>: No date slicer on data-heavy pages</td>
+                      <td>Sales / In Day View</td>
+                      <td style="font-size:12px">Add a date slicer or relative date filter to enable partition pruning on DirectQuery tables</td>
+                    </tr><tr>
+                      <td><span class="badge badge-medium">medium</span></td>
+                      <td><strong>V02</strong>: No date slicer on data-heavy pages</td>
+                      <td>Sales / Definitions</td>
+                      <td style="font-size:12px">Add a date slicer or relative date filter to enable partition pruning on DirectQuery tables</td>
+                    </tr><tr>
+                      <td><span class="badge badge-medium">medium</span></td>
+                      <td><strong>V03</strong>: Excessive report-level filters</td>
+                      <td>Sales / (report-level)</td>
+                      <td style="font-size:12px">Consolidate report-level filters. Move page-specific filters to page level</td>
+                    </tr><tr>
+                      <td><span class="badge badge-medium">medium</span></td>
+                      <td><strong>V05</strong>: Auto-refresh or query reduction settings</td>
+                      <td>Sales / (report-level)</td>
+                      <td style="font-size:12px">In PBI Desktop → File → Options → Report settings → Query reduction: consider disabling cross-highlighting and enabling &#x27;Apply&#x27; buttons on slicers and filters to reduce DirectQuery query volume during user interaction.</td>
+                    </tr><tr>
+                      <td><span class="badge badge-medium">medium</span></td>
+                      <td><strong>V06</strong>: Wide tables/matrices</td>
+                      <td>Sales / Metric Profiler</td>
+                      <td style="font-size:12px">Reduce column count to essential fields. Use drillthrough pages for detail views</td>
+                    </tr><tr>
+                      <td><span class="badge badge-medium">medium</span></td>
+                      <td><strong>V01</strong>: Too many visuals per page</td>
+                      <td>Trade / Topline Performance</td>
+                      <td style="font-size:12px">Split into sub-pages or use bookmarks to show/hide groups of visuals</td>
+                    </tr><tr>
+                      <td><span class="badge badge-medium">medium</span></td>
+                      <td><strong>V01</strong>: Too many visuals per page</td>
+                      <td>Trade / Topline Performance Date</td>
+                      <td style="font-size:12px">Split into sub-pages or use bookmarks to show/hide groups of visuals</td>
+                    </tr><tr>
+                      <td><span class="badge badge-medium">medium</span></td>
+                      <td><strong>V01</strong>: Too many visuals per page</td>
+                      <td>Trade / Weekly Trade Overview</td>
+                      <td style="font-size:12px">Split into sub-pages or use bookmarks to show/hide groups of visuals</td>
+                    </tr><tr>
+                      <td><span class="badge badge-medium">medium</span></td>
+                      <td><strong>V03</strong>: Excessive report-level filters</td>
+                      <td>Trade / (report-level)</td>
+                      <td style="font-size:12px">Consolidate report-level filters. Move page-specific filters to page level</td>
+                    </tr><tr>
+                      <td><span class="badge badge-medium">medium</span></td>
+                      <td><strong>V05</strong>: Auto-refresh or query reduction settings</td>
+                      <td>Trade / (report-level)</td>
+                      <td style="font-size:12px">In PBI Desktop → File → Options → Report settings → Query reduction: consider disabling cross-highlighting and enabling &#x27;Apply&#x27; buttons on slicers and filters to reduce DirectQuery query volume during user interaction.</td>
+                    </tr><tr>
+                      <td><span class="badge badge-medium">medium</span></td>
+                      <td><strong>V06</strong>: Wide tables/matrices</td>
+                      <td>Trade / Topline Performance</td>
+                      <td style="font-size:12px">Reduce column count to essential fields. Use drillthrough pages for detail views</td>
+                    </tr><tr>
+                      <td><span class="badge badge-medium">medium</span></td>
+                      <td><strong>V06</strong>: Wide tables/matrices</td>
+                      <td>Trade / Topline Performance</td>
+                      <td style="font-size:12px">Reduce column count to essential fields. Use drillthrough pages for detail views</td>
+                    </tr><tr>
+                      <td><span class="badge badge-medium">medium</span></td>
+                      <td><strong>V06</strong>: Wide tables/matrices</td>
+                      <td>Trade / Topline Performance Date</td>
+                      <td style="font-size:12px">Reduce column count to essential fields. Use drillthrough pages for detail views</td>
+                    </tr><tr>
+                      <td><span class="badge badge-low">low</span></td>
+                      <td><strong>V08</strong>: Large embedded images</td>
+                      <td>Ranking View of Trade / Ranking View</td>
+                      <td style="font-size:12px">Use URL-referenced images hosted on a CDN instead of embedded images. Compress backgrounds to &lt;200 KB</td>
+                    </tr><tr>
+                      <td><span class="badge badge-low">low</span></td>
+                      <td><strong>V08</strong>: Large embedded images</td>
+                      <td>Sales / Overview</td>
+                      <td style="font-size:12px">Use URL-referenced images hosted on a CDN instead of embedded images. Compress backgrounds to &lt;200 KB</td>
+                    </tr><tr>
+                      <td><span class="badge badge-low">low</span></td>
+                      <td><strong>V08</strong>: Large embedded images</td>
+                      <td>Sales / Overview Date</td>
+                      <td style="font-size:12px">Use URL-referenced images hosted on a CDN instead of embedded images. Compress backgrounds to &lt;200 KB</td>
+                    </tr><tr>
+                      <td><span class="badge badge-low">low</span></td>
+                      <td><strong>V08</strong>: Large embedded images</td>
+                      <td>Sales / Trends View</td>
+                      <td style="font-size:12px">Use URL-referenced images hosted on a CDN instead of embedded images. Compress backgrounds to &lt;200 KB</td>
+                    </tr><tr>
+                      <td><span class="badge badge-low">low</span></td>
+                      <td><strong>V08</strong>: Large embedded images</td>
+                      <td>Trade / Topline Performance</td>
+                      <td style="font-size:12px">Use URL-referenced images hosted on a CDN instead of embedded images. Compress backgrounds to &lt;200 KB</td>
+                    </tr><tr>
+                      <td><span class="badge badge-low">low</span></td>
+                      <td><strong>V08</strong>: Large embedded images</td>
+                      <td>Trade / Topline Performance Date</td>
+                      <td style="font-size:12px">Use URL-referenced images hosted on a CDN instead of embedded images. Compress backgrounds to &lt;200 KB</td>
+                    </tr><tr>
+                      <td><span class="badge badge-low">low</span></td>
+                      <td><strong>V08</strong>: Large embedded images</td>
+                      <td>Trade / Weekly Trade Overview</td>
+                      <td style="font-size:12px">Use URL-referenced images hosted on a CDN instead of embedded images. Compress backgrounds to &lt;200 KB</td>
+                    </tr></tbody>
+          </table>
+        </div>
+        </div></details>
+<details id="sec-3" class="report-section"><summary>3. Action-Priority Matrix</summary><div class="section-body">
+    
+    <p style="font-size:13px;color:var(--muted);margin-bottom:8px">
+      All findings and implementation actions plotted by <strong>effort</strong> vs <strong>impact</strong>
+      to maximise productivity. Expand each quadrant to see findings and their mapped actions.
+    </p>
+    <div class="note-box" style="margin-bottom:16px">
+      <strong>Category:</strong>
+      <span class="badge badge-info">PBI Report</span> = Report layout / pages / slicers / filters
+      &nbsp;&middot;&nbsp;
+      <span class="badge" style="background:rgba(108,117,125,0.12);color:#6c757d">PBI Visual</span> = Visual configs / cards / matrices
+      &nbsp;&middot;&nbsp;
+      <span class="badge badge-medium">Semantic Model</span> = DAX measures / relationships / table config
+      &nbsp;&middot;&nbsp;
+      <span class="badge badge-high">dbt Models</span> = dbt SQL / materialisation / clustering / serve views
+    </div>
+    <div class="matrix-wrapper">
+      <div class="matrix-y-label">&larr; Low Impact &nbsp;&nbsp;&nbsp; High Impact &rarr;</div>
+      <div class="matrix-grid">
+        <div class="matrix-box" style="background:rgba(26,135,84,0.06);border:1px solid rgba(26,135,84,0.25)">
+        <h3 style="color:var(--green)">&#9889; Quick Wins</h3>
+        <div class="matrix-subtitle">High Impact, Low Effort &mdash; top priority</div>
+        <span class="matrix-count" style="color:var(--green)">5 findings &middot; 6 actions</span>
+        <details>
+          <summary style="color:var(--green)">View findings &amp; actions</summary>
+          <div style="margin-top:8px">
+            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:6px">Findings</div>
+            <ul><li><strong>F1</strong>: Column Over-Selection on Fact Table (91 cols vs ~23 needed) <span class="badge badge-high">dbt Models</span> <span class="badge badge-medium">Semantic Model</span></li><li><strong>F3</strong>: Date Filter via JOIN Instead of Direct WHERE on Fact Table <span class="badge badge-medium">Semantic Model</span> <span class="badge badge-high">dbt Models</span></li><li><strong>F4</strong>: 3 Bidirectional Cross-Filter Relationships on DirectQuery Tables <span class="badge badge-medium">Semantic Model</span></li><li><strong>F8</strong>: Query Reduction Settings Not Optimised on Trade Report <span class="badge badge-info">PBI Report</span></li><li><strong>F10</strong>: 8 Dual Mode Tables That Could Be Import <span class="badge badge-medium">Semantic Model</span></li></ul>
+            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin:12px 0 6px">Implementation Actions</div>
+            <table class="matrix-actions-table" style="width:100%;border-collapse:collapse">
+              <thead><tr><th style="text-align:left;font-size:11px;padding:4px 10px">Action</th><th style="text-align:left;font-size:11px;padding:4px 10px">Category / Location</th></tr></thead>
+              <tbody><tr><td>[F8] <strong>Optimise query reduction settings: disable cross-highlighting, enable slicer/filter Apply buttons</strong></td><td><span class="badge badge-info">PBI Report</span> <span style="font-size:11px;color:var(--muted)">Trade report — Query reduction settings</span></td></tr>
+<tr><td>[F1] <strong>Create narrow serve view serve_fact_trade_daily_narrow_v1 with only ~23 PBI-referenced columns</strong></td><td><span class="badge badge-high">dbt Models</span> <span class="badge badge-medium">Semantic Model</span> <span style="font-size:11px;color:var(--muted)">serve_fact_product_option_trade_daily_snapshot_v1</span></td></tr>
+<tr><td>[F10] <strong>Switch 8 financial transform tables to Import mode with daily scheduled refresh</strong></td><td><span class="badge badge-medium">Semantic Model</span> <span style="font-size:11px;color:var(--muted)">Daily Financial Transform, Daily Financial Half to Date, Daily Financial Month to Date, Daily Financial Year to Date, Weekly Financial Transform, Weekly Financial Half to Date, Weekly Financial Month to Date, Weekly Financial Year to Date</span></td></tr>
+<tr><td>[F4] <strong>Remove bidirectional filtering on Option ↔ Product Option In Pricing Store and Option ↔ Product Option In Store</strong></td><td><span class="badge badge-medium">Semantic Model</span> <span style="font-size:11px;color:var(--muted)">Relationships involving Option table</span></td></tr>
+<tr><td>[F3] <strong>Evaluate aggregation table for common date-range queries (current week, current month)</strong></td><td><span class="badge badge-medium">Semantic Model</span> <span style="font-size:11px;color:var(--muted)">Daily Trade table</span></td></tr>
+<tr><td>[F3] <strong>Investigate direct date filtering mechanism to enable cluster pruning on fact table</strong></td><td><span class="badge badge-medium">Semantic Model</span> <span style="font-size:11px;color:var(--muted)">Daily Trade → Date relationship</span></td></tr>
+</tbody></table>
+          </div>
+        </details>
+      </div>
+        <div class="matrix-box" style="background:rgba(7,112,207,0.06);border:1px solid rgba(7,112,207,0.25)">
+        <h3 style="color:var(--accent)">&#128640; Major Projects</h3>
+        <div class="matrix-subtitle">High Impact, High Effort &mdash; plan carefully</div>
+        <span class="matrix-count" style="color:var(--accent)">3 findings &middot; 3 actions</span>
+        <details>
+          <summary style="color:var(--accent)">View findings &amp; actions</summary>
+          <div style="margin-top:8px">
+            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:6px">Findings</div>
+            <ul><li><strong>F2</strong>: FILTER(ALL) Anti-Pattern in 77 Measures Forcing Full Table Scans <span class="badge badge-medium">Semantic Model</span></li><li><strong>F5</strong>: 49 Critical-Complexity DAX Measures Generating 14+ SQL Subqueries <span class="badge badge-medium">Semantic Model</span></li><li><strong>F13</strong>: 54 Nested CALCULATE Patterns in DAX Measures <span class="badge badge-medium">Semantic Model</span></li></ul>
+            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin:12px 0 6px">Implementation Actions</div>
+            <table class="matrix-actions-table" style="width:100%;border-collapse:collapse">
+              <thead><tr><th style="text-align:left;font-size:11px;padding:4px 10px">Action</th><th style="text-align:left;font-size:11px;padding:4px 10px">Category / Location</th></tr></thead>
+              <tbody><tr><td>[F2] <strong>Refactor top 20 FILTER(ALL) measures to use KEEPFILTERS pattern</strong></td><td><span class="badge badge-medium">Semantic Model</span> <span style="font-size:11px;color:var(--muted)">@Measures (77 FILTER(ALL) measures, prioritise 49 critical)</span></td></tr>
+<tr><td>[F5] <strong>Consolidate WTD/MTD/HTD/YTD measures into shared base measure pattern</strong></td><td><span class="badge badge-medium">Semantic Model</span> <span style="font-size:11px;color:var(--muted)">@Measures (WTD: Retail Sales Value WTD, Retail Return Value WTD, etc.)</span></td></tr>
+<tr><td>[F13] <strong>Flatten 54 nested CALCULATE measures using VAR/RETURN</strong></td><td><span class="badge badge-medium">Semantic Model</span> <span style="font-size:11px;color:var(--muted)">@Measures</span></td></tr>
+</tbody></table>
+          </div>
+        </details>
+      </div>
+        <div class="matrix-box" style="background:rgba(108,117,125,0.06);border:1px solid rgba(108,117,125,0.2)">
+        <h3 style="color:#6c757d">&#128221; Fill-ins</h3>
+        <div class="matrix-subtitle">Low Impact, Low Effort &mdash; if time permits</div>
+        <span class="matrix-count" style="color:#6c757d">6 findings &middot; 6 actions</span>
+        <details>
+          <summary style="color:#6c757d">View findings &amp; actions</summary>
+          <div style="margin-top:8px">
+            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:6px">Findings</div>
+            <ul><li><strong>F6</strong>: 12 Report Pages Exceed 15 Visuals (up to 28 per page) <span class="badge badge-info">PBI Report</span> <span class="badge" style="background:rgba(108,117,125,0.12);color:#6c757d">PBI Visual</span></li><li><strong>F7</strong>: All Pages Use Time Period Slicer but No Direct Date Range Slicer <span class="badge badge-info">PBI Report</span></li><li><strong>F9</strong>: 19 Wide Tables/Matrices in Trade Report <span class="badge" style="background:rgba(108,117,125,0.12);color:#6c757d">PBI Visual</span></li><li><strong>F11</strong>: Cross-Catalog JOINs Across 5+ Databricks Catalogs <span class="badge badge-medium">Semantic Model</span></li><li><strong>F12</strong>: 6 Engineering BPA Findings: Functions on Filter Columns (E05) <span class="badge badge-high">dbt Models</span> <span class="badge badge-medium">Semantic Model</span></li><li><strong>F14</strong>: 650 Unused Column Candidates Across Model <span class="badge badge-medium">Semantic Model</span></li></ul>
+            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin:12px 0 6px">Implementation Actions</div>
+            <table class="matrix-actions-table" style="width:100%;border-collapse:collapse">
+              <thead><tr><th style="text-align:left;font-size:11px;padding:4px 10px">Action</th><th style="text-align:left;font-size:11px;padding:4px 10px">Category / Location</th></tr></thead>
+              <tbody><tr><td>[F7] <strong>Set default Time Period slicer selection to &#x27;This Week&#x27; on Topline Performance, Weekly Trade Overview, and Seasonality Overview pages</strong></td><td><span class="badge badge-info">PBI Report</span> <span style="font-size:11px;color:var(--muted)">Trade / Topline Performance, Weekly Trade Overview, Seasonality Overview</span></td></tr>
+<tr><td>[F6] <strong>Split Topline Performance page (28 visuals) into summary + detail drill-through</strong></td><td><span class="badge badge-info">PBI Report</span> <span style="font-size:11px;color:var(--muted)">Trade / Topline Performance</span></td></tr>
+<tr><td>[F6] <strong>Reduce visual count on Weekly Trade Overview and Seasonality Overview (26 each)</strong></td><td><span class="badge badge-info">PBI Report</span> <span style="font-size:11px;color:var(--muted)">Trade / Weekly Trade Overview, Seasonality Overview</span></td></tr>
+<tr><td>[F9] <strong>Review and optimise 19 wide matrix visuals — add Top N filters and reduce columns</strong></td><td><span class="badge" style="background:rgba(108,117,125,0.12);color:#6c757d">PBI Visual</span> <span style="font-size:11px;color:var(--muted)">Trade report (multiple pages)</span></td></tr>
+<tr><td>[F14] <strong>Hide 650 unused columns in semantic model, prioritising DirectQuery tables</strong></td><td><span class="badge badge-medium">Semantic Model</span> <span style="font-size:11px;color:var(--muted)">Daily Trade, Option, and dimension tables</span></td></tr>
+<tr><td>[F12] <strong>Review functions on filter columns in 6 dbt models (E05 findings)</strong></td><td><span class="badge badge-high">dbt Models</span> <span class="badge badge-medium">Semantic Model</span> <span style="font-size:11px;color:var(--muted)">6 flagged dbt models</span></td></tr>
+</tbody></table>
+          </div>
+        </details>
+      </div>
+        <div class="matrix-box" style="background:rgba(192,57,43,0.06);border:1px solid rgba(192,57,43,0.2)">
+        <h3 style="color:var(--red)">&#9888; Thankless Tasks</h3>
+        <div class="matrix-subtitle">Low Impact, High Effort &mdash; avoid or re-evaluate</div>
+        <span class="matrix-count" style="color:var(--red)">0 findings &middot; 0 actions</span>
+        <details>
+          <summary style="color:var(--red)">View findings &amp; actions</summary>
+          <div style="margin-top:8px">
+            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:6px">Findings</div>
+            <ul><li style="color:var(--muted)">No findings in this quadrant</li></ul>
+            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin:12px 0 6px">Implementation Actions</div>
+            <p style="font-size:12px;color:var(--muted);margin-top:8px">No actions mapped to this quadrant.</p>
+          </div>
+        </details>
+      </div>
+      </div>
+      <div class="matrix-x-label">&larr; Low Effort &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; High Effort &rarr;</div>
+    </div>
+    </div></details>
+<details id="sec-4" class="report-section"><summary>4. Detailed Recommendations</summary><div class="section-body">
+    
+    <p style="font-size:13px;color:var(--muted);margin-bottom:20px">
+      Implementation details, trade-offs, and alternative options for each finding.
+    </p>
+    
+    <div class="card" style="border-left:4px solid var(--red)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="margin:0">F1: Column Over-Selection on Fact Table (91 cols vs ~23 needed)</h3>
+        <div><span class="badge badge-high">critical</span> <span class="badge badge-info">Model-wide</span> <span class="badge badge-high">dbt Models</span> <span class="badge badge-medium">Semantic Model</span></div>
+      </div>
+      <p style="font-size:13px;margin-bottom:12px"><strong>Problem:</strong> PBI DirectQuery selects all 91 columns from sales.serve.fact_product_option_trade_daily_snapshot_v1 even when a visual only needs 1-2 aggregated values (e.g. stock_quantity). The serve view is a direct SELECT * from the curated table with no column reduction. This generates 42,764 queries/day reading an average of 2.5s each, with P95 at 10s. The slowest queries read 19.6 GB per execution.</p>
+      <div style="margin-top:12px;padding:12px;background:var(--light-bg);border-radius:6px;font-size:13px">
+                      <strong>Affected Objects:</strong>
+                      <div style="margin-top:6px"><strong>Tables:</strong> <code>fact_product_option_trade_daily_snapshot_v1</code><br><strong>dbt Models:</strong> <code>serve_fact_product_option_trade_daily_snapshot_v1</code></div>
+                    </div>
+      <div class="recommendation-box" style="margin:0">
+        <h4>How to Fix</h4>
+        <p>Create a narrow serve view serve_fact_trade_daily_narrow_v1 in dbt containing only the ~23 columns actually referenced by PBI measures: dim_date_sk, dim_product_option_sk, dim_pricing_store_sk, dim_web_store_sk, dim_shop_sk, dim_warehouse_sk, dim_country_sk, dim_territory_sk, dim_selling_channel_sk, dim_seller_sk, dim_price_status_sk, dim_price_status_group_sk, dim_inventory_status_sk, dim_product_lifecycle_status_sk, dim_lifecycle_price_status_sk, dim_stock_age_band_sk, financial_year_week_id, plus the measure columns (retail_sale_quantity, retail_sale_value, stock_quantity, etc.). Then update the PBI partition expression to point to the new view.</p>
+        <p style='margin-top:8px'><strong>Estimated improvement:</strong> 60-75% reduction in read_bytes per query. Query time reduction from avg 2.5s to ~0.8-1.2s.</p>
+      </div>
+      <div style="display:flex;gap:24px;margin-top:12px;font-size:13px">
+        <span><strong>Impact:</strong> high</span>
+        <span><strong>Effort:</strong> low</span>
+      </div>
+      
+      
+      
+      
+      
+      
+      <div style="margin-top:12px"><strong>Trade-offs:</strong><ul style="padding-left:18px;margin-top:4px"><li>Requires dbt deploy cycle to create new view</li><li>PBI partition expression update needed</li><li>Must ensure all DAX measure references are included in narrow view</li></ul></div>
+      <div style="margin-top:12px"><strong>Options:</strong>
+                  <table style="margin-top:8px"><thead><tr><th>Option</th><th>Description</th><th>Pros</th><th>Cons</th></tr></thead>
+                    <tbody><tr><td><strong>Option A: Narrow serve view</strong></td>
+                      <td>Create serve_fact_trade_daily_narrow_v1 with only PBI-referenced columns</td><td style="color:var(--green)">Low effort, no PBI logic changes, largest single improvement</td>
+                      <td style="color:var(--red)">Requires dbt deploy + PBI source update</td></tr><tr><td><strong>Option B: Column projection in M query</strong></td>
+                      <td>Add Table.SelectColumns in _fn_GetDataFromDBX M expression</td><td style="color:var(--green)">No dbt changes needed</td>
+                      <td style="color:var(--red)">Harder to maintain, still reads full view server-side</td></tr></tbody></table></div>
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--red)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="margin:0">F2: FILTER(ALL) Anti-Pattern in 77 Measures Forcing Full Table Scans</h3>
+        <div><span class="badge badge-high">critical</span> <span class="badge badge-info">Model-wide</span> <span class="badge badge-medium">Semantic Model</span></div>
+      </div>
+      <p style="font-size:13px;margin-bottom:12px"><strong>Problem:</strong> 77 DAX measures use FILTER(ALL(...)) which overrides all filters and forces DirectQuery to scan the entire fact table on every evaluation. Combined with context transitions (avg 7-8 per critical measure), the top 49 critical-complexity measures generate an estimated 14 SQL subqueries each. This is the primary driver of the 5-6 billion rows read in the slowest queries.</p>
+      <div style="margin-top:12px;padding:12px;background:var(--light-bg);border-radius:6px;font-size:13px">
+                      <strong>Affected Objects:</strong>
+                      <div style="margin-top:6px"><strong>Measures:</strong> <code>Retail Sales Units Coversion % LY</code>, <code>Retail Sales Value OB LM</code>, <code>Retail Sales Value T&amp;R LM</code>, <code>Intake Units WTD</code>, <code>Retail Physical Return Quantity WTD</code>, <code>Retail Physical Return Value WTD</code>, <code>Retail Return Value WTD</code>, <code>Retail Sales Quantity WTD</code>, <code>Retail Sales Value LY WTD</code>, <code>Retail Sales Value WTD</code> (+2 more)</div>
+                    </div>
+      <div class="recommendation-box" style="margin:0">
+        <h4>How to Fix</h4>
+        <p>Refactor the top 20 FILTER(ALL) measures to use KEEPFILTERS or explicit column-level filters. For WTD/MTD/HTD/YTD measures, replace FILTER(ALL(Date), Date[financial_year_week_id] = ...) with CALCULATE([Base Measure], KEEPFILTERS(Date[financial_year_week_id] = ...)). For ratio measures like &#x27;Retail Sales Units Conversion % LY&#x27;, use DIVIDE with a pre-computed denominator variable. Prioritise the 49 critical-complexity measures first.</p>
+        <p style='margin-top:8px'><strong>Estimated improvement:</strong> 50-80% reduction in rows scanned for affected measures. P95 query time reduction from 10.2s to ~3-5s.</p>
+      </div>
+      <div style="display:flex;gap:24px;margin-top:12px;font-size:13px">
+        <span><strong>Impact:</strong> high</span>
+        <span><strong>Effort:</strong> high</span>
+      </div>
+      
+      
+      
+      
+      <div class="note-box" style="margin-top:12px">
+                  <strong>Requires Deep Dive</strong>
+                  <ol style='padding-left:18px;margin-top:8px'><li>Export top 20 FILTER(ALL) measures and run in DAX Studio with Server Timings</li><li>Identify which FILTER(ALL) patterns can be replaced with KEEPFILTERS</li><li>Test WTD measures with explicit time intelligence filters</li></ol>
+                </div>
+      
+      <div style="margin-top:12px"><strong>Trade-offs:</strong><ul style="padding-left:18px;margin-top:4px"><li>DAX refactoring requires careful testing of each measure to ensure functional equivalence</li><li>Some FILTER(ALL) patterns may be intentional for ratio calculations</li></ul></div>
+      
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--red)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="margin:0">F3: Date Filter via JOIN Instead of Direct WHERE on Fact Table</h3>
+        <div><span class="badge badge-high">high</span> <span class="badge badge-info">Model-wide</span> <span class="badge badge-medium">Semantic Model</span> <span class="badge badge-high">dbt Models</span></div>
+      </div>
+      <p style="font-size:13px;margin-bottom:12px"><strong>Problem:</strong> PBI applies date predicates by JOINing dim_date_v2 with WHERE calendar_date = &#x27;2026-04-12&#x27;, then joining to the fact table via dim_date_sk surrogate key. Databricks cannot push this filter down to the fact table&#x27;s liquid clustering on dim_date_sk because the predicate is on a column in a different table. The fact table (116.5 GB) is scanned without cluster pruning, reading billions of unnecessary rows.</p>
+      <div style="margin-top:12px;padding:12px;background:var(--light-bg);border-radius:6px;font-size:13px">
+                      <strong>Affected Objects:</strong>
+                      <div style="margin-top:6px"><strong>Tables:</strong> <code>Daily Trade</code>, <code>Date</code><br><strong>dbt Models:</strong> <code>serve_fact_product_option_trade_daily_snapshot_v1</code>, <code>serve_dim_date_v2</code><br><strong>Relationships:</strong> <code>Daily Trade → Date (dim_date_sk)</code></div>
+                    </div>
+      <div class="recommendation-box" style="margin:0">
+        <h4>How to Fix</h4>
+        <p>Option A: Add a calculated column to the fact table with the actual calendar_date (or a calendar_date filter column) and create a direct relationship, enabling PBI to filter directly on the fact. Option B: Create a parameterised M query that applies a date WHERE clause before the fact table is loaded. Option C: Add a WHERE filter on the serve view using a date range parameter. The clustering on dim_date_sk is present but ineffective because PBI never sends a direct predicate on this column.</p>
+        <p style='margin-top:8px'><strong>Estimated improvement:</strong> 90%+ row reduction on date-filtered queries. Queries that read 4.4B rows should drop to ~10-50M rows.</p>
+      </div>
+      <div style="display:flex;gap:24px;margin-top:12px;font-size:13px">
+        <span><strong>Impact:</strong> high</span>
+        <span><strong>Effort:</strong> medium</span>
+      </div>
+      
+      <div style="margin-top:12px"><strong>Connection Mode Comparison:</strong>
+                      <table style="margin-top:8px"><thead><tr><th>Mode</th><th>Implications</th></tr></thead>
+                        <tbody><tr><td><strong>DirectQuery</strong></td><td>Current — date filter via JOIN, no cluster pruning, 4.4B rows scanned</td></tr><tr><td><strong>Hybrid</strong></td><td>Aggregation table for common date ranges in Import mode, DQ fallback for ad-hoc dates</td></tr><tr><td><strong>Parameter Filter</strong></td><td>M-level date parameter reduces fact scan to current period only</td></tr></tbody></table></div>
+      
+      
+      
+      
+      <div style="margin-top:12px"><strong>Trade-offs:</strong><ul style="padding-left:18px;margin-top:4px"><li>Calculated column approach increases model complexity</li><li>M-level filtering requires report authors to use the date parameter</li></ul></div>
+      
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--red)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="margin:0">F4: 3 Bidirectional Cross-Filter Relationships on DirectQuery Tables</h3>
+        <div><span class="badge badge-high">high</span> <span class="badge badge-info">Model-wide</span> <span class="badge badge-medium">Semantic Model</span></div>
+      </div>
+      <p style="font-size:13px;margin-bottom:12px"><strong>Problem:</strong> Three bidirectional cross-filter relationships exist in the model. In DirectQuery mode, bidirectional filtering causes additional SQL subqueries because Databricks must evaluate the filter in both directions. The Option table (dual, degree 9) is involved in all three, amplifying the impact.</p>
+      <div style="margin-top:12px;padding:12px;background:var(--light-bg);border-radius:6px;font-size:13px">
+                      <strong>Affected Objects:</strong>
+                      <div style="margin-top:6px"><strong>Relationships:</strong> <code>Option ↔ Option Ranking</code>, <code>Option ↔ Product Option In Pricing Store</code>, <code>Option ↔ Product Option In Store</code></div>
+                    </div>
+      <div class="recommendation-box" style="margin:0">
+        <h4>How to Fix</h4>
+        <p>For each bidirectional relationship, evaluate whether bidirectional filtering is needed: (1) Option ↔ Option Ranking — if only used for ranking display, switch to single-direction and use CROSSFILTER() in specific measures. (2) Option ↔ Product Option In Pricing Store — evaluate if single-direction suffices. (3) Option ↔ Product Option In Store — same evaluation. Use CROSSFILTER(Option[dim_product_option_sk], &#x27;Product Option In Store&#x27;[dim_product_option_sk], BOTH) in specific measures instead of model-level bidirectional.</p>
+        <p style='margin-top:8px'><strong>Estimated improvement:</strong> 10-20% reduction in SQL subquery count for queries touching these relationships.</p>
+      </div>
+      <div style="display:flex;gap:24px;margin-top:12px;font-size:13px">
+        <span><strong>Impact:</strong> medium</span>
+        <span><strong>Effort:</strong> medium</span>
+      </div>
+      
+      
+      
+      <div style="margin-top:12px"><strong>Individual Analysis:</strong><div style="border-left:3px solid var(--border);padding:8px 12px;margin:6px 0">
+                      <strong>Option ↔ Option Ranking</strong>
+                      <br><span style="font-size:12px">Bidirectional needed for ranking cross-filter in pivotTable visuals</span>
+                      <br><span style="font-size:12px;color:var(--green)">Fix: Use CROSSFILTER() in DAX measures that need reverse filtering</span>
+                      <span class="badge badge-info" style="margin-left:8px">medium</span>
+                    </div><div style="border-left:3px solid var(--border);padding:8px 12px;margin:6px 0">
+                      <strong>Option ↔ Product Option In Pricing Store</strong>
+                      <br><span style="font-size:12px">Enables filtering pricing store by product option</span>
+                      <br><span style="font-size:12px;color:var(--green)">Fix: Evaluate if single-direction suffices — pricing store typically filters options, not vice versa</span>
+                      <span class="badge badge-info" style="margin-left:8px">low</span>
+                    </div><div style="border-left:3px solid var(--border);padding:8px 12px;margin:6px 0">
+                      <strong>Option ↔ Product Option In Store</strong>
+                      <br><span style="font-size:12px">Enables store-level product filtering</span>
+                      <br><span style="font-size:12px;color:var(--green)">Fix: Switch to single-direction with DAX CROSSFILTER() where reverse is needed</span>
+                      <span class="badge badge-info" style="margin-left:8px">low</span>
+                    </div></div>
+      
+      
+      <div style="margin-top:12px"><strong>Trade-offs:</strong><ul style="padding-left:18px;margin-top:4px"><li>Removing bidirectional may break existing visual cross-filtering — test each page</li></ul></div>
+      
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--red)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="margin:0">F5: 49 Critical-Complexity DAX Measures Generating 14+ SQL Subqueries</h3>
+        <div><span class="badge badge-high">high</span> <span class="badge badge-info">Model-wide</span> <span class="badge badge-medium">Semantic Model</span></div>
+      </div>
+      <p style="font-size:13px;margin-bottom:12px"><strong>Problem:</strong> 49 measures have critical complexity (score 44-45) driven by 7-8 context transitions and 5-6 FILTER(ALL) calls each. Each generates an estimated 14 SQL subqueries in DirectQuery mode. These are predominantly WTD/MTD/HTD/YTD time intelligence measures that nest multiple CALCULATE layers with FILTER(ALL(Date)).</p>
+      <div style="margin-top:12px;padding:12px;background:var(--light-bg);border-radius:6px;font-size:13px">
+                      <strong>Affected Objects:</strong>
+                      <div style="margin-top:6px"><strong>Measures:</strong> <code>Retail Sales Units Coversion % LY</code>, <code>Retail Sales Value OB LM</code>, <code>Retail Sales Value T&amp;R LM</code>, <code>Intake Units WTD</code>, <code>Retail Physical Return Quantity WTD</code>, <code>Retail Physical Return Value WTD</code>, <code>Retail Return Value WTD</code>, <code>Retail Sales Quantity WTD</code>, <code>Retail Sales Value LY WTD</code>, <code>Retail Sales Value WTD</code></div>
+                    </div>
+      <div class="recommendation-box" style="margin:0">
+        <h4>How to Fix</h4>
+        <p>Consolidate time intelligence into shared base measures. Create a single WTD base measure using CALCULATE with KEEPFILTERS, then reference it from all WTD variants (Retail Sales Value WTD, Retail Return Value WTD, etc.). This reduces context transitions from 7-8 to 2-3 per measure. Use VAR/RETURN pattern to avoid repeated subexpression evaluation.</p>
+        <p style='margin-top:8px'><strong>Estimated improvement:</strong> 60-70% reduction in SQL subquery count for time intelligence measures.</p>
+      </div>
+      <div style="display:flex;gap:24px;margin-top:12px;font-size:13px">
+        <span><strong>Impact:</strong> high</span>
+        <span><strong>Effort:</strong> high</span>
+      </div>
+      
+      
+      
+      
+      <div class="note-box" style="margin-top:12px">
+                  <strong>Requires Deep Dive</strong>
+                  <ol style='padding-left:18px;margin-top:8px'><li>Group the 49 critical measures by pattern (WTD, MTD, HTD, YTD, LY)</li><li>Create a template refactoring for each pattern</li><li>Test in DAX Studio with Server Timings before and after</li></ol>
+                </div>
+      
+      <div style="margin-top:12px"><strong>Trade-offs:</strong><ul style="padding-left:18px;margin-top:4px"><li>Large refactoring effort — 49 measures to update</li><li>Functional equivalence must be verified for each</li></ul></div>
+      
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--amber)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="margin:0">F6: 12 Report Pages Exceed 15 Visuals (up to 28 per page)</h3>
+        <div><span class="badge badge-medium">medium</span> <span class="badge" style="background:rgba(108,117,125,0.12);color:#6c757d">Report-specific</span> <span class="badge badge-info">PBI Report</span> <span class="badge" style="background:rgba(108,117,125,0.12);color:#6c757d">PBI Visual</span></div>
+      </div>
+      <p style="font-size:13px;margin-bottom:12px"><strong>Problem:</strong> All 12 active pages in the Trade report exceed the recommended 15-visual threshold. Topline Performance has 28 visual containers. Each visual generates its own DirectQuery SQL query against Databricks, meaning opening the Topline Performance page fires up to 28 simultaneous queries. With the fact table averaging 2.5s per query, page load can exceed 30 seconds.</p>
+      <div style="margin-top:12px;padding:12px;background:var(--light-bg);border-radius:6px;font-size:13px">
+                      <strong>Affected Objects:</strong>
+                      <div style="margin-top:6px"><strong>Pages:</strong> <code>Topline Performance (28 visuals)</code>, <code>Weekly Trade Overview (26 visuals)</code>, <code>Seasonality Overview (26 visuals)</code>, <code>Option Ranking (26 visuals)</code>, <code>Lead Time (26 visuals)</code>, <code>Channel Overview (24 visuals)</code>, <code>Gross Demand (22 visuals)</code>, <code>Intake &amp; Commitment (22 visuals)</code>, <code>Category Overview (22 visuals)</code>, <code>Clearance (21 visuals)</code> (+2 more)</div>
+                    </div>
+      <div class="recommendation-box" style="margin:0">
+        <h4>How to Fix</h4>
+        <p>Split the heaviest pages into sub-pages or use bookmarks to show/hide visual groups. For Topline Performance: move the detail matrix to a drill-through page. For pages with 20+ visuals, identify visuals that share the same measure and consolidate into fewer, more informative visuals. Use &#x27;show items with no data&#x27; sparingly as it multiplies query load.</p>
+        <p style='margin-top:8px'><strong>Estimated improvement:</strong> 40-60% reduction in concurrent queries per page load, improving perceived load time from 30s to 10-15s.</p>
+      </div>
+      <div style="display:flex;gap:24px;margin-top:12px;font-size:13px">
+        <span><strong>Impact:</strong> medium</span>
+        <span><strong>Effort:</strong> medium</span>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--green)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="margin:0">F7: All Pages Use Time Period Slicer but No Direct Date Range Slicer</h3>
+        <div><span class="badge badge-low">low</span> <span class="badge" style="background:rgba(108,117,125,0.12);color:#6c757d">Report-specific</span> <span class="badge badge-info">PBI Report</span></div>
+      </div>
+      <p style="font-size:13px;margin-bottom:12px"><strong>Problem:</strong> All 12 pages in the Trade report have a Time Period slicer (advancedSlicerVisual bound to Time Period.Time Period), which filters by financial periods like &#x27;Last Week&#x27; or &#x27;Current Month&#x27;. Pages like Topline Performance, Weekly Trade Overview, and Seasonality Overview rely solely on this relative time filter. While this is functional, the Time Period filter applies via JOIN to dim_financial_time_period_v1 and then to dim_date_v2 — it does not directly constrain the fact table, so cluster pruning is still limited (see F3). The &#x27;Date&#x27; variant pages (e.g., Topline Performance Date, Weekly Trade Overview Date) add explicit Calendar Date slicers for more granular control.</p>
+      <div style="margin-top:12px;padding:12px;background:var(--light-bg);border-radius:6px;font-size:13px">
+                      <strong>Affected Objects:</strong>
+                      <div style="margin-top:6px"><strong>Pages:</strong> <code>Topline Performance</code>, <code>Weekly Trade Overview</code>, <code>Seasonality Overview</code></div>
+                    </div>
+      <div class="recommendation-box" style="margin:0">
+        <h4>How to Fix</h4>
+        <p>No urgent action required — the Time Period slicer is already present and functional. For incremental improvement, consider adding a default selection to the Time Period slicer (e.g., &#x27;This Week&#x27;) so users always start with a filtered view rather than &#x27;All&#x27;. The more impactful fix is F3 (direct date filtering on the fact table).</p>
+        <p style='margin-top:8px'><strong>Estimated improvement:</strong> Minimal standalone — this is a usability improvement. The real date filtering fix is F3.</p>
+      </div>
+      <div style="display:flex;gap:24px;margin-top:12px;font-size:13px">
+        <span><strong>Impact:</strong> low</span>
+        <span><strong>Effort:</strong> low</span>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--amber)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="margin:0">F8: Query Reduction Settings Not Optimised on Trade Report</h3>
+        <div><span class="badge badge-medium">medium</span> <span class="badge" style="background:rgba(108,117,125,0.12);color:#6c757d">Report-specific</span> <span class="badge badge-info">PBI Report</span></div>
+      </div>
+      <p style="font-size:13px;margin-bottom:12px"><strong>Problem:</strong> The Trade report has cross-highlighting enabled and slicer/filter &#x27;Apply&#x27; buttons disabled. In DirectQuery mode, cross-highlighting generates additional queries each time a user hovers over a visual (the engine must re-query related visuals). Without &#x27;Apply&#x27; buttons, every slicer or filter selection immediately fires queries instead of batching them. Auto-refresh is NOT enabled — this is a query reduction settings issue, not an auto-refresh issue.</p>
+      <div style="margin-top:12px;padding:12px;background:var(--light-bg);border-radius:6px;font-size:13px">
+                      <strong>Affected Objects:</strong>
+                      <div style="margin-top:6px"><strong>Pages:</strong> <code>Trade report (report-level query reduction settings)</code></div>
+                    </div>
+      <div class="recommendation-box" style="margin:0">
+        <h4>How to Fix</h4>
+        <p>In PBI Desktop → File → Options → Report settings → Query reduction: (1) Disable cross-highlighting to prevent hover-triggered queries. (2) Enable &#x27;Add an Apply button to each slicer&#x27; so users can select multiple slicer values before queries fire. (3) Enable &#x27;Add an Apply button to each filter&#x27; for the same reason. The &#x27;Apply all slicers at once&#x27; option is already enabled, which is good.</p>
+        <p style='margin-top:8px'><strong>Estimated improvement:</strong> 5-15% reduction in interactive query volume during user sessions.</p>
+      </div>
+      <div style="display:flex;gap:24px;margin-top:12px;font-size:13px">
+        <span><strong>Impact:</strong> medium</span>
+        <span><strong>Effort:</strong> low</span>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--amber)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="margin:0">F9: 19 Wide Tables/Matrices in Trade Report</h3>
+        <div><span class="badge badge-medium">medium</span> <span class="badge" style="background:rgba(108,117,125,0.12);color:#6c757d">Report-specific</span> <span class="badge" style="background:rgba(108,117,125,0.12);color:#6c757d">PBI Visual</span></div>
+      </div>
+      <p style="font-size:13px;margin-bottom:12px"><strong>Problem:</strong> 19 visuals in the Trade report use wide tables or matrices. Each column in a matrix generates a separate column projection in the DirectQuery SQL, and combined with the fact table&#x27;s 91 columns being selected regardless, this multiplies the data processed.</p>
+      <div style="margin-top:12px;padding:12px;background:var(--light-bg);border-radius:6px;font-size:13px">
+                      <strong>Affected Objects:</strong>
+                      <div style="margin-top:6px"><strong>Visuals:</strong> <code>19 wide tableEx/pivotTable/matrix visuals across multiple pages</code></div>
+                    </div>
+      <div class="recommendation-box" style="margin:0">
+        <h4>How to Fix</h4>
+        <p>Review wide matrix visuals and reduce column count where possible. Use drill-through pages for detailed breakdowns instead of showing all dimensions in a single matrix. Consider Top N filters on matrices to limit row cardinality.</p>
+        <p style='margin-top:8px'><strong>Estimated improvement:</strong> 10-20% reduction in query complexity for pages with wide matrices.</p>
+      </div>
+      <div style="display:flex;gap:24px;margin-top:12px;font-size:13px">
+        <span><strong>Impact:</strong> medium</span>
+        <span><strong>Effort:</strong> medium</span>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--amber)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="margin:0">F10: 8 Dual Mode Tables That Could Be Import</h3>
+        <div><span class="badge badge-medium">medium</span> <span class="badge badge-info">Model-wide</span> <span class="badge badge-medium">Semantic Model</span></div>
+      </div>
+      <p style="font-size:13px;margin-bottom:12px"><strong>Problem:</strong> 8 financial transform/time intelligence tables are in Dual mode but contain relatively static reference data (financial calendar mappings). In Dual mode, PBI uses DirectQuery when the table is joined with a DQ table, adding unnecessary JOINs to Databricks queries. Since these are small lookup tables, switching to Import would cache them locally and eliminate Databricks roundtrips.</p>
+      <div style="margin-top:12px;padding:12px;background:var(--light-bg);border-radius:6px;font-size:13px">
+                      <strong>Affected Objects:</strong>
+                      <div style="margin-top:6px"><strong>Tables:</strong> <code>Daily Financial Transform</code>, <code>Daily Financial Half to Date</code>, <code>Daily Financial Month to Date</code>, <code>Daily Financial Year to Date</code>, <code>Weekly Financial Transform</code>, <code>Weekly Financial Half to Date</code>, <code>Weekly Financial Month to Date</code>, <code>Weekly Financial Year to Date</code></div>
+                    </div>
+      <div class="recommendation-box" style="margin:0">
+        <h4>How to Fix</h4>
+        <p>Switch the 8 financial transform tables to Import mode. They contain static calendar/financial period mappings that change infrequently. Set a scheduled refresh (e.g., daily at 06:00). This removes 8 tables from DirectQuery SQL generation.</p>
+        <p style='margin-top:8px'><strong>Estimated improvement:</strong> 5-10% reduction in query complexity by removing financial lookup table JOINs from Databricks SQL.</p>
+      </div>
+      <div style="display:flex;gap:24px;margin-top:12px;font-size:13px">
+        <span><strong>Impact:</strong> medium</span>
+        <span><strong>Effort:</strong> low</span>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--amber)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="margin:0">F11: Cross-Catalog JOINs Across 5+ Databricks Catalogs</h3>
+        <div><span class="badge badge-medium">medium</span> <span class="badge badge-info">Model-wide</span> <span class="badge badge-medium">Semantic Model</span></div>
+      </div>
+      <p style="font-size:13px;margin-bottom:12px"><strong>Problem:</strong> A single PBI visual generates SQL that JOINs tables from 5 Databricks catalogs (sales, technology, product, supplychain, sourcingandbuying) in a single query. Cross-catalog JOINs prevent some query optimisations and increase planning overhead.</p>
+      <div style="margin-top:12px;padding:12px;background:var(--light-bg);border-radius:6px;font-size:13px">
+                      <strong>Affected Objects:</strong>
+                      <div style="margin-top:6px"><strong>Tables:</strong> <code>sales.serve (fact, pricing, lifecycle)</code>, <code>technology.serve (date, territory, financial transforms)</code>, <code>product.serve (option, UDA, fabric)</code>, <code>supplychain.serve (inventory, warehouse, stock age)</code>, <code>sourcingandbuying.serve (supplier)</code></div>
+                    </div>
+      <div class="recommendation-box" style="margin:0">
+        <h4>How to Fix</h4>
+        <p>This is an architectural characteristic of the model — not easily changed without restructuring the data platform. Mitigate via narrower serve views (F1), switching small dims to Import (F10), and reducing the number of tables per query via report design improvements (F6).</p>
+        <p style='margin-top:8px'><strong>Estimated improvement:</strong> Indirect — primarily addressed via F1, F6, and F10.</p>
+      </div>
+      <div style="display:flex;gap:24px;margin-top:12px;font-size:13px">
+        <span><strong>Impact:</strong> medium</span>
+        <span><strong>Effort:</strong> low</span>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--amber)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="margin:0">F12: 6 Engineering BPA Findings: Functions on Filter Columns (E05)</h3>
+        <div><span class="badge badge-medium">medium</span> <span class="badge badge-info">Model-wide</span> <span class="badge badge-high">dbt Models</span> <span class="badge badge-medium">Semantic Model</span></div>
+      </div>
+      <p style="font-size:13px;margin-bottom:12px"><strong>Problem:</strong> 6 dbt models apply functions on columns that are used in WHERE or JOIN predicates (e.g., CONCAT_WS on surrogate keys, CAST on date columns). Functions on filter columns prevent predicate pushdown and disable clustering benefits.</p>
+      <div style="margin-top:12px;padding:12px;background:var(--light-bg);border-radius:6px;font-size:13px">
+                      <strong>Affected Objects:</strong>
+                      <div style="margin-top:6px"><strong>dbt Models:</strong> <code>6 dbt models with functions applied on filter/join columns</code></div>
+                    </div>
+      <div class="recommendation-box" style="margin:0">
+        <h4>How to Fix</h4>
+        <p>Review the 6 flagged models and remove function wrapping on filter/join columns. For computed composite keys (like dim_product_option_in_pricing_store_sk = concat_ws(&#x27;|&#x27;, ...)), consider pre-computing in the curated layer instead.</p>
+        <p style='margin-top:8px'><strong>Estimated improvement:</strong> 5-15% improvement in cluster pruning efficiency for affected tables.</p>
+      </div>
+      <div style="display:flex;gap:24px;margin-top:12px;font-size:13px">
+        <span><strong>Impact:</strong> medium</span>
+        <span><strong>Effort:</strong> medium</span>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--amber)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="margin:0">F13: 54 Nested CALCULATE Patterns in DAX Measures</h3>
+        <div><span class="badge badge-medium">medium</span> <span class="badge badge-info">Model-wide</span> <span class="badge badge-medium">Semantic Model</span></div>
+      </div>
+      <p style="font-size:13px;margin-bottom:12px"><strong>Problem:</strong> 54 measures contain nested CALCULATE expressions. In DirectQuery, each CALCULATE nesting generates an additional level of SQL subquery. Combined with FILTER(ALL), these create the 4-5 level deep subquery patterns observed in real Databricks query history.</p>
+      <div style="margin-top:12px;padding:12px;background:var(--light-bg);border-radius:6px;font-size:13px">
+                      <strong>Affected Objects:</strong>
+                      <div style="margin-top:6px"><strong>Measures:</strong> <code>54 measures with nested CALCULATE (each nesting adds a SQL subquery level)</code></div>
+                    </div>
+      <div class="recommendation-box" style="margin:0">
+        <h4>How to Fix</h4>
+        <p>Flatten nested CALCULATE by using VAR/RETURN pattern. Instead of CALCULATE(CALCULATE([Measure], filter1), filter2), use VAR filtered = CALCULATE([Measure], filter1, filter2) RETURN filtered. This reduces subquery depth.</p>
+        <p style='margin-top:8px'><strong>Estimated improvement:</strong> 1-2 fewer SQL subquery levels per measure, reducing planning and execution time.</p>
+      </div>
+      <div style="display:flex;gap:24px;margin-top:12px;font-size:13px">
+        <span><strong>Impact:</strong> medium</span>
+        <span><strong>Effort:</strong> high</span>
+      </div>
+      
+      
+      
+      
+      <div class="note-box" style="margin-top:12px">
+                  <strong>Requires Deep Dive</strong>
+                  <ol style='padding-left:18px;margin-top:8px'><li>Identify the 10 most-frequently-used nested CALCULATE measures</li><li>Profile in DAX Studio to measure actual subquery count</li><li>Refactor using VAR/RETURN and test equivalence</li></ol>
+                </div>
+      
+      
+      
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--green)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="margin:0">F14: 650 Unused Column Candidates Across Model</h3>
+        <div><span class="badge badge-low">low</span> <span class="badge badge-info">Model-wide</span> <span class="badge badge-medium">Semantic Model</span></div>
+      </div>
+      <p style="font-size:13px;margin-bottom:12px"><strong>Problem:</strong> BPA identifies 650 columns that are not referenced by any DAX measure, relationship, or calculated column. In DirectQuery, unreferenced columns still appear in the SELECT list generated by PBI, increasing read_bytes. Hiding or removing these columns reduces the SQL width.</p>
+      <div style="margin-top:12px;padding:12px;background:var(--light-bg);border-radius:6px;font-size:13px">
+                      <strong>Affected Objects:</strong>
+                      <div style="margin-top:6px"><strong>Tables:</strong> <code>Multiple tables — 650 columns not referenced by any measure or relationship</code></div>
+                    </div>
+      <div class="recommendation-box" style="margin:0">
+        <h4>How to Fix</h4>
+        <p>Review the 650 unused column candidates and hide columns that are genuinely unnecessary. Focus on the DirectQuery tables first (Daily Trade has 91 columns — many are surrogate keys or audit columns not used by reports). This works in combination with F1 (narrow serve view) for maximum impact.</p>
+        <p style='margin-top:8px'><strong>Estimated improvement:</strong> Incremental — combined with F1, reduces read_bytes by 60-75%.</p>
+      </div>
+      <div style="display:flex;gap:24px;margin-top:12px;font-size:13px">
+        <span><strong>Impact:</strong> low</span>
+        <span><strong>Effort:</strong> medium</span>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+    </div>
+
+    <details style="margin-top:24px">
+      <summary>Findings by Severity &mdash; Quick Reference Table</summary>
+      <div class="card" style="margin-top:12px">
+        <table><thead><tr><th>#</th><th>Finding</th><th>Severity</th><th>Scope</th><th>Category</th><th>Impact</th><th>Effort</th></tr></thead>
+          <tbody><tr><td>F1</td><td><strong>Column Over-Selection on Fact Table (91 cols vs ~23 needed)</strong></td><td><span class="badge badge-high">critical</span></td><td><span class="badge badge-info">Model-wide</span></td><td><span class="badge badge-high">dbt Models</span> <span class="badge badge-medium">Semantic Model</span></td><td>high</td><td>low</td></tr>
+<tr><td>F2</td><td><strong>FILTER(ALL) Anti-Pattern in 77 Measures Forcing Full Table Scans</strong></td><td><span class="badge badge-high">critical</span></td><td><span class="badge badge-info">Model-wide</span></td><td><span class="badge badge-medium">Semantic Model</span></td><td>high</td><td>high</td></tr>
+<tr><td>F3</td><td><strong>Date Filter via JOIN Instead of Direct WHERE on Fact Table</strong></td><td><span class="badge badge-high">high</span></td><td><span class="badge badge-info">Model-wide</span></td><td><span class="badge badge-medium">Semantic Model</span> <span class="badge badge-high">dbt Models</span></td><td>high</td><td>medium</td></tr>
+<tr><td>F4</td><td><strong>3 Bidirectional Cross-Filter Relationships on DirectQuery Tables</strong></td><td><span class="badge badge-high">high</span></td><td><span class="badge badge-info">Model-wide</span></td><td><span class="badge badge-medium">Semantic Model</span></td><td>medium</td><td>medium</td></tr>
+<tr><td>F5</td><td><strong>49 Critical-Complexity DAX Measures Generating 14+ SQL Subqueries</strong></td><td><span class="badge badge-high">high</span></td><td><span class="badge badge-info">Model-wide</span></td><td><span class="badge badge-medium">Semantic Model</span></td><td>high</td><td>high</td></tr>
+<tr><td>F6</td><td><strong>12 Report Pages Exceed 15 Visuals (up to 28 per page)</strong></td><td><span class="badge badge-medium">medium</span></td><td><span class="badge" style="background:rgba(108,117,125,0.12);color:#6c757d">Report-specific</span></td><td><span class="badge badge-info">PBI Report</span> <span class="badge" style="background:rgba(108,117,125,0.12);color:#6c757d">PBI Visual</span></td><td>medium</td><td>medium</td></tr>
+<tr><td>F7</td><td><strong>All Pages Use Time Period Slicer but No Direct Date Range Slicer</strong></td><td><span class="badge badge-low">low</span></td><td><span class="badge" style="background:rgba(108,117,125,0.12);color:#6c757d">Report-specific</span></td><td><span class="badge badge-info">PBI Report</span></td><td>low</td><td>low</td></tr>
+<tr><td>F8</td><td><strong>Query Reduction Settings Not Optimised on Trade Report</strong></td><td><span class="badge badge-medium">medium</span></td><td><span class="badge" style="background:rgba(108,117,125,0.12);color:#6c757d">Report-specific</span></td><td><span class="badge badge-info">PBI Report</span></td><td>medium</td><td>low</td></tr>
+<tr><td>F9</td><td><strong>19 Wide Tables/Matrices in Trade Report</strong></td><td><span class="badge badge-medium">medium</span></td><td><span class="badge" style="background:rgba(108,117,125,0.12);color:#6c757d">Report-specific</span></td><td><span class="badge" style="background:rgba(108,117,125,0.12);color:#6c757d">PBI Visual</span></td><td>medium</td><td>medium</td></tr>
+<tr><td>F10</td><td><strong>8 Dual Mode Tables That Could Be Import</strong></td><td><span class="badge badge-medium">medium</span></td><td><span class="badge badge-info">Model-wide</span></td><td><span class="badge badge-medium">Semantic Model</span></td><td>medium</td><td>low</td></tr>
+<tr><td>F11</td><td><strong>Cross-Catalog JOINs Across 5+ Databricks Catalogs</strong></td><td><span class="badge badge-medium">medium</span></td><td><span class="badge badge-info">Model-wide</span></td><td><span class="badge badge-medium">Semantic Model</span></td><td>medium</td><td>low</td></tr>
+<tr><td>F12</td><td><strong>6 Engineering BPA Findings: Functions on Filter Columns (E05)</strong></td><td><span class="badge badge-medium">medium</span></td><td><span class="badge badge-info">Model-wide</span></td><td><span class="badge badge-high">dbt Models</span> <span class="badge badge-medium">Semantic Model</span></td><td>medium</td><td>medium</td></tr>
+<tr><td>F13</td><td><strong>54 Nested CALCULATE Patterns in DAX Measures</strong></td><td><span class="badge badge-medium">medium</span></td><td><span class="badge badge-info">Model-wide</span></td><td><span class="badge badge-medium">Semantic Model</span></td><td>medium</td><td>high</td></tr>
+<tr><td>F14</td><td><strong>650 Unused Column Candidates Across Model</strong></td><td><span class="badge badge-low">low</span></td><td><span class="badge badge-info">Model-wide</span></td><td><span class="badge badge-medium">Semantic Model</span></td><td>low</td><td>medium</td></tr>
+</tbody></table>
+      </div>
+    </details>
+    </div></details>
+    <div class="report-footer">
+      Generated by PBI Performance Diagnosis Agent &middot; 13 Apr 2026
+    </div>
+  </div>
+<script>
+document.querySelectorAll('.sortable-th').forEach(th=>{th.addEventListener('click',()=>{const t=th.closest('table'),i=Array.from(th.parentNode.children).indexOf(th),rows=Array.from(t.querySelectorAll('tbody tr')),a=th.dataset.sort!=='asc';th.dataset.sort=a?'asc':'desc';rows.sort((x,y)=>{const va=x.children[i]?.dataset.val||x.children[i]?.textContent||'',vb=y.children[i]?.dataset.val||y.children[i]?.textContent||'',na=parseFloat(va),nb=parseFloat(vb);if(!isNaN(na)&&!isNaN(nb))return a?na-nb:nb-na;return a?va.localeCompare(vb):vb.localeCompare(va)});rows.forEach(r=>t.querySelector('tbody').appendChild(r))})});
+
+function bpaFilter(barId, tableId, attr, value) {
+  var bar = document.getElementById(barId);
+  bar.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active','active-latency','active-cost','active-memory','active-quality','active-high','active-medium','active-low'); });
+  var clicked = bar.querySelector('[data-filter-value="'+value+'"]');
+  if(clicked){ clicked.classList.add('active'); if(value!=='all') clicked.classList.add('active-'+value); }
+  var rows = document.querySelectorAll('#'+tableId+' tbody tr');
+  var shown = 0;
+  /* Collect active filters from both filter bars for this table */
+  var impactBar = document.getElementById(tableId.replace('table','bar-impact'));
+  var sevBar = document.getElementById(tableId.replace('table','bar-severity'));
+  var impactVal = 'all', sevVal = 'all';
+  if(impactBar){ var a=impactBar.querySelector('.filter-btn.active'); if(a) impactVal=a.getAttribute('data-filter-value')||'all'; }
+  if(sevBar){ var a=sevBar.querySelector('.filter-btn.active'); if(a) sevVal=a.getAttribute('data-filter-value')||'all'; }
+  var isFiltered = (impactVal!=='all' || sevVal!=='all');
+  rows.forEach(function(r){
+    var matchImpact = (impactVal==='all' || r.getAttribute('data-impact')===impactVal);
+    var matchSev = (sevVal==='all' || r.getAttribute('data-severity')===sevVal);
+    if(matchImpact && matchSev){
+      r.style.display=''; shown++;
+    } else {
+      r.style.display='none';
+    }
+  });
+  /* Update overflow toggle visibility */
+  var toggle = document.getElementById(tableId.replace('table','toggle'));
+  if(toggle){
+    if(isFiltered){ toggle.style.display='none'; }
+    else { toggle.style.display=''; _resetBpaOverflow(tableId); }
+  }
+  var counter = document.getElementById(tableId+'-count');
+  if(counter) counter.textContent = shown;
+}
+
+function toggleBpaOverflow(e) {
+  e.preventDefault();
+  var rows = document.querySelectorAll('#bpa-detail-table tbody tr[data-overflow]');
+  var link = document.getElementById('bpa-detail-toggle');
+  var showing = rows[0] && rows[0].style.display !== 'none';
+  rows.forEach(function(r){ r.style.display = showing ? 'none' : ''; });
+  link.textContent = showing ? 'Show ' + rows.length + ' more findings...' : 'Show first 20 only';
+}
+
+function _resetBpaOverflow(tableId) {
+  var rows = document.querySelectorAll('#'+tableId+' tbody tr[data-overflow]');
+  rows.forEach(function(r){ r.style.display = 'none'; });
+  var toggle = document.getElementById('bpa-detail-toggle');
+  if(toggle) toggle.textContent = 'Show ' + rows.length + ' more findings...';
+}
+</script>
+</body>
+</html>

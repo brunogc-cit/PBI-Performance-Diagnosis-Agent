@@ -1,0 +1,141 @@
+{
+  "tables": [
+    {
+      "fullName": "sales.curated.fact_product_option_trade_daily_snapshot_v1",
+      "rowCount": null,
+      "sizeGB": 116.5,
+      "numFiles": 2703,
+      "clusteringColumns": ["dim_date_sk", "dim_product_option_sk", "_updated_date"],
+      "format": "delta",
+      "isView": false,
+      "notes": "Main fact table for Trade. ~116.5 GB, liquid clustered by dim_date_sk + dim_product_option_sk. Serve view is SELECT * passthrough."
+    },
+    {
+      "fullName": "sales.serve.fact_product_option_trade_daily_snapshot_v1",
+      "rowCount": null,
+      "sizeGB": null,
+      "numFiles": null,
+      "clusteringColumns": [],
+      "format": "view",
+      "isView": true,
+      "notes": "Serve view over curated table. 91 columns. SELECT * with computed concat_ws columns."
+    },
+    {
+      "fullName": "technology.serve.dim_date_v2",
+      "rowCount": null,
+      "sizeGB": null,
+      "numFiles": null,
+      "clusteringColumns": [],
+      "format": "view",
+      "isView": true,
+      "notes": "Date dimension view used by 4 PBI tables (Date, Earliest Global Available To Sell Date, Earliest Global Go Live Date, Go Live Date FC)"
+    },
+    {
+      "fullName": "product.serve.dim_product_option_v1",
+      "rowCount": null,
+      "sizeGB": null,
+      "numFiles": null,
+      "clusteringColumns": [],
+      "format": "view",
+      "isView": true,
+      "notes": "Product dimension view. 73+ columns."
+    }
+  ],
+  "tableQueryStats": [
+    {"tableName": "fact_product_option_trade_daily_snapshot_v1", "totalQueries": 1240174, "dailyQueries": 42764, "avgDurationMs": 2561, "p95DurationMs": 10000},
+    {"tableName": "dim_date_v2", "totalQueries": 87779, "dailyQueries": 3026, "avgDurationMs": 2978, "p95DurationMs": 11810},
+    {"tableName": "dim_product_option_v1", "totalQueries": 18341, "dailyQueries": 632, "avgDurationMs": 4066, "p95DurationMs": 15481},
+    {"tableName": "dim_product_option_in_store_v1", "totalQueries": 91, "dailyQueries": 22, "avgDurationMs": 6572, "p95DurationMs": 23406},
+    {"tableName": "dim_warehouse_v1", "totalQueries": 251, "dailyQueries": 8, "avgDurationMs": 4614, "p95DurationMs": 16334},
+    {"tableName": "dim_product_option_in_pricing_store_v1", "totalQueries": 4984, "dailyQueries": 178, "avgDurationMs": 3717, "p95DurationMs": 11793},
+    {"tableName": "dim_pricing_store_v1", "totalQueries": 5603, "dailyQueries": 193, "avgDurationMs": 3699, "p95DurationMs": 22659},
+    {"tableName": "dim_financial_time_period_v1", "totalQueries": 1514, "dailyQueries": 52, "avgDurationMs": 1979, "p95DurationMs": 5763},
+    {"tableName": "dim_product_option_country_restriction_v1", "totalQueries": 68, "dailyQueries": 2, "avgDurationMs": 1895, "p95DurationMs": 6824},
+    {"tableName": "dim_country_v1", "totalQueries": 1581, "dailyQueries": 54, "avgDurationMs": 1433, "p95DurationMs": 5590},
+    {"tableName": "dim_inventory_status_v1", "totalQueries": 711, "dailyQueries": 24, "avgDurationMs": 701, "p95DurationMs": 2852},
+    {"tableName": "dim_supplier_v1", "totalQueries": 7052, "dailyQueries": 243, "avgDurationMs": 674, "p95DurationMs": 5093},
+    {"tableName": "dim_seller_v1", "totalQueries": 911, "dailyQueries": 31, "avgDurationMs": 655, "p95DurationMs": 2832},
+    {"tableName": "dim_shop_v1", "totalQueries": 1630, "dailyQueries": 56, "avgDurationMs": 624, "p95DurationMs": 2973},
+    {"tableName": "dim_selling_channel_v1", "totalQueries": 4140, "dailyQueries": 142, "avgDurationMs": 620, "p95DurationMs": 2334},
+    {"tableName": "financial_transform_daily_v1", "totalQueries": 1594, "dailyQueries": 54, "avgDurationMs": 554, "p95DurationMs": 1116},
+    {"tableName": "dim_web_store_v1", "totalQueries": 1629, "dailyQueries": 56, "avgDurationMs": 547, "p95DurationMs": 2329},
+    {"tableName": "dim_product_option_fabric_composition_v1", "totalQueries": 74, "dailyQueries": 2, "avgDurationMs": 534, "p95DurationMs": 1400},
+    {"tableName": "dim_product_option_multi_valued_uda_v1", "totalQueries": 2055, "dailyQueries": 70, "avgDurationMs": 472, "p95DurationMs": 1118},
+    {"tableName": "dim_territory_v1", "totalQueries": 1271, "dailyQueries": 43, "avgDurationMs": 429, "p95DurationMs": 777},
+    {"tableName": "dim_stock_age_band_v1", "totalQueries": 1585, "dailyQueries": 54, "avgDurationMs": 385, "p95DurationMs": 669}
+  ],
+  "slowestQueries": [
+    {
+      "statementId": "01f1344f-856a-1765-951b-495063e9d843",
+      "totalDurationMs": 500822,
+      "producedRows": 12000,
+      "readRows": 40624339,
+      "readBytes": 27958582126,
+      "startTime": "2026-04-09T20:05:57.062Z",
+      "scanAmplification": 3385
+    },
+    {
+      "statementId": "01f1344c-581a-1ecc-96bc-96f2bfbc23dc",
+      "totalDurationMs": 221344,
+      "producedRows": null,
+      "readRows": 5630606186,
+      "readBytes": 17544907054,
+      "startTime": "2026-04-09T19:43:12.553Z",
+      "scanAmplification": null
+    },
+    {
+      "statementId": "01f1341e-6928-16c8-bd01-093bc0365e89",
+      "totalDurationMs": 216141,
+      "producedRows": null,
+      "readRows": 6040019164,
+      "readBytes": 19572167391,
+      "startTime": "2026-04-09T14:14:24.313Z",
+      "scanAmplification": null
+    },
+    {
+      "statementId": "01f1341e-609b-1ebf-90ca-540a235db73f",
+      "totalDurationMs": 215770,
+      "producedRows": null,
+      "readRows": 4659507200,
+      "readBytes": 16118375165,
+      "startTime": "2026-04-09T14:14:09.971Z",
+      "scanAmplification": null
+    },
+    {
+      "statementId": "01f1341e-7898-1df4-aec7-4ec265cb3bd5",
+      "totalDurationMs": 189281,
+      "producedRows": 4854,
+      "readRows": 6035153904,
+      "readBytes": 19935593771,
+      "startTime": "2026-04-09T14:14:50.216Z",
+      "scanAmplification": 1243372
+    }
+  ],
+  "pbiDailyStats": {
+    "totalQueries": 1436633,
+    "distinctSessions": 185689,
+    "avgQueriesPerSession": 7.7,
+    "slow10s": 73925,
+    "slow30s": 10801,
+    "pctSlow10s": 5.1,
+    "pctSlow30s": 0.8,
+    "avgDurationS": 2.6,
+    "p50s": 0.9,
+    "p95s": 10.2,
+    "maxs": 706.0,
+    "totalReadTb": 1233.51,
+    "pctCached": 52.7,
+    "periodDays": 29
+  },
+  "realQueryEvidence": {
+    "sampleQueryObservations": [
+      "PBI generates deeply nested subqueries (4-5 levels) with full column projections at each level",
+      "All 91 columns from fact table selected even when visual only needs 2 aggregated values (stock_quantity)",
+      "Date filtering via JOIN to dim_date_v2 WHERE calendar_date = specific date, not WHERE on fact table directly",
+      "Cross-catalog JOINs: sales.serve + technology.serve + supplychain.serve + product.serve in single query",
+      "dim_financial_time_period_v1 joined to apply 'Last Week' filter via time_period column",
+      "Worst queries read 5-6 billion rows (16-20 GB) for <5000 returned rows — scan amplification >1,000,000:1",
+      "Top query took 500s reading 40M rows / 28 GB for just 12,000 returned rows"
+    ]
+  }
+}

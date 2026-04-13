@@ -89,17 +89,19 @@ RULES = [
     },
     {
         "ruleId": "V05",
-        "title": "Auto-refresh enabled",
-        "severity": "high",
+        "title": "Auto-refresh or query reduction settings",
+        "severity": "medium",
         "performanceImpact": "cost",
         "description": (
-            "Automatic page refresh sends repeated queries at a fixed interval, "
-            "consuming capacity CU continuously even when no user is viewing "
-            "the report. This is especially costly with DirectQuery models."
+            "Checks for automatic page refresh (which sends repeated queries "
+            "at a fixed interval) and query reduction settings (cross-highlighting, "
+            "slicer/filter Apply buttons) that affect DirectQuery query volume "
+            "during user interaction."
         ),
         "recommendation": (
-            "Disable automatic page refresh unless the report genuinely requires "
-            "near-real-time data. Consider change detection refresh instead."
+            "Disable auto-refresh for daily snapshot data. Enable query reduction "
+            "settings (disable cross-highlighting, enable Apply buttons) to reduce "
+            "interactive query load on DirectQuery models."
         ),
     },
     {
@@ -255,11 +257,14 @@ def _is_date_field(query_ref: str) -> bool:
     return any(indicator in lower for indicator in date_indicators)
 
 
+_SLICER_TYPES = {"slicer", "advancedSlicerVisual", "chicletSlicer", "timeline"}
+
+
 def _section_has_date_slicer(visual_containers: list[dict]) -> bool:
     """Check whether any slicer on the page references a date-type field."""
     for vc in visual_containers:
         vtype = _get_visual_type(vc)
-        if vtype != "slicer":
+        if vtype not in _SLICER_TYPES:
             continue
 
         # Check projections for date fields
@@ -428,7 +433,7 @@ def _check_v04(sections: list[dict]) -> list[dict]:
 
 
 def _check_v05(layout: dict) -> list[dict]:
-    """V05: Auto-refresh enabled."""
+    """V05: Auto-refresh or suboptimal query reduction settings."""
     examples = []
 
     config_str = layout.get("config", "")
@@ -440,23 +445,49 @@ def _check_v05(layout: dict) -> list[dict]:
     if not slow_ds or not isinstance(slow_ds, dict):
         return examples
 
-    has_refresh_interval = "refreshInterval" in slow_ds
-    cross_highlight_disabled = slow_ds.get("isCrossHighlightingDisabled", True)
-
-    findings = []
-    if has_refresh_interval:
+    # Auto-refresh (genuine automatic page refresh interval)
+    if "refreshInterval" in slow_ds:
         interval = slow_ds.get("refreshInterval", "unknown")
-        findings.append(f"refreshInterval set to {interval}")
-    if not cross_highlight_disabled:
-        findings.append("isCrossHighlightingDisabled is false")
-
-    if findings:
         examples.append({
             "page": "(report-level)",
-            "detail": f"Auto-refresh settings detected: {'; '.join(findings)}",
+            "detail": f"Auto-refresh enabled with interval: {interval}",
             "recommendation": (
                 "Disable automatic page refresh unless near-real-time "
-                "data is genuinely required"
+                "data is genuinely required. For daily snapshot data, "
+                "auto-refresh adds query load with no benefit."
+            ),
+        })
+
+    # Query reduction settings (separate from auto-refresh)
+    qr_findings = []
+    if not slow_ds.get("isCrossHighlightingDisabled", True):
+        qr_findings.append(
+            "Cross-highlighting enabled — hovering on visuals generates "
+            "additional DirectQuery queries"
+        )
+    if not slow_ds.get("isSlicerSelectionsButtonEnabled", False):
+        qr_findings.append(
+            "Slicer 'Apply' button disabled — each slicer selection "
+            "immediately fires queries instead of batching"
+        )
+    if not slow_ds.get("isFilterSelectionsButtonEnabled", False):
+        qr_findings.append(
+            "Filter 'Apply' button disabled — each filter change "
+            "immediately fires queries"
+        )
+
+    if qr_findings:
+        examples.append({
+            "page": "(report-level)",
+            "detail": (
+                f"Query reduction settings not fully optimised: "
+                f"{'; '.join(qr_findings)}"
+            ),
+            "recommendation": (
+                "In PBI Desktop → File → Options → Report settings → "
+                "Query reduction: consider disabling cross-highlighting "
+                "and enabling 'Apply' buttons on slicers and filters to "
+                "reduce DirectQuery query volume during user interaction."
             ),
         })
 

@@ -1862,8 +1862,11 @@ def generate_html(
         # --- Normalise quadrant keys ---
         _q_map = {
             "quick win": "quick_win", "quick_win": "quick_win", "Quick Win": "quick_win",
+            "quick wins": "quick_win", "Quick Wins": "quick_win",
             "strategic investment": "strategic", "strategic": "strategic", "Strategic Investment": "strategic",
+            "strategic investments": "strategic", "Strategic Investments": "strategic",
             "minor improvement": "minor", "minor": "minor", "Minor Improvement": "minor",
+            "minor improvements": "minor", "Minor Improvements": "minor",
             "deprioritise": "deprioritise", "Deprioritise": "deprioritise",
             "thankless": "deprioritise", "Thankless Tasks": "deprioritise",
         }
