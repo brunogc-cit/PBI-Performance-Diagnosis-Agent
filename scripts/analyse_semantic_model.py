@@ -11,6 +11,7 @@ Usage:
 
 import argparse
 import json
+import re
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -358,7 +359,9 @@ def _merge_volumetry(tables: list[dict], volumetry_file: Path | None) -> dict[st
 
     for t in tables:
         if t.get("sourceTable"):
-            full_name = f"{t['sourceCatalog']}.{t['sourceDatabase']}.{t['sourceTable']}".lower()
+            # Strip _dev suffix from catalog name (PBI models use _dev, profiles use production)
+            cat = re.sub(r"_dev$", "", t["sourceCatalog"])
+            full_name = f"{cat}.{t['sourceDatabase']}.{t['sourceTable']}".lower()
             if full_name in dbx_lookup:
                 entry = dbx_lookup[full_name]
                 vol = {
@@ -466,6 +469,21 @@ def analyse_model(model_path: Path, volumetry_file: Path | None = None) -> dict:
                             source_catalog = source_catalog or match.group(1)
                             source_database = source_database or match.group(2)
                             source_table = source_table or match.group(3)
+
+            # Strip _dev suffix from catalog — PBI models use dev catalogs,
+            # but output should reflect production catalog names
+            if source_catalog:
+                import re
+                source_catalog = re.sub(r"_dev$", "", source_catalog)
+
+            # Exclude personal dev schemas — these are developer workspaces,
+            # not production data sources. Clear the source mapping so the
+            # table still appears in the model but without a Databricks reference.
+            _EXCLUDED_SCHEMAS = {"rafael_diassantos"}
+            if source_database in _EXCLUDED_SCHEMAS:
+                source_catalog = ""
+                source_database = ""
+                source_table = ""
 
             tables.append({
                 "name": table_name,

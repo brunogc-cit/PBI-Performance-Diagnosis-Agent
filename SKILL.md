@@ -18,6 +18,8 @@ description: >
 
 **Write all output files to the `output/` directory** within this agent's directory only. Never write outside the agent workspace.
 
+**NEVER include personal dev schemas in reports.** The PBI model may reference developer workspace schemas (e.g., `dbt_dev.rafael_diassantos.*`). These MUST be excluded from all report output — do not mention `rafael_diassantos` or any personal dev schema in synthesis.json, the executive summary, findings, recommendations, or any report section. The scripts (`analyse_semantic_model.py`, `generate_report.py`) already filter these out, but if you generate synthesis.json manually, never reference them.
+
 **Always read `input.md` first.** Do not proceed without validating the input and obtaining human confirmation.
 
 # Power BI Performance Diagnosis Agent
@@ -215,7 +217,7 @@ Read `output/engineering-bpa-results.json` and analyse:
 - ROW_NUMBER subselect instead of QUALIFY, non-atomic materialisation
 - Cross-references with `model-taxonomy.json` — only checks dbt models consumed by the PBI semantic model
 
-Findings are tagged with **Engineering** Where badge. The Health Score Architecture pillar includes engineering high findings (-1.5 each, cap -8).
+Findings are tagged with **dbt Models** Where badge. The report section "dbt Best Practices (Performance)" filters to performance-related rules only (latency/cost), excluding quality-only rules (E13, E14).
 
 ### Step 4: Databricks Metadata Profiling
 
@@ -391,7 +393,7 @@ When `databricks-profile.json` includes `tableQueryStats`, use per-table query c
 
 0. `analysisMode` — `"model-wide"`, `"report-scoped"`, or `"hybrid"`. Determines how findings are scoped and tagged.
 
-1. `executiveSummary` — a concise paragraph covering the most critical findings. MUST include: health score, key numbers (tables, measures, rows read), and the #1 recommendation. The report generator also renders a **"Key Findings & Recommended Actions"** card in the Executive Summary that automatically pulls the top critical/high findings from `topFindings` with their severity, title, first recommended action, estimated improvement, and Where badges. This gives readers an immediate view of the biggest optimisations. To maximise the value of this card, ensure each finding's `recommendation` field starts with a clear actionable first sentence and `estimatedImprovement` is always populated.
+1. `executiveSummary` — a concise paragraph covering the most critical findings. MUST include: key numbers (tables, measures, rows read), and the #1 recommendation. Do NOT include a health score or grade. The report generator also renders a **"Key Findings & Recommended Actions"** card in the Executive Summary that automatically pulls the top critical/high findings from `topFindings` with their severity, title, first recommended action, estimated improvement, and Where badges. This gives readers an immediate view of the biggest optimisations. To maximise the value of this card, ensure each finding's `recommendation` field starts with a clear actionable first sentence and `estimatedImprovement` is always populated.
 
 2. `gitContext` — if git repos were checked, include any critical observations:
    ```json
@@ -412,8 +414,19 @@ When `databricks-profile.json` includes `tableQueryStats`, use per-table query c
    - `id`, `title`, `severity`, `impact`, `effort`, `quadrant`, `layers`
    - `scope` — **REQUIRED**: `"model-wide"` or `"report-specific"`. In model-wide mode, reframe report-specific findings to apply broadly (e.g., "column over-selection across all serve views" not "91 cols for Ranking View"). Report-specific findings (e.g., "18 report-level filters") must be tagged explicitly.
    - `reportContext` — `null` for model-wide findings, or the report name for report-specific findings
-   - `description` — what the problem is and why it matters (2-3 sentences)
-   - `recommendation` — **detailed implementation instructions**: step-by-step how to fix it, which files to change, what code/config to modify. Be specific enough that the reader can act on it without further research.
+   - `affectedObjects` — **REQUIRED**: list of specific objects affected by this finding. Every finding MUST name the exact objects from the analysis data. Examples:
+     ```json
+     {"pages": ["Topline Performance", "Weekly Trade Overview", "Seasonality Overview"]}
+     {"tables": ["fact_product_option_trade_daily_snapshot_v1", "dim_date_v2"]}
+     {"measures": ["Total Sales LY", "WTD Gross Demand", "Option Ranking"]}
+     {"dbtModels": ["serve_fact_trade_daily_v1", "serve_dim_product_option_v1"]}
+     {"relationships": ["Option <-> Option Ranking", "Product Option <-> Sales"]}
+     {"columns": ["calendar_date", "dim_date_sk", "product_option_id"]}
+     {"visuals": ["matrix 0eac3eb0a1d581031ba4 on Topline Performance (43 cols)"]}
+     ```
+     Include ALL relevant object types. Never say "3 pages" — say which 3. Never say "77 measures" without listing the top examples. The reader must know exactly what to look at without further investigation.
+   - `description` — what the problem is and why it matters (2-3 sentences). **MUST name specific objects.** Instead of "3 data-heavy pages lack a date slicer", write "The Topline Performance, Weekly Trade Overview, and Seasonality Overview pages contain pivotTable and tableEx visuals but no date slicer, meaning every visual queries the full 2-year date range." Pull exact names from analysis JSON outputs (visual-analysis.json, model-taxonomy.json, bpa-results.json, dbt-lineage.json, etc.).
+   - `recommendation` — **detailed implementation instructions**: step-by-step how to fix it, which files to change, what code/config to modify. **Name specific objects**: which pages need slicers, which tables need column changes, which dbt models to modify, which measures to refactor. Be specific enough that the reader can act on it without further research.
    - `estimatedImprovement` — quantified expected gain (e.g., "90% row reduction", "query time from 33s to ~3-5s")
    - `evidenceIds` — list of `claimId` strings linking to evidence in `query-profile.json`. Every factual claim MUST have supporting evidence.
    - `impactBreakdown` — (when Databricks data available) time split: `{"planning": "0.5s", "execution": "130s", "delivery": "20s"}`
@@ -452,11 +465,17 @@ When `databricks-profile.json` includes `tableQueryStats`, use per-table query c
 
 5. `implementationRoadmap` — phased action list with Where classification. Each phase is an object with:
    - `phase`: a label like "Phase 1: Quick Wins" (use numbered phases, **NEVER use time estimates** like "Week 1-2" or "Month 2" — only suggest implementation order, not duration)
-   - `actions`: list of objects with `action` (description), `where` (Engineering / Semantic Model / Power BI), `finding` (finding ID reference, e.g. "F1" or "F1, F2"), `impact` (Critical / High / Medium / Low)
+   - `actions`: list of objects with:
+     - `action` — description of what to do. **MUST name the specific object** (e.g., "Add date slicer to Topline Performance page" not "Add date slicers to pages")
+     - `where` — category: `dbt Models` / `Semantic Model` / `PBI Report` / `PBI Visual`
+     - `location` — the specific object: page name, table name, dbt model name, measure name, etc. (e.g., "Topline Performance page", "serve_fact_trade_daily_v1", "fact_product_option_trade_daily_snapshot_v1")
+     - `finding` — finding ID reference, e.g. "F1" or "F1, F2"
+     - `impact` — Critical / High / Medium / Low
    Example:
    ```json
    {"phase": "Phase 1: Quick Wins", "actions": [
-     {"action": "Create narrow serve view with only needed columns", "where": "Engineering", "finding": "F1, F3", "impact": "Critical"}
+     {"action": "Create narrow serve view serve_fact_trade_daily_narrow_v1 with only 23 PBI-referenced columns", "where": "dbt Models", "location": "serve_fact_trade_daily_v1", "finding": "F3", "impact": "Critical"},
+     {"action": "Add date slicer to Topline Performance page with default = current financial period", "where": "PBI Report", "location": "Trade / Topline Performance", "finding": "F12", "impact": "Medium"}
    ]}
    ```
 
@@ -468,10 +487,11 @@ Build a **criticality score** per finding:
 - **Impact**: How much would fixing this improve performance?
 - **Effort**: How much work to implement?
 - **Risk**: What could go wrong?
-- **Where**: Which team/skillset is required to implement the fix? Classify each recommendation into one or more of:
-  - **Engineering** — changes to Databricks, dbt models, Delta tables, serve views, materialisations, aggregation tables, clustering. Requires a Data Engineer.
-  - **Semantic Model** — changes to the PBI semantic model definition (DAX measures, relationships, M expressions, storage modes, column visibility). Requires a PBI developer with Tabular Editor.
-  - **Power BI** — changes that can be made purely in Power BI Desktop or Service (report layout, slicers, bookmarks, visual configuration, Incremental Refresh setup). Requires a PBI report author.
+- **Where**: Which team/skillset is required and **which specific object** is affected? Classify each recommendation into one or more of:
+  - **dbt Models** — changes to dbt SQL, materialisations, serve views, clustering, Delta tables. Requires a Data Engineer. Always name the specific dbt model (e.g., `serve_fact_trade_daily_v1`).
+  - **Semantic Model** — changes to the PBI semantic model definition (DAX measures, relationships, M expressions, storage modes, column visibility). Requires a PBI developer with Tabular Editor. Always name the specific table, measure, or relationship.
+  - **PBI Report** — changes to report layout, pages, slicers, bookmarks, page-level filters. Requires a PBI report author. Always name the specific report and page (e.g., "Trade / Topline Performance").
+  - **PBI Visual** — changes to specific visual configurations (card types, matrix column counts, Top N filters). Requires a PBI report author. Always name the specific visual or page containing it.
 
 Build **recommendation quadrant** (effort vs impact):
 - **Quick Wins**: low effort, high impact
@@ -479,7 +499,7 @@ Build **recommendation quadrant** (effort vs impact):
 - **Minor Improvements**: low effort, low impact
 - **Deprioritise**: high effort, low impact
 
-Every finding and recommendation MUST include the **Where** classification badge(s). When a recommendation spans multiple layers (e.g., create a narrow dbt view AND update the PBI relationship), list all applicable badges.
+Every finding and recommendation MUST include the **Where** category badge(s) AND the specific location (object name). When a recommendation spans multiple layers (e.g., create a narrow dbt view AND update the PBI relationship), list all applicable badges with their respective locations.
 
 Generate trade-off explanations in non-technical language.
 
@@ -502,29 +522,28 @@ The report template is at `references/report-template.html`. The final report mu
 The report now includes up to 16 sections (6 new conditional sections):
 - **Query Attribution Dashboard** — per-user heat-mapped table with sortable columns (from `user-query-profile.json`)
 - **Memory & Column Analysis** — column-level memory estimates and removal candidates (from `column-memory-analysis.json`)
-- **Engineering Best Practices** — dbt/Databricks BPA findings with Engineering badges (from `engineering-bpa-results.json`)
+- **dbt Best Practices (Performance)** — performance-related dbt/Databricks BPA findings (from `engineering-bpa-results.json`)
 - **Report Visual Analysis** — PBI Inspector-style rules against PBIX Layout (from `visual-analysis.json`)
 - **Capacity Settings Analysis** — timeout/memory limit simulations with distribution charts (from `capacity-settings-analysis.json`)
 - **Workload & Infrastructure** — surge protection, capacity scaling, semantic model settings (from `workload-analysis.json`)
 
-All new sections are conditional — they only appear when their JSON input exists. The Health Score Architecture pillar now includes Engineering BPA high findings.
+All new sections are conditional — they only appear when their JSON input exists.
 
 Also produce a markdown summary checkpoint: `output/performance-diagnosis.md`
 
 **Report sections**:
-1. Executive Summary (key findings, health score, top 3 recommendations)
+1. Executive Summary (key findings, top 3 recommendations)
 2. Model Taxonomy (tables, storage modes, relationship diagram, source mapping)
 3. Data Volume Profile (table sizes, row counts, volume distribution)
 4. Storage Mode Analysis (DirectQuery/Dual/Import breakdown, why it matters)
 5. DAX Complexity Report (measure ranking, anti-patterns, hot tables)
 6. Query Performance Profile (slowest queries, frequency, visual mapping)
 7. Best Practice Findings (BPA results, dbt findings, community gaps)
-8. Root Cause Analysis (per-issue deep dive with evidence, each finding tagged with **Where**: Engineering / Semantic Model / Power BI)
-9. Recommendation Quadrant (effort vs impact 2x2 matrix, each item tagged with **Where**)
-10. Detailed Recommendations (per-finding card with: problem description, step-by-step implementation guide, estimated improvement, trade-offs, and alternative options when applicable)
-11. Implementation Roadmap (prioritised timeline with **Where** column showing which team owns each action)
-12. Health Score Summary
-13. Appendices (raw data, full BPA results, query samples)
+8. Root Cause Analysis (per-issue deep dive with evidence, each finding tagged with **Where**: dbt Models / Semantic Model / PBI Report / PBI Visual)
+9. Recommendation Quadrant (effort vs impact 2x2 matrix, each item tagged with **Where** category + specific location)
+10. Detailed Recommendations (per-finding card with: problem description, affected objects, step-by-step implementation guide, estimated improvement, trade-offs, and alternative options when applicable)
+11. Implementation Roadmap (prioritised action list with **Category / Location** column showing which team owns each action and exactly which object to change)
+12. Appendices (raw data, full BPA results, query samples)
 
 **Language**: All explanations use analogies and plain language suitable for non-technical readers. Technical details go in collapsible sections or appendices. British English throughout.
 

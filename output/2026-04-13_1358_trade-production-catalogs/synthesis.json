@@ -1,0 +1,389 @@
+{
+  "analysisMode": "model-wide",
+  "model": "ADE - Trade",
+  "analysisDate": "2026-04-13",
+  "executiveSummary": "The ADE - Trade semantic model exhibits significant performance risks driven by its DirectQuery-dominant architecture against large Databricks tables via pass-through serve views. The model has 45 tables (9 DirectQuery, 29 Dual, 7 Import) with 801 measures, 785 columns, and 31 relationships. The central fact table (Daily Trade / fact_product_option_trade_daily_snapshot_v1) is a DirectQuery table with degree 21 \u2014 the highest connectivity in the model \u2014 meaning any visual touching this table can trigger multi-table JOINs across up to 4 snowflake levels. 49 measures are rated critical complexity and 77 use FILTER(ALL), which forces full table scans by removing all filter context before re-applying it. All 145 dbt serve models are materialised as views with no column reduction, so every PBI query scans all columns in the underlying curated tables. 3 bidirectional cross-filter relationships generate additional Databricks subqueries. 6 dbt models have functions applied to filter columns (E05), blocking predicate pushdown. Without Databricks query profiling data (warehouse access was unavailable for this run), volumetric impact cannot be quantified precisely, but the structural indicators alone \u2014 9 DirectQuery tables, 77 FILTER(ALL) measures, no aggregation tables, pass-through serve views, and a snowflake depth of 4 \u2014 point to severe scan amplification. The top recommendation is to introduce aggregation tables at common analysis grains and refactor serve views to include column projection and date predicate pushdown.",
+  "databricksDailyStats": null,
+  "skippedSteps": [
+    {
+      "step": 4,
+      "reason": "Permission denied on Technology SQL Warehouse (f0bdb929e2c1cf2d). User needs CAN USE access."
+    },
+    {
+      "step": 5,
+      "reason": "Permission denied on Technology SQL Warehouse. Cannot query system.query.history."
+    }
+  ],
+  "healthScore": {
+    "overall": 35,
+    "breakdown": {
+      "storageModes": {
+        "score": 5,
+        "max": 15,
+        "note": "9 DirectQuery tables including main fact, 29 Dual, no aggregation tables, no import fact tables"
+      },
+      "daxPatterns": {
+        "score": 5,
+        "max": 20,
+        "note": "77 FILTER(ALL), 49 critical measures, 55 with 5+ estimated SQL subqueries, avg complexity 3.7"
+      },
+      "relationships": {
+        "score": 7,
+        "max": 10,
+        "note": "3 bidirectional cross-filter relationships, 0 inactive; 31 total manageable but degree-21 hub creates fan-out"
+      },
+      "queryPerformance": {
+        "score": null,
+        "max": 20,
+        "note": "Databricks query profiling unavailable \u2014 warehouse permission denied. Score excluded from total."
+      },
+      "dataVolume": {
+        "score": null,
+        "max": 15,
+        "note": "Row counts and table sizes unavailable \u2014 warehouse permission denied. Score excluded from total."
+      },
+      "engineering": {
+        "score": 6,
+        "max": 10,
+        "note": "6 E05 predicate pushdown blockers, 6 E07 ROW_NUMBER subselects, all 145 serve views are pass-through"
+      },
+      "bestPractices": {
+        "score": 4,
+        "max": 10,
+        "note": "11 high BPA findings (bidirectional + dual mode), 650 unused column candidates, 571 unqualified DAX columns"
+      }
+    }
+  },
+  "topFindings": [
+    {
+      "id": "F1",
+      "title": "77 FILTER(ALL) measures force full table scans on every query",
+      "severity": "critical",
+      "impact": "critical",
+      "effort": "high",
+      "quadrant": "Strategic Investment",
+      "layers": [
+        "Semantic Model"
+      ],
+      "scope": "model-wide",
+      "reportContext": null,
+      "category": "dax-performance",
+      "description": "77 DAX measures use the FILTER(ALL(Table)) pattern, which removes all existing filter context before re-applying specific conditions. In DirectQuery mode, this translates to additional subqueries that scan the entire underlying table without benefit from any slicer or page-level filter. With 9 DirectQuery tables and a hub table at degree 21, each FILTER(ALL) invocation can trigger a full scan of the fact table.",
+      "recommendation": "1. Audit all 77 FILTER(ALL) measures to determine if KEEPFILTERS or REMOVEFILTERS on specific columns would suffice. 2. Replace FILTER(ALL(Table), condition) with CALCULATE(measure, KEEPFILTERS(condition)) where possible. 3. For measures that truly need to remove all context, consider pre-aggregating the required values into an import-mode aggregation table.",
+      "estimatedImprovement": "30-50% reduction in Databricks subqueries per visual refresh",
+      "evidenceIds": [
+        "dax-audit-filter-all",
+        "bpa-filter-all-77"
+      ],
+      "where": "Semantic Model"
+    },
+    {
+      "id": "F2",
+      "title": "Degree-21 fact table hub creates extreme JOIN fan-out",
+      "severity": "critical",
+      "impact": "critical",
+      "effort": "high",
+      "quadrant": "Strategic Investment",
+      "layers": [
+        "Semantic Model"
+      ],
+      "scope": "model-wide",
+      "reportContext": null,
+      "category": "model-topology",
+      "description": "The Daily Trade table (fact_product_option_trade_daily_snapshot_v1) has 21 direct relationships, making it the most connected table in the model. Any visual that touches this table \u2014 even for a single measure \u2014 triggers JOINs to all referenced dimension tables. The snowflake depth reaches 4 levels (e.g., Daily Trade -> Option -> Product Option In Warehouse -> Go Live Date FC). PBI DirectQuery generates nested subqueries for each relationship hop, amplifying scan width.",
+      "recommendation": "1. Introduce aggregation tables at common analysis grains (daily by product option, daily by category) to serve 80%+ of visuals without touching the full fact table. 2. Consider splitting the model into focused sub-models (trade volume, stock management, pricing) to reduce relationship fan-out per query. 3. Evaluate converting high-frequency dimension lookups to Dual mode with cached aggregations.",
+      "estimatedImprovement": "70-90% reduction in JOIN complexity for typical visuals",
+      "evidenceIds": [
+        "hub-table-degree-21",
+        "snowflake-depth-4"
+      ],
+      "where": "Semantic Model"
+    },
+    {
+      "id": "F3",
+      "title": "All 145 serve views are pass-through with no column projection",
+      "severity": "high",
+      "impact": "high",
+      "effort": "medium",
+      "quadrant": "Quick Win",
+      "layers": [
+        "dbt Models"
+      ],
+      "scope": "model-wide",
+      "reportContext": null,
+      "category": "engineering",
+      "description": "Every serve model in the dbt project is materialised as a view using SELECT * with no column filtering. This means PBI DirectQuery queries read all columns from the underlying curated tables, regardless of which columns the visual actually needs. 19 serve views have more than 50 columns. Combined with PBI's column over-selection behaviour (selecting all model columns per table), this creates massive unnecessary data reads.",
+      "recommendation": "1. For each serve view consumed by the ADE - Trade model, create a narrow variant that selects only the columns referenced in the PBI model (use model-taxonomy.json column lists as reference). 2. Prioritise the fact table serve view (serve_fact_product_option_trade_daily_snapshot_v1) \u2014 reducing from all columns to only the ~30 PBI needs would cut scan width significantly. 3. Add explicit column lists to all serve views as a project-wide standard.",
+      "estimatedImprovement": "20-40% reduction in data scanned per query",
+      "evidenceIds": [
+        "dbt-all-views",
+        "dbt-19-wide-models"
+      ],
+      "where": "dbt Models"
+    },
+    {
+      "id": "F4",
+      "title": "49 critical-complexity DAX measures generating 5+ SQL subqueries each",
+      "severity": "high",
+      "impact": "high",
+      "effort": "high",
+      "quadrant": "Strategic Investment",
+      "layers": [
+        "Semantic Model"
+      ],
+      "scope": "model-wide",
+      "reportContext": null,
+      "category": "dax-performance",
+      "description": "49 measures are rated critical complexity (score >= 10), with an average of 5+ estimated SQL subqueries per measure evaluation. These measures combine context transitions, relationship hops across multiple tables, and FILTER(ALL) patterns. In DirectQuery mode, each subquery becomes a separate SQL statement sent to Databricks, compounding latency.",
+      "recommendation": "1. Identify the top 10 critical measures by visual binding frequency (which measures appear on the most visuals). 2. Refactor to reduce context transitions \u2014 use SUMX with a single CALCULATE instead of nested CALCULATE chains. 3. Pre-compute intermediate results in import-mode aggregation tables where the measure logic requires multiple table traversals.",
+      "estimatedImprovement": "40-60% reduction in Databricks queries per visual for affected measures",
+      "evidenceIds": [
+        "dax-49-critical",
+        "dax-55-high-subqueries"
+      ],
+      "where": "Semantic Model"
+    },
+    {
+      "id": "F5",
+      "title": "3 bidirectional cross-filter relationships amplify query complexity",
+      "severity": "high",
+      "impact": "medium",
+      "effort": "low",
+      "quadrant": "Quick Win",
+      "layers": [
+        "Semantic Model"
+      ],
+      "scope": "model-wide",
+      "reportContext": null,
+      "category": "model-topology",
+      "description": "3 relationships use bidirectional cross-filtering, which causes PBI to generate additional SQL subqueries to propagate filters in both directions. In a DirectQuery model with degree-21 hub tables, bidirectional filters cascade across multiple paths, potentially doubling the number of Databricks queries per visual. The affected relationships include Option Ranking (many-to-many with bidirectional), Product Option Fabric Composition, and Time Period.",
+      "recommendation": "1. Review each bidirectional relationship to determine if one-direction filtering suffices. 2. Convert the Option Ranking many-to-many bidirectional to a bridge pattern with explicit measures using CROSSFILTER. 3. For Time Period, use TREATAS or USERELATIONSHIP in specific measures instead of bidirectional cross-filter on the relationship.",
+      "estimatedImprovement": "10-20% reduction in subqueries for visuals touching affected tables",
+      "evidenceIds": [
+        "bpa-bidirectional-3"
+      ],
+      "where": "Semantic Model"
+    },
+    {
+      "id": "F6",
+      "title": "6 dbt models with functions on filter columns blocking predicate pushdown",
+      "severity": "high",
+      "impact": "high",
+      "effort": "low",
+      "quadrant": "Quick Win",
+      "layers": [
+        "dbt Models"
+      ],
+      "scope": "model-wide",
+      "reportContext": null,
+      "category": "engineering",
+      "description": "6 dbt models apply SQL functions (CAST, COALESCE, UPPER, etc.) to columns that are used in WHERE or JOIN predicates. This prevents Databricks from pushing predicates down to the Delta file level, forcing full file scans even when liquid clustering would otherwise prune 90%+ of files. This is engineering rule E05 in the BPA.",
+      "recommendation": "1. Move function applications to the SELECT clause or compute them in a CTE/subquery after filtering on the raw column. 2. For CAST operations on date keys, ensure the cast is applied to the parameter/literal side, not the column side. 3. For COALESCE, restructure to use IS NOT NULL checks in the WHERE clause.",
+      "estimatedImprovement": "50-80% reduction in files scanned for affected queries",
+      "evidenceIds": [
+        "eng-bpa-e05-6"
+      ],
+      "where": "dbt Models"
+    },
+    {
+      "id": "F7",
+      "title": "8 dual-mode tables without clear aggregation benefit",
+      "severity": "medium",
+      "impact": "medium",
+      "effort": "medium",
+      "quadrant": "Planned Improvement",
+      "layers": [
+        "Semantic Model"
+      ],
+      "scope": "model-wide",
+      "reportContext": null,
+      "category": "storage-mode",
+      "description": "8 tables are flagged by BPA rule DUAL_MODE_TABLES. Dual mode tables maintain both an in-memory cache and a DirectQuery connection. Without proper cache refresh policies, dual tables can serve stale data or, worse, force unnecessary DirectQuery fallback when the cache is invalidated. 29 of 45 tables are dual mode \u2014 the model heavily relies on dual mode for dimensions.",
+      "recommendation": "1. Evaluate each dual-mode dimension: if it changes infrequently (e.g., territory, country), convert to pure Import mode. 2. For rapidly changing dimensions that must stay current, keep dual mode but ensure the PBI dataset refresh schedule aligns with business requirements. 3. Consider converting the remaining 8 flagged tables to Import mode to reduce DirectQuery load.",
+      "estimatedImprovement": "5-15% reduction in DirectQuery fallback queries",
+      "evidenceIds": [
+        "bpa-dual-mode-8"
+      ],
+      "where": "Semantic Model"
+    },
+    {
+      "id": "F8",
+      "title": "650 unused column candidates inflating model memory and query width",
+      "severity": "medium",
+      "impact": "medium",
+      "effort": "low",
+      "quadrant": "Quick Win",
+      "layers": [
+        "Semantic Model"
+      ],
+      "scope": "model-wide",
+      "reportContext": null,
+      "category": "model-hygiene",
+      "description": "650 columns across the model are not referenced by any measure, relationship, or sort-by configuration. In DirectQuery mode, these columns still get selected by PBI when building queries against their parent tables, increasing data transfer and Databricks processing. This represents 83% of the 785 total columns.",
+      "recommendation": "1. Hide all 650 unreferenced columns in the semantic model to prevent end-user selection. 2. For DirectQuery tables, go further and remove unreferenced columns entirely \u2014 PBI only generates SQL for columns that exist in the model. 3. Cross-reference with actual report usage (via query history) before removal to ensure no visuals depend on them.",
+      "estimatedImprovement": "15-30% reduction in query width for tables with many unused columns",
+      "evidenceIds": [
+        "bpa-unused-650"
+      ],
+      "where": "Semantic Model"
+    },
+    {
+      "id": "F9",
+      "title": "571 unqualified DAX column references risk ambiguity and slow evaluation",
+      "severity": "low",
+      "impact": "low",
+      "effort": "low",
+      "quadrant": "Quick Win",
+      "layers": [
+        "Semantic Model"
+      ],
+      "scope": "model-wide",
+      "reportContext": null,
+      "category": "dax-quality",
+      "description": "571 DAX measures reference columns without the table qualifier (e.g., [ColumnName] instead of 'TableName'[ColumnName]). While this does not directly affect DirectQuery SQL generation, it makes the DAX engine perform additional name resolution work and can cause incorrect results if column names collide across tables.",
+      "recommendation": "1. Use Tabular Editor's 'Fix unqualified column references' feature to batch-update all 571 occurrences. 2. Add a BPA rule to prevent new unqualified references.",
+      "estimatedImprovement": "Minimal performance impact; primarily a quality and maintainability improvement",
+      "evidenceIds": [
+        "bpa-unqualified-571"
+      ],
+      "where": "Semantic Model"
+    },
+    {
+      "id": "F10",
+      "title": "6 ROW_NUMBER subselects in dbt models \u2014 use QUALIFY instead",
+      "severity": "medium",
+      "impact": "medium",
+      "effort": "low",
+      "quadrant": "Quick Win",
+      "layers": [
+        "dbt Models"
+      ],
+      "scope": "model-wide",
+      "reportContext": null,
+      "category": "engineering",
+      "description": "6 dbt models use a ROW_NUMBER() window function in a subquery with an outer WHERE rn = 1 pattern. Databricks supports QUALIFY, which lets the engine push the filter into the window computation, avoiding a materialisation step.",
+      "recommendation": "1. Refactor each occurrence to use QUALIFY ROW_NUMBER() OVER (...) = 1 instead of the subselect pattern. 2. This is a mechanical refactor with no logic change.",
+      "estimatedImprovement": "5-15% improvement in query compilation and execution for affected models",
+      "evidenceIds": [
+        "eng-bpa-e07-6"
+      ],
+      "where": "dbt Models"
+    }
+  ],
+  "modelProfile": {
+    "tables": 45,
+    "columns": 785,
+    "measures": 801,
+    "relationships": 31,
+    "directQueryTables": 9,
+    "dualTables": 29,
+    "importTables": 7,
+    "hubTableDegree": 21,
+    "maxSnowflakeDepth": 4,
+    "daxComplexity": {
+      "low": 577,
+      "medium": 153,
+      "high": 22,
+      "critical": 49
+    },
+    "daxAntiPatterns": {
+      "filterAll": 77,
+      "nestedCalculate": 54,
+      "repeatedSubexpression": 108,
+      "unqualifiedColumns": 571
+    },
+    "bpaFindings": {
+      "high": 11,
+      "medium": 87,
+      "low": 1221
+    },
+    "hotTables": [
+      {
+        "name": "Date",
+        "storageMode": "dual",
+        "refs": 216,
+        "degree": 2
+      },
+      {
+        "name": "Daily Trade",
+        "storageMode": "directQuery",
+        "refs": 94,
+        "degree": 21
+      },
+      {
+        "name": "Daily Financial Transform",
+        "storageMode": "dual",
+        "refs": 90,
+        "degree": 0
+      },
+      {
+        "name": "Inventory Status",
+        "storageMode": "dual",
+        "refs": 40,
+        "degree": 1
+      },
+      {
+        "name": "UDA",
+        "storageMode": "dual",
+        "refs": 28,
+        "degree": 1
+      }
+    ]
+  },
+  "dbtProfile": {
+    "domains": 10,
+    "serveModels": 145,
+    "allViews": true,
+    "wideModels": 19,
+    "modelsWithFilter": 31,
+    "modelsWithUnion": 10,
+    "actionableFindings": 111
+  },
+  "queryProfile": null,
+  "recommendationQuadrant": {
+    "quickWins": [
+      "F5",
+      "F6",
+      "F8",
+      "F9",
+      "F10"
+    ],
+    "strategic": [
+      "F1",
+      "F2",
+      "F4"
+    ],
+    "planned": [
+      "F3",
+      "F7"
+    ],
+    "deprioritise": []
+  },
+  "implementationRoadmap": [
+    {
+      "phase": "Phase 1: Quick Wins (Immediate)",
+      "items": [
+        "F5: Remove bidirectional cross-filters where one-direction suffices",
+        "F6: Fix 6 dbt models with functions on filter columns (E05)",
+        "F8: Hide or remove 650 unused columns from the semantic model",
+        "F9: Fix 571 unqualified DAX column references via Tabular Editor batch operation",
+        "F10: Refactor 6 ROW_NUMBER subselects to QUALIFY in dbt models"
+      ]
+    },
+    {
+      "phase": "Phase 2: Planned Improvements",
+      "items": [
+        "F3: Create narrow serve views with explicit column projections for PBI-consumed tables",
+        "F7: Convert stable dual-mode dimensions to pure Import mode"
+      ]
+    },
+    {
+      "phase": "Phase 3: Strategic Investments",
+      "items": [
+        "F1: Refactor 77 FILTER(ALL) measures to use KEEPFILTERS or pre-aggregated tables",
+        "F2: Introduce aggregation tables at common analysis grains to bypass the degree-21 fact hub",
+        "F4: Refactor top 10 critical DAX measures to reduce context transitions and subquery count"
+      ]
+    }
+  ]
+}

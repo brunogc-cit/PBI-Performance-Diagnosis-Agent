@@ -53,18 +53,64 @@ def _fmt_number(n) -> str:
 
 
 def _where_badges(layers: list[str]) -> str:
-    """Build Where badges (Engineering / Semantic Model / Power BI) from layer list."""
+    """Build Where category badges from layer list.
+
+    Categories:
+      PBI Report   — report layout, pages, slicers, filters
+      PBI Visual   — specific visual configurations, card types
+      Semantic Model — DAX measures, relationships, table/column config
+      dbt Models   — dbt SQL, materialisation, clustering, serve views
+    """
     badges = []
     for layer in layers:
         ll = layer.lower()
-        if any(kw in ll for kw in ("dbt", "databricks", "engineering")):
-            badges.append('<span class="badge badge-high">Engineering</span>')
-        if any(kw in ll for kw in ("semantic", "model", "dax", "directquery")):
+        if any(kw in ll for kw in ("dbt", "databricks", "engineering", "serve view", "curated", "delta")):
+            badges.append('<span class="badge badge-high">dbt Models</span>')
+        if any(kw in ll for kw in ("semantic", "model", "dax", "directquery", "measure", "relationship", "table config")):
             badges.append('<span class="badge badge-medium">Semantic Model</span>')
-        if any(kw in ll for kw in ("power bi", "pbi report", "report")):
-            badges.append('<span class="badge badge-info">Power BI</span>')
+        if any(kw in ll for kw in ("visual", "card", "matrix visual", "chart")):
+            badges.append('<span class="badge" style="background:rgba(108,117,125,0.12);color:#6c757d">PBI Visual</span>')
+        if any(kw in ll for kw in ("power bi", "pbi report", "report", "page", "slicer", "filter", "layout")):
+            badges.append('<span class="badge badge-info">PBI Report</span>')
     html = " ".join(dict.fromkeys(badges))
     return html or '<span class="badge badge-info">TBD</span>'
+
+
+def _where_with_location(layers: list[str], location: str = "") -> str:
+    """Build Where badges with an actual location string.
+
+    Returns category badge(s) followed by the specific location
+    (e.g., page name, table name, dbt model name).
+    """
+    badges_html = _where_badges(layers)
+    if location:
+        return f'{badges_html} <span style="font-size:11px;color:var(--muted)">{escape(location)}</span>'
+    return badges_html
+
+
+def _extract_location_from_action(action_text: str, where_val: str) -> str:
+    """Best-effort extraction of a specific location from an action description.
+
+    Looks for common patterns like table names, page names, model names, etc.
+    """
+    import re as _re
+    # dbt model names (serve_*, curated_*)
+    m = _re.search(r'\b(serve_\w+|curated_\w+)\b', action_text)
+    if m:
+        return m.group(1)
+    # PBI table names in quotes or after "on"
+    m = _re.search(r'(?:on|from|in)\s+["\']?([A-Z][a-z][\w\s]+(?:Table|View))["\']?', action_text)
+    if m:
+        return m.group(1).strip()
+    # Report/page names (e.g., "Trade report", "Sales page")
+    m = _re.search(r'\b(\w+(?:\s+\w+)?)\s+(?:report|page|dashboard)\b', action_text, _re.IGNORECASE)
+    if m:
+        return m.group(0).strip()
+    # Specific table names (e.g., "fact_order_line_v1", "dim_date_v2")
+    m = _re.search(r'\b((?:fact|dim|bridge)_\w+)\b', action_text, _re.IGNORECASE)
+    if m:
+        return m.group(1)
+    return ""
 
 
 def _scope_badge(scope: str) -> str:
@@ -579,59 +625,8 @@ def generate_html(
 
     dbt_stats_raw = dbt_lineage.get("statistics", {}) if dbt_lineage else {}
 
-    # ── Health Score v2: 4-pillar point budget ──
-    # Each pillar has a fixed point budget. Sum = 0-100. Global floor = 5.
-    #   BPA Compliance (40)  — rule violations severity
-    #   DAX Quality    (25)  — anti-patterns, complexity
-    #   Architecture   (25)  — model structure risks
-    #   dbt Quality    (10)  — data pipeline quality
-
-    # Pillar 1: BPA Compliance (max 40)
-    bpa_h_deduct = min(bpa_high * 3.5, 30)
-    bpa_m_deduct = min(bpa_medium * 0.3, 8)
-    health_bpa = max(2, 40 - bpa_h_deduct - bpa_m_deduct)
-
-    # Pillar 2: DAX Quality (max 25)
-    dax_fa = dax_stats.get("measuresWithFilterAll", 0)
-    dax_subq = dax_stats.get("measuresWithHighSubqueries", 0)
-    dax_crit = complexity_dist.get("critical", 0)
-    fa_deduct = min(dax_fa * 0.35, 12)
-    subq_deduct = min(dax_subq * 0.3, 10)
-    crit_deduct = min(dax_crit * 0.15, 6)
-    health_dax = max(0, 25 - fa_deduct - subq_deduct - crit_deduct) if dax_complexity else 25
-
-    # Pillar 3: Architecture (max 25)
-    dq_excess = max(0, dq_tables - 5)
-    bidi_deduct = min(bidi_rels * 4, 12)
-    dq_deduct = min(dq_excess * 1.5, 10)
-    health_arch = max(3, 25 - bidi_deduct - dq_deduct) if taxonomy else 25
-
-    # Engineering BPA findings affect Architecture pillar
+    # Engineering BPA summary — used in approach card
     eng_bpa_summary = engineering_bpa.get("summary", {}) if engineering_bpa else {}
-    eng_high = eng_bpa_summary.get("high", 0)
-    eng_deduct = min(eng_high * 1.5, 8)
-    if engineering_bpa and taxonomy:
-        health_arch = max(3, health_arch - eng_deduct)
-
-    # Pillar 4: dbt Quality (max 10)
-    dbt_act = dbt_stats_raw.get("actionableFindingsCount", 0)
-    dbt_wide = dbt_stats_raw.get("wideModels", 0)
-    dbt_act_deduct = min(dbt_act * 0.08, 5)
-    dbt_wide_deduct = min(dbt_wide * 0.25, 4)
-    health_dbt = max(0, 10 - dbt_act_deduct - dbt_wide_deduct) if dbt_lineage else 10
-
-    health = max(5, round(health_bpa + health_dax + health_arch + health_dbt))
-    health_grade = "A" if health >= 80 else ("B" if health >= 60 else ("C" if health >= 40 else ("D" if health >= 20 else "F")))
-
-    health_class = "green" if health >= 70 else ("amber" if health >= 40 else "red")
-    health_label = f"Grade {health_grade}"
-
-    # Health score tooltip — shown on hover wherever the score appears
-    health_tooltip = (
-        f"BPA: {health_bpa:.0f}/40 · DAX: {health_dax:.0f}/25 · "
-        f"Arch: {health_arch:.0f}/25 · dbt: {health_dbt:.0f}/10\n"
-        f"Grades: A (80+) · B (60-79) · C (40-59) · D (20-39) · F (<20)"
-    )
 
     # ── Build sections ──
     sections: list[str] = []
@@ -782,11 +777,6 @@ def generate_html(
         <div class="value">{bpa_total}</div>
         <div class="label">BPA Findings</div>
         <div class="sub">{bpa_high} high, {bpa_medium} medium</div>
-      </div>
-      <div class="metric-card {health_class}">
-        <div class="value"><span class="tooltip-wrap" data-tooltip="{health_tooltip}">{health}/100</span></div>
-        <div class="label">Health Score</div>
-        <div class="sub">{health_label}</div>
       </div>
     </div>
     {"<div class='card'><p>" + escape(exec_summary) + "</p></div>" if exec_summary else ""}
@@ -980,7 +970,11 @@ def generate_html(
             for t in group:
                 src = ""
                 if t.get("sourceTable"):
-                    src = f"{t['sourceCatalog']}.{t['sourceDatabase']}.{t['sourceTable']}"
+                    full_src = f"{t['sourceCatalog']}.{t['sourceDatabase']}.{t['sourceTable']}"
+                    # Exclude personal dev schemas from display (e.g., dbt_dev.rafael_diassantos.*)
+                    _EXCLUDED_SCHEMAS = {"rafael_diassantos"}
+                    if t.get("sourceDatabase", "") not in _EXCLUDED_SCHEMAS:
+                        src = full_src
                 vol = t.get("volumetry", {})
                 row_count = vol.get("rowCount")
                 size_gb = vol.get("sizeGB")
@@ -1319,12 +1313,21 @@ def generate_html(
     # ═══════════════════════════════════════════════════════
     if bpa_results:
         sec_num += 1
-        findings = bpa_results.get("findings", [])
+        all_rule_results = bpa_results.get("ruleResults", [])
         passing_rules = bpa_results.get("passingRules", [])
 
-        # Rule violations table — only show FAIL rules with impact type
-        # Sort by highest violation count first
-        sorted_rules = sorted(bpa_results.get("ruleResults", []), key=lambda r: r.get("count", 0), reverse=True)
+        # Filter to performance-related rules only (latency, cost, memory)
+        _PERF_IMPACTS = {"latency", "cost", "memory"}
+        perf_rules = [r for r in all_rule_results if r.get("performanceImpact", "") in _PERF_IMPACTS]
+        perf_rule_names = {r.get("rule", "") for r in perf_rules}
+        quality_rules = [r for r in all_rule_results if r.get("performanceImpact", "") not in _PERF_IMPACTS]
+
+        # Filter findings to only performance-related rules
+        all_findings = bpa_results.get("findings", [])
+        findings = [f for f in all_findings if f.get("rule", "") in perf_rule_names]
+
+        # Rule violations table — only performance-impacting rules
+        sorted_rules = sorted(perf_rules, key=lambda r: r.get("count", 0), reverse=True)
         rule_rows = ""
         for r in sorted_rules:
             impact = r.get("performanceImpact", "")
@@ -1336,10 +1339,16 @@ def generate_html(
               <td>{impact_badge}</td>
               <td style="font-size:12px;color:var(--muted)">{impact_desc}</td></tr>"""
 
+        # Quality rules collapsed at the bottom
+        quality_html = ""
+        if quality_rules:
+            q_names = ", ".join(r.get("rule", "") for r in quality_rules)
+            quality_html = f'<p style="font-size:12px;color:var(--muted);margin-top:12px">{len(quality_rules)} non-performance rules excluded (quality only): {escape(q_names)}</p>'
+
         # Passing rules summary
         passing_html = ""
         if passing_rules:
-            passing_html = f'<p style="font-size:13px;color:var(--green);margin-top:12px">&#10003; {len(passing_rules)} of {len(passing_rules) + len(bpa_results.get("ruleResults", []))} rules passed (no violations): {", ".join(passing_rules)}</p>'
+            passing_html = f'<p style="font-size:13px;color:var(--green);margin-top:12px">&#10003; {len(passing_rules)} rules passed (no violations): {", ".join(passing_rules)}</p>'
 
         # Split findings: High always shown, 10 Medium shown, rest collapsed
         high_findings = [f for f in findings if f.get("severity", "").lower() == "high"]
@@ -1370,14 +1379,15 @@ def generate_html(
         </details>"""
 
         sections.append(f"""
-        <h2 class="section-title">{sec_num}. Best Practice Findings</h2>
-        <div class="card"><h3>Rule Violations</h3>
+        <h2 class="section-title">{sec_num}. Best Practice Findings (Performance)</h2>
+        <div class="card"><h3>Rule Violations &mdash; Performance Impact Only</h3>
           <table><thead><tr><th>Rule</th><th>Violations</th><th>Impact Type</th><th>Performance Impact</th></tr></thead>
             <tbody>{rule_rows}</tbody></table>
+          {quality_html}
           {passing_html}
         </div>
         <div class="card">
-          <h3>Detailed Findings ({len(findings)} total — showing {visible_count} critical/high/medium)</h3>
+          <h3>Detailed Findings ({len(findings)} performance-related — showing {visible_count})</h3>
           <table><thead><tr><th>Rule</th><th>Severity</th><th>Table</th><th>Object</th><th>Detail</th></tr></thead>
             <tbody>{visible_rows}</tbody></table>
           {collapsed_html}
@@ -1385,29 +1395,48 @@ def generate_html(
         """)
 
     # ═══════════════════════════════════════════════════════
-    # SECTION: ENGINEERING BEST PRACTICES
+    # SECTION: dbt BEST PRACTICES (Performance)
     # ═══════════════════════════════════════════════════════
     if engineering_bpa:
         sec_num += 1
-        eng_summary = engineering_bpa.get("summary", {})
         eng_rules = engineering_bpa.get("ruleResults", [])
         eng_passing = engineering_bpa.get("passingRules", [])
 
+        # Filter to performance-related rules only (latency, cost — exclude quality)
+        _ENG_PERF_IMPACTS = {"latency", "cost"}
+        perf_eng_rules = [r for r in eng_rules if r.get("impact", r.get("performanceImpact", "")) in _ENG_PERF_IMPACTS]
+        quality_eng_rules = [r for r in eng_rules if r.get("impact", r.get("performanceImpact", "")) not in _ENG_PERF_IMPACTS]
+
+        # Recompute summary for performance-only rules
+        eng_perf_high = sum(r["count"] for r in perf_eng_rules if r.get("severity") == "high")
+        eng_perf_medium = sum(r["count"] for r in perf_eng_rules if r.get("severity") == "medium")
+        eng_perf_low = sum(r["count"] for r in perf_eng_rules if r.get("severity") == "low")
+        eng_perf_total = eng_perf_high + eng_perf_medium + eng_perf_low
+
         # Sort by count descending
-        sorted_eng_rules = sorted(eng_rules, key=lambda r: r.get("count", 0), reverse=True)
+        sorted_eng_rules = sorted(perf_eng_rules, key=lambda r: r.get("count", 0), reverse=True)
 
         eng_rows = ""
         for rule in sorted_eng_rules:
             examples_html = ""
             for ex in rule.get("examples", [])[:3]:
                 examples_html += f"<div style='font-size:11px;color:var(--muted);margin-top:4px'>{escape(ex.get('model', ''))} → {escape(ex.get('detail', ''))}</div>"
+            impact = rule.get("impact", rule.get("performanceImpact", ""))
+            impact_badge = _impact_type_badge(impact) if impact else ""
             eng_rows += f"""<tr>
               <td><strong>{escape(rule.get('ruleId', ''))}</strong></td>
               <td>{escape(rule.get('title', ''))}{examples_html}</td>
               <td>{_badge(rule.get('severity', 'medium'))}</td>
+              <td>{impact_badge}</td>
               <td style="font-weight:600">{rule.get('count', 0)}</td>
               <td style="font-size:12px">{escape(rule.get('recommendation', ''))}</td>
             </tr>"""
+
+        # Quality rules excluded note
+        quality_html = ""
+        if quality_eng_rules:
+            q_names = ", ".join(f"{r.get('ruleId', '')}: {r.get('title', '')}" for r in quality_eng_rules)
+            quality_html = f'<p style="font-size:12px;color:var(--muted);margin-top:12px">{len(quality_eng_rules)} non-performance rules excluded (quality only): {escape(q_names)}</p>'
 
         passing_html = ""
         if eng_passing:
@@ -1415,19 +1444,20 @@ def generate_html(
             passing_html = f"<details><summary>Passing rules ({len(eng_passing)})</summary><p style='font-size:12px;color:var(--muted);margin-top:8px'>{escape(passing_items)}</p></details>"
 
         sections.append(f"""
-        <h2 class="section-title">{sec_num}. Engineering Best Practices {'<span class="badge badge-high">Engineering</span>' if eng_summary.get('high', 0) > 0 else ''}</h2>
+        <h2 class="section-title">{sec_num}. dbt Best Practices (Performance) {'<span class="badge badge-high">dbt Models</span>' if eng_perf_high > 0 else ''}</h2>
         <div class="metric-grid">
-          <div class="metric-card red"><div class="value">{eng_summary.get('high', 0)}</div><div class="label">High</div></div>
-          <div class="metric-card amber"><div class="value">{eng_summary.get('medium', 0)}</div><div class="label">Medium</div></div>
-          <div class="metric-card green"><div class="value">{eng_summary.get('low', 0)}</div><div class="label">Low</div></div>
-          <div class="metric-card"><div class="value">{eng_summary.get('totalFindings', 0)}</div><div class="label">Total Findings</div></div>
+          <div class="metric-card red"><div class="value">{eng_perf_high}</div><div class="label">High</div></div>
+          <div class="metric-card amber"><div class="value">{eng_perf_medium}</div><div class="label">Medium</div></div>
+          <div class="metric-card green"><div class="value">{eng_perf_low}</div><div class="label">Low</div></div>
+          <div class="metric-card"><div class="value">{eng_perf_total}</div><div class="label">Total Findings</div></div>
         </div>
         <div class="card">
-          <h3>Rule Violations <span class="badge badge-high">Engineering</span></h3>
+          <h3>Rule Violations &mdash; Performance Impact Only</h3>
           <table>
-            <thead><tr><th>Rule</th><th>Description</th><th>Severity</th><th>Count</th><th>Recommendation</th></tr></thead>
+            <thead><tr><th>Rule</th><th>Description</th><th>Severity</th><th>Impact</th><th>Count</th><th>Recommendation</th></tr></thead>
             <tbody>{eng_rows}</tbody>
           </table>
+          {quality_html}
           {passing_html}
         </div>
         """)
@@ -1487,19 +1517,32 @@ def generate_html(
         va_summary = visual_analysis.get("summary", {})
         va_reports = visual_analysis.get("reports", [])
 
-        visual_rows = ""
+        # Collect all visual finding rows with severity for sorting
+        _SEV_ORDER = {"high": 0, "medium": 1, "low": 2}
+        visual_items: list[tuple[int, str]] = []  # (sort_key, html_row)
         for report in va_reports:
+            report_name = report.get("reportName", "Unknown Report")
             for rule in report.get("ruleResults", []):
+                sev = rule.get("severity", "medium").lower()
+                sev_key = _SEV_ORDER.get(sev, 9)
                 for ex in rule.get("examples", [])[:3]:
-                    visual_rows += f"""<tr>
-                      <td>{_badge(rule.get('severity', 'medium'))}</td>
+                    page = ex.get("page", ex.get("detail", ""))
+                    # Build "Report / Page" location string
+                    location = f"{report_name} / {page}" if page else report_name
+                    row = f"""<tr>
+                      <td>{_badge(sev)}</td>
                       <td><strong>{escape(rule.get('ruleId', ''))}</strong>: {escape(rule.get('title', ''))}</td>
-                      <td>{escape(ex.get('page', ex.get('detail', '')))}</td>
+                      <td>{escape(location)}</td>
                       <td style="font-size:12px">{escape(ex.get('recommendation', rule.get('recommendation', '')))}</td>
                     </tr>"""
+                    visual_items.append((sev_key, row))
+
+        # Sort by severity: high first, then medium, then low
+        visual_items.sort(key=lambda x: x[0])
+        visual_rows = "".join(row for _, row in visual_items)
 
         sections.append(f"""
-        <h2 class="section-title">{sec_num}. Report Visual Analysis <span class="badge badge-info">Power BI</span></h2>
+        <h2 class="section-title">{sec_num}. Report Visual Analysis <span class="badge badge-info">PBI Report</span></h2>
         <div class="metric-grid">
           <div class="metric-card"><div class="value">{va_summary.get('totalPages', 0)}</div><div class="label">Pages Analysed</div></div>
           <div class="metric-card"><div class="value">{va_summary.get('totalVisuals', 0)}</div><div class="label">Total Visuals</div></div>
@@ -1508,7 +1551,7 @@ def generate_html(
         </div>
         <div class="card">
           <table>
-            <thead><tr><th>Severity</th><th>Rule</th><th>Location</th><th>Recommendation</th></tr></thead>
+            <thead><tr><th>Severity</th><th>Rule</th><th>Report / Page</th><th>Recommendation</th></tr></thead>
             <tbody>{visual_rows}</tbody>
           </table>
         </div>
@@ -1685,11 +1728,12 @@ def generate_html(
                 if isinstance(item, dict):
                     action_desc = item.get("action", "")
                     where_val = item.get("where", "")
+                    location_val = item.get("location", "")
                     finding_ref = item.get("finding", "")
                     impact_val = item.get("impact", "")
                 else:
                     action_desc = str(item)
-                    where_val, finding_ref, impact_val = "", "", ""
+                    where_val, location_val, finding_ref, impact_val = "", "", "", ""
                 # Determine quadrant from finding reference
                 fids = [fid.strip() for fid in finding_ref.split(",") if fid.strip()] if finding_ref else []
                 target_q = "strategic"  # default
@@ -1697,14 +1741,18 @@ def generate_html(
                     if fid in finding_quad_lookup:
                         target_q = finding_quad_lookup[fid]
                         break
+                # Build WHERE with category + actual location
+                # Prefer explicit location field, fall back to regex extraction from action text
+                location = location_val or _extract_location_from_action(action_desc, where_val)
                 if where_val:
-                    where_r = _where_badges([w.strip() for w in where_val.split(",")] if "," in where_val else [where_val])
+                    layers_list = [w.strip() for w in where_val.split(",")] if "," in where_val else [where_val]
+                    where_r = _where_with_location(layers_list, location)
                 else:
                     matched = [f for f in syn_findings if f.get("id") in fids]
                     layers = []
                     for m in matched:
                         layers.extend(m.get("layers", []))
-                    where_r = _where_badges(list(dict.fromkeys(layers))) if layers else '<span class="badge badge-info">TBD</span>'
+                    where_r = _where_with_location(list(dict.fromkeys(layers)), location) if layers else '<span class="badge badge-info">TBD</span>'
                 roadmap_by_quad.setdefault(target_q, []).append({
                     "action": action_desc,
                     "where_html": where_r,
@@ -1728,7 +1776,7 @@ def generate_html(
                 ref = f"[{escape(a['finding'])}] " if a.get("finding") else ""
                 rows += f"<tr><td>{ref}<strong>{escape(a['action'])}</strong></td><td>{a['where_html']}</td></tr>\n"
             return f"""<table class="matrix-actions-table" style="width:100%;border-collapse:collapse">
-              <thead><tr><th style="text-align:left;font-size:11px;padding:4px 10px">Action</th><th style="text-align:left;font-size:11px;padding:4px 10px">Where</th></tr></thead>
+              <thead><tr><th style="text-align:left;font-size:11px;padding:4px 10px">Action</th><th style="text-align:left;font-size:11px;padding:4px 10px">Category / Location</th></tr></thead>
               <tbody>{rows}</tbody></table>"""
 
         def _matrix_box(key, title, subtitle, colour_bg, colour_border, colour_title, icon, findings, actions):
@@ -1771,12 +1819,14 @@ def generate_html(
       to maximise productivity. Expand each quadrant to see findings and their mapped actions.
     </p>
     <div class="note-box" style="margin-bottom:16px">
-      <strong>Where:</strong>
-      <span class="badge badge-high">Engineering</span> = Databricks / dbt / Delta tables
+      <strong>Category:</strong>
+      <span class="badge badge-info">PBI Report</span> = Report layout / pages / slicers / filters
       &nbsp;&middot;&nbsp;
-      <span class="badge badge-medium">Semantic Model</span> = PBI model / DAX / M expressions
+      <span class="badge" style="background:rgba(108,117,125,0.12);color:#6c757d">PBI Visual</span> = Visual configs / cards / matrices
       &nbsp;&middot;&nbsp;
-      <span class="badge badge-info">Power BI</span> = Report layout / slicers / configuration
+      <span class="badge badge-medium">Semantic Model</span> = DAX measures / relationships / table config
+      &nbsp;&middot;&nbsp;
+      <span class="badge badge-high">dbt Models</span> = dbt SQL / materialisation / clustering / serve views
     </div>
     <div class="matrix-wrapper">
       <div class="matrix-y-label">&larr; Low Impact &nbsp;&nbsp;&nbsp; High Impact &rarr;</div>
@@ -1813,6 +1863,28 @@ def generate_html(
             where_html = _where_badges(f.get("layers", []))
             impact = escape(str(f.get("impact", "")))
             effort = escape(str(f.get("effort", "")))
+
+            # Affected objects — show exactly which pages, tables, models, etc. are impacted
+            affected_html = ""
+            ao = f.get("affectedObjects")
+            if ao and isinstance(ao, dict):
+                ao_parts = []
+                _ao_labels = [
+                    ("pages", "Pages"), ("tables", "Tables"), ("measures", "Measures"),
+                    ("dbtModels", "dbt Models"), ("relationships", "Relationships"),
+                    ("columns", "Columns"), ("visuals", "Visuals"),
+                ]
+                for key, label in _ao_labels:
+                    items = ao.get(key, [])
+                    if items:
+                        item_badges = ", ".join(f"<code>{escape(str(i))}</code>" for i in items[:10])
+                        overflow = f" (+{len(items) - 10} more)" if len(items) > 10 else ""
+                        ao_parts.append(f"<strong>{label}:</strong> {item_badges}{overflow}")
+                if ao_parts:
+                    affected_html = f"""<div style="margin-top:12px;padding:12px;background:var(--light-bg);border-radius:6px;font-size:13px">
+                      <strong>Affected Objects:</strong>
+                      <div style="margin-top:6px">{"<br>".join(ao_parts)}</div>
+                    </div>"""
 
             # Impact breakdown (planning / execution / delivery)
             breakdown_html = ""
@@ -1928,6 +2000,7 @@ def generate_html(
         <div>{_badge(sev)} {_scope_badge(scope)} {where_html}</div>
       </div>
       <p style="font-size:13px;margin-bottom:12px"><strong>Problem:</strong> {desc}</p>
+      {affected_html}
       <div class="recommendation-box" style="margin:0">
         <h4>How to Fix</h4>
         <p>{rec}</p>
@@ -1970,76 +2043,13 @@ def generate_html(
     <details style="margin-top:24px">
       <summary>Findings by Severity &mdash; Quick Reference Table</summary>
       <div class="card" style="margin-top:12px">
-        <table><thead><tr><th>#</th><th>Finding</th><th>Severity</th><th>Scope</th><th>Where</th><th>Impact</th><th>Effort</th></tr></thead>
+        <table><thead><tr><th>#</th><th>Finding</th><th>Severity</th><th>Scope</th><th>Category</th><th>Impact</th><th>Effort</th></tr></thead>
           <tbody>{severity_ref_rows}</tbody></table>
       </div>
     </details>
     """)
 
     # (Implementation Roadmap is now merged into the Action-Priority Matrix section above)
-
-    # ═══════════════════════════════════════════════════════
-    # SECTION: HEALTH SCORE SUMMARY
-    # ═══════════════════════════════════════════════════════
-    sec_num += 1
-
-    # Build per-pillar detail strings for the breakdown
-    bpa_detail = f"{bpa_high} high (-{bpa_h_deduct:.1f}), {bpa_medium} medium (-{bpa_m_deduct:.1f})"
-    dax_detail_parts = []
-    if dax_fa: dax_detail_parts.append(f"{dax_fa} FILTER(ALL) (-{fa_deduct:.1f})")
-    if dax_subq: dax_detail_parts.append(f"{dax_subq} high-subq (-{subq_deduct:.1f})")
-    if dax_crit: dax_detail_parts.append(f"{dax_crit} critical (-{crit_deduct:.1f})")
-    dax_detail = ", ".join(dax_detail_parts) if dax_detail_parts else "No issues detected"
-    if not dax_complexity: dax_detail = "No data (neutral)"
-    arch_detail_parts = []
-    if bidi_rels: arch_detail_parts.append(f"{bidi_rels} bidirectional (-{bidi_deduct:.1f})")
-    if dq_excess > 0: arch_detail_parts.append(f"{dq_excess} excess DQ (-{dq_deduct:.1f})")
-    if eng_high: arch_detail_parts.append(f"{eng_high} eng BPA high (-{eng_deduct:.1f})")
-    arch_detail = ", ".join(arch_detail_parts) if arch_detail_parts else "No issues detected"
-    if not taxonomy: arch_detail = "No data (neutral)"
-    dbt_detail_parts = []
-    if dbt_act: dbt_detail_parts.append(f"{dbt_act} actionable (-{dbt_act_deduct:.1f})")
-    if dbt_wide: dbt_detail_parts.append(f"{dbt_wide} wide models (-{dbt_wide_deduct:.1f})")
-    dbt_detail = ", ".join(dbt_detail_parts) if dbt_detail_parts else "No issues detected"
-    if not dbt_lineage: dbt_detail = "No data (neutral)"
-
-    def _pillar_class(score, max_pts):
-        pct = score / max_pts if max_pts else 0
-        return "green" if pct >= 0.7 else ("amber" if pct >= 0.4 else "red")
-
-    sections.append(f"""
-    <h2 class="section-title">{sec_num}. Health Score Summary</h2>
-    <div class="card" style="text-align:center;padding:40px">
-      <div style="font-size:64px;font-weight:700;color:var(--{health_class})">
-        <span class="tooltip-wrap" data-tooltip="{health_tooltip}">{health}/100</span>
-      </div>
-      <div style="font-size:16px;font-weight:600;color:var(--{health_class});margin-top:8px">Grade {health_grade}</div>
-    </div>
-    <div class="card" style="margin-top:16px">
-      <h3>Score Breakdown &mdash; 4 Pillars</h3>
-      <table>
-        <thead><tr><th>Pillar</th><th>Score</th><th>Max</th><th>Key Factors</th></tr></thead>
-        <tbody>
-          <tr><td>BPA Compliance</td><td style="color:var(--{_pillar_class(health_bpa, 40)});font-weight:600">{health_bpa:.0f}</td><td>40</td><td style="font-size:12px">{escape(bpa_detail)}</td></tr>
-          <tr><td>DAX Quality</td><td style="color:var(--{_pillar_class(health_dax, 25)});font-weight:600">{health_dax:.0f}</td><td>25</td><td style="font-size:12px">{escape(dax_detail)}</td></tr>
-          <tr><td>Architecture</td><td style="color:var(--{_pillar_class(health_arch, 25)});font-weight:600">{health_arch:.0f}</td><td>25</td><td style="font-size:12px">{escape(arch_detail)}</td></tr>
-          <tr><td>dbt Quality</td><td style="color:var(--{_pillar_class(health_dbt, 10)});font-weight:600">{health_dbt:.0f}</td><td>10</td><td style="font-size:12px">{escape(dbt_detail)}</td></tr>
-          <tr style="font-weight:700;border-top:2px solid var(--border)"><td>Total</td><td style="color:var(--{health_class})">{health}</td><td>100</td><td>Grade {health_grade}</td></tr>
-        </tbody>
-      </table>
-      <div style="display:flex;gap:16px;margin-top:16px;font-size:12px">
-        <span class="badge badge-low">A: 80+</span>
-        <span class="badge badge-info">B: 60-79</span>
-        <span class="badge badge-medium">C: 40-59</span>
-        <span class="badge badge-high">D: 20-39</span>
-        <span class="badge" style="background:rgba(0,0,0,0.08)">F: &lt;20</span>
-      </div>
-      <p style="font-size:13px;color:var(--muted);margin-top:12px">
-        Each pillar starts at its maximum and gets deductions capped per signal category.
-        Missing data sources receive full points (neutral). Global minimum: 5.
-      </p>
-    </div>
-    """)
 
     # ═══════════════════════════════════════════════════════
     # ASSEMBLE — wrap sections in collapsible <details>, build TOC & approach
@@ -2081,7 +2091,7 @@ def generate_html(
         ("DAX Measures Analysis", bool(dax_complexity), "Complexity scoring, anti-pattern detection, context transitions"),
         ("Best Practice Analyser (BPA)", bool(bpa_results), f"{bpa_total} findings across 12 rules"),
         ("dbt Source Code (Serve + Curated)", bool(dbt_lineage), "Lineage, materialisation, clustering, column pruning"),
-        ("Engineering BPA (dbt Rules)", bool(engineering_bpa), f"{eng_bpa_summary.get('totalFindings', 0)} findings across 15 rules" if engineering_bpa else ""),
+        ("dbt Best Practices (Performance)", bool(engineering_bpa), f"{eng_bpa_summary.get('totalFindings', 0)} findings across 15 rules" if engineering_bpa else ""),
         ("Databricks Metadata & Volumetry", bool(dbx_profile), "Row counts, table sizes, query statistics"),
         ("Databricks Query History", bool(query_profile or user_query_profile), "Per-user attribution, duration profiling"),
         ("Capacity Settings Simulation", bool(capacity_settings), "Timeout, memory limit, row set thresholds",
@@ -2148,7 +2158,6 @@ def generate_html(
     <div class="metadata">
       <span>{now}</span>
       <span>PBI Performance Diagnosis Agent</span>
-      <span class="tooltip-wrap" data-tooltip="{health_tooltip}">Health: {health}/100 ({health_grade})</span>
       <span>Mode: {escape(analysis_mode)}</span>
     </div>
   </div>
@@ -2156,7 +2165,7 @@ def generate_html(
     {approach_html}
     {sections_html}
     <div class="report-footer">
-      Generated by PBI Performance Diagnosis Agent &middot; {now} &middot; <span class="tooltip-wrap" data-tooltip="{health_tooltip}">Health Score: {health}/100 (Grade {health_grade})</span>
+      Generated by PBI Performance Diagnosis Agent &middot; {now}
     </div>
   </div>
 <script>
