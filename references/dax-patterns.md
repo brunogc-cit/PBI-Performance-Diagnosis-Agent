@@ -161,6 +161,8 @@ SUMX(
 
 ### 1.10 Unqualified Column References
 
+**Performance Impact: None** — This is a readability/maintenance concern only. No effect on query generation or engine performance. Classified as severity `Info` and suppressed from the Action Register.
+
 **Why it is bad:** Unqualified column names (without the table prefix) can resolve ambiguously when tables have columns with the same name. Always qualify column references with the table name.
 
 ```dax

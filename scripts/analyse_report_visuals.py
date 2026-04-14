@@ -92,6 +92,7 @@ RULES = [
         "title": "Auto-refresh or query reduction settings",
         "severity": "medium",
         "performanceImpact": "cost",
+        "performanceRelevant": False,  # Org policy, not actionable perf fix (suppressed from Action Register)
         "description": (
             "Checks for automatic page refresh (which sends repeated queries "
             "at a fixed interval) and query reduction settings (cross-highlighting, "
@@ -139,6 +140,7 @@ RULES = [
         "title": "Large embedded images",
         "severity": "low",
         "performanceImpact": "latency",
+        "performanceRelevant": False,  # Negligible impact in DQ models (suppressed from Action Register)
         "description": (
             "Image visuals and background images are embedded in the report "
             "definition and transferred on every page load. Large images "

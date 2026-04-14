@@ -47,6 +47,7 @@ PBI-Performance-Diagnosis-Agent/
 │   ├── report-template.html           # HTML/CSS template for report styling
 │   ├── bpa-rules-reference.md         # 20 BPA rules with examples, fixes, and composite model docs
 │   ├── dax-patterns.md                # DAX anti-patterns, compound tiers, pattern families
+│   ├── finding-suppression-rules.md   # Learned suppression rules from architect feedback
 │   └── system-tables-queries.md       # Databricks SQL queries for metadata/volume/profiling
 │
 ├── plan/                              # Design documentation
@@ -195,7 +196,7 @@ python3 scripts/generate_report.py \
 
 **`analyse_dax_complexity.py`** — Two-pass analysis: first collects table storage modes, then scores each measure's complexity. **New in v2**: complexity scoring prioritises context transitions (3 pts each), relationship hops (2 pts each), and FILTER(ALL) count (4 pts each) over LOC (1 pt for >30 lines). Each measure includes `contextTransitions`, `relationshipHops`, `filterAllCount`, and `estimatedSQLSubqueries`. Accepts `--taxonomy-file` for hot table enrichment with volumetry, degree, and computed `optimizationPriority` (critical/high/medium/low). Outputs `dax-complexity.json`.
 
-**`audit_dax.py`** — Scans all DAX measure expressions for 13 anti-pattern rules (FILTER_ALL, IFERROR/ISERROR, nested CALCULATE, CROSSJOIN, repeated subexpression, bare division, COUNT vs COUNTROWS, missing format string, USERELATIONSHIP, DIVIDE_CALC, unqualified columns, no VAR, hardcoded values). Each issue includes `whyItsBad` (engine-level explanation) and `requiredActions` (list of specific fix steps). Strips comments and string literals before pattern matching. Outputs `dax-audit.json`.
+**`audit_dax.py`** — Scans all DAX measure expressions for 13 anti-pattern rules (FILTER_ALL, IFERROR/ISERROR, nested CALCULATE, CROSSJOIN, repeated subexpression, bare division, COUNT vs COUNTROWS, missing format string, USERELATIONSHIP, DIVIDE_CALC, unqualified columns, no VAR, hardcoded values). Each issue includes `whyItsBad` (engine-level explanation) and `requiredActions` (list of specific fix steps). Strips comments and string literals before pattern matching. Three non-performance rules (MISSING_FORMAT_STRING, UNQUALIFIED_COLUMNS, HARDCODED_VALUES) are classified as severity `Info` and suppressed from the Action Register — they appear in detail tables only. Outputs `dax-audit.json`.
 
 **`analyse_dbt_lineage.py`** — Parses dbt serve-layer SQL for `ref()` calls, WHERE filters, UNION ALL, and column counts. Reads contract YAML files for materialisation config (view/table/incremental), liquid clustering, unique keys. **New in v2**: includes a value gate that identifies `actionableFindings` (wide-serve-view, missing-filter, should-materialise, missing-clustering) and sets `hasActionableFindings` boolean. The report collapses this section when no actionable findings exist. Outputs `dbt-lineage.json`.
 
@@ -205,7 +206,7 @@ python3 scripts/generate_report.py \
 
 **`analyse_dax_antipatterns.py`** — Compound anti-pattern tier analysis. Detects 9 anti-pattern flags (ITERATOR, ALL_FILTER, ROW_FILTER, SWITCH_IF, TIME_INTEL, NESTED_CALC, USERELATIONSHIP, CROSSJOIN, DIVIDE_CALC) per measure. Assigns severity tiers (Critical ≥4, High Risk 3, Medium 2, Low Risk 1, Clean 0). Groups measures into semantic pattern families (WTD, LY, Cover, etc.) with consolidated "Why it's slow" and "Required actions". Builds measure-to-measure dependency call graph and detects amplification chains (expensive measures called inside iterators). Produces priority fix order. Outputs `dax-antipattern-tiers.json`.
 
-**`generate_report.py`** — Reads all intermediate JSONs from the output directory (including `dax-antipattern-tiers.json`), reads `synthesis.json` for root cause findings with **Where** classification (dbt Models / Semantic Model / PBI Report / PBI Visual), and produces a single self-contained HTML file with inline CSS. Creates a timestamped subdirectory (`output/YYYY-MM-DD_HHMM_<run-label>/`) and moves all intermediate files there. **Key features**: Model taxonomy shows classification (fact/dim), volumetry (rows, GB), and relationship topology (hub tables, snowflake depth). DAX complexity shows context transitions as primary metric. **New in v3**: DAX Anti-Pattern Tier Analysis section renders tier summary, 9-flag catalog, pattern family cards with "Why it's slow" / "Required actions", priority fix order, and dependency chain amplification. Detailed recommendations use "Why it's bad" / "Required action" format with structured action lists (from `whyItsBad`/`requiredActions` fields). BPA detailed findings include "Why it's bad" explanation from impact descriptions. Action-Priority Matrix shows inter-finding dependencies in a "Depends on" column. Hot tables include volumetry, degree, and optimisation priority. BPA and Engineering BPA sections show ALL rules (performance + quality) with interactive filter buttons. **New in v4**: Dimension Consolidation Opportunities card in the Snowflake Branching section — renders actionable groups of semantically similar dimension tables with column overlap bars, benefit scoring, evidence bullets, and recommended consolidation actions. No health score — removed in favour of detailed per-section findings.
+**`generate_report.py`** — Reads all intermediate JSONs from the output directory (including `dax-antipattern-tiers.json`), reads `synthesis.json` for root cause findings with **Where** classification (dbt Models / Semantic Model / PBI Report / PBI Visual), and produces a single self-contained HTML file with inline CSS. Applies finding suppression rules (`SUPPRESSED_VISUAL_RULES`, `SUPPRESSED_DAX_AUDIT_RULES`, `SUPPRESSED_ENGINEERING_RULES`) to exclude non-performance findings from the Action Register CSV while keeping them in detail section tables. Creates a timestamped subdirectory (`output/YYYY-MM-DD_HHMM_<run-label>/`) and moves all intermediate files there. **Key features**: Model taxonomy shows classification (fact/dim), volumetry (rows, GB), and relationship topology (hub tables, snowflake depth). DAX complexity shows context transitions as primary metric. **New in v3**: DAX Anti-Pattern Tier Analysis section renders tier summary, 9-flag catalog, pattern family cards with "Why it's slow" / "Required actions", priority fix order, and dependency chain amplification. Detailed recommendations use "Why it's bad" / "Required action" format with structured action lists (from `whyItsBad`/`requiredActions` fields). BPA detailed findings include "Why it's bad" explanation from impact descriptions. Action-Priority Matrix shows inter-finding dependencies in a "Depends on" column. Hot tables include volumetry, degree, and optimisation priority. BPA and Engineering BPA sections show ALL rules (performance + quality) with interactive filter buttons. **New in v4**: Dimension Consolidation Opportunities card in the Snowflake Branching section — renders actionable groups of semantically similar dimension tables with column overlap bars, benefit scoring, evidence bullets, and recommended consolidation actions. No health score — removed in favour of detailed per-section findings.
 
 **`run_engineering_bpa.py`** — Runs 15 engineering best practice rules against dbt SQL and contract YAMLs. Checks SELECT *, missing clustering, wide serve views, missing WHERE filters, functions on filter columns, OR in JOINs, ROW_NUMBER vs QUALIFY, non-atomic materialisation, and more. Cross-references with model-taxonomy.json to only check dbt models consumed by PBI. The report shows ALL 15 rules with interactive filter buttons by impact type (Latency/Cost/Quality). Displayed under section "dbt Best Practices". Outputs `engineering-bpa-results.json`.
 
@@ -466,6 +467,37 @@ The scripts were validated against the real ASOS model:
 - **Output directory only** — never write files outside `output/`
 - **Human-in-the-loop** — always present the validation checklist and wait for confirmation before running analysis
 - **No personal dev schemas in reports** — The PBI model references developer workspace schemas (e.g., `dbt_dev.rafael_diassantos.*`). These MUST be excluded from all report output. The scripts (`analyse_semantic_model.py`, `generate_report.py`) filter them out automatically. Never mention `rafael_diassantos` or any personal dev schema in synthesis, findings, or recommendations.
+
+## Finding Suppression Rules
+
+The agent applies learned suppression rules during Step 7 synthesis to avoid non-actionable recommendations. These rules are defined in `references/finding-suppression-rules.md` and encode feedback from human data architects about which findings are noise.
+
+Rules are categorised as:
+- **SUPPRESS** — never include in Action Register or synthesis findings (S1-S5)
+- **DOWNGRADE** — keep in detail tables, don't promote to actions (D1)
+
+### Suppressed Rules Summary
+
+| ID | Rule(s) | Reason |
+|----|---------|--------|
+| S1 | V05 (Query reduction settings) | Org-level policy decisions, not actionable perf fixes |
+| S2 | V08 (Embedded images) | Negligible perf impact in DirectQuery models |
+| S3 | MISSING_FORMAT_STRING, UNQUALIFIED_COLUMNS, HARDCODED_VALUES | Code style/display only, no engine-level impact |
+| S4 | E13 (Hardcoded magic numbers) | SQL style/maintainability only |
+| S5 | New dbt model creation | Increases pipeline complexity; prefer optimising existing models |
+
+### Script-Level Enforcement
+
+The `generate_report.py` script enforces suppression via `SUPPRESSED_*_RULES` constants that filter findings from the Action Register CSV. Suppressed findings still appear in their respective HTML section tables (Visual Analysis, DAX Audit, Engineering BPA) for informational reference.
+
+The `audit_dax.py` script reclassifies non-performance checks (MISSING_FORMAT_STRING, UNQUALIFIED_COLUMNS, HARDCODED_VALUES) to severity `Info` instead of `Medium`/`Low`, clearly distinguishing them from performance-impacting anti-patterns.
+
+### Action Classification
+
+The agent classifies actions by confidence level:
+- **Accept** — clear perf impact, well-defined implementation
+- **Validate** — needs runtime investigation (e.g., storage mode switches, clustering choices)
+- **Propose** — report design changes requiring business stakeholder input
 
 ## Reuse in Another Project
 

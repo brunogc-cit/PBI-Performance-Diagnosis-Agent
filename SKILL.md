@@ -533,6 +533,23 @@ This produces findings that match the structure of expert-written performance ti
 
 Generate trade-off explanations in non-technical language.
 
+#### Finding Suppression and Quality Gate
+
+Before finalising synthesis.json, apply the suppression rules from `references/finding-suppression-rules.md`:
+
+1. **Read** `references/finding-suppression-rules.md` at the start of Step 7.
+2. **SUPPRESS** findings matching S1-S5 rules — do not include them in `topFindings`, `implementationRoadmap`, or the Action Register CSV. Suppressed items may appear in their source section's detailed table (BPA, Engineering BPA, Visual Analysis) as informational context only.
+3. **DOWNGRADE** findings matching D1 rules — keep in section tables but do not create duplicate Action Register entries.
+4. **Performance-only filter**: Every finding in `topFindings` MUST have a clear engine-level performance impact (query generation, scan volume, memory, latency). Findings that only affect code style, display formatting, or maintainability belong in appendix/detail tables, not in the Action Register.
+5. **No new pipeline models**: Never recommend creating brand-new dbt models for pre-aggregation. Instead, recommend materialising existing serve views (as `materialized_view`) or adding filters/column reduction to existing models. Note new model creation as a "Future consideration" in tradeoffs only.
+
+#### Action Classification Guidance
+
+When building the `implementationRoadmap`, classify actions by confidence level to help the reviewer:
+- **Accept** (high confidence): Clear performance impact, well-defined implementation, no business-logic dependency. The agent assigns these directly.
+- **Validate** (needs investigation): Performance impact depends on runtime behaviour that cannot be confirmed statically (e.g., Dual→Import switches, clustering column choices, WHERE filters on dimension tables). Mark with "⚠ Validate before implementing" in the action description.
+- **Propose** (needs stakeholder input): Report design changes (page splits, visual count reduction, matrix column cuts) that affect user experience and require business user alignment. Mark with "💬 Propose to report owner" in the action description.
+
 ### Step 8: Report Generation
 
 Generate a comprehensive HTML report:

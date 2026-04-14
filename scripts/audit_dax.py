@@ -520,12 +520,12 @@ def check_count_vs_countrows(m: MeasureInfo) -> list[dict]:
 
 
 def check_missing_format_string(m: MeasureInfo) -> list[dict]:
-    """MEDIUM: Measure has no formatString."""
+    """INFO: Measure has no formatString (display-only, no perf impact)."""
     issues: list[dict] = []
     if not m.format_string:
         issues.append({
             "rule": "MISSING_FORMAT_STRING",
-            "severity": "Medium",
+            "severity": "Info",
             "message": "Measure has no formatString -- values may display with inconsistent formatting",
             "fix": "Add a formatString (e.g. '#,0.00' for numbers, '0.0%' for percentages, '#,0' for integers)",
             "whyItsBad": "Without an explicit format string, PBI uses raw floating-point display, causing inconsistencies across visuals.",
@@ -538,7 +538,7 @@ def check_missing_format_string(m: MeasureInfo) -> list[dict]:
 
 
 def check_unqualified_columns(m: MeasureInfo) -> list[dict]:
-    """LOW: Column references like [Column] without table prefix."""
+    """INFO: Column references like [Column] without table prefix (readability, no perf impact)."""
     cleaned = _strip_dax_comments_and_strings(m.expression)
     # [Name] NOT preceded by ' (closing quote of a table name)
     pat = re.compile(r"(?<!')\[([A-Za-z_][\w ]*)\]")
@@ -551,7 +551,7 @@ def check_unqualified_columns(m: MeasureInfo) -> list[dict]:
             display += f" ... (+{len(unique) - 5} more)"
         issues.append({
             "rule": "UNQUALIFIED_COLUMNS",
-            "severity": "Low",
+            "severity": "Info",
             "message": f"Unqualified column references: {display} -- prefix with table name for clarity",
             "fix": "Use 'TableName'[ColumnName] instead of bare [ColumnName]",
             "whyItsBad": "Unqualified column names can resolve ambiguously when tables share column names.",
@@ -588,7 +588,7 @@ def check_no_variables(m: MeasureInfo) -> list[dict]:
 
 
 def check_hardcoded_values(m: MeasureInfo) -> list[dict]:
-    """LOW: Literal strings or numbers in CALCULATE filter arguments."""
+    """INFO: Literal strings or numbers in CALCULATE filter arguments (maintainability, no perf impact)."""
     cleaned = _strip_dax_comments_and_strings(m.expression)
     issues: list[dict] = []
 
@@ -612,7 +612,7 @@ def check_hardcoded_values(m: MeasureInfo) -> list[dict]:
         display = ", ".join(samples)
         issues.append({
             "rule": "HARDCODED_VALUES",
-            "severity": "Low",
+            "severity": "Info",
             "message": f"Hardcoded literals in filter context: {display} -- consider parameterising",
             "fix": "Extract hardcoded values to a parameter table or separate measure for maintainability",
             "whyItsBad": "Hardcoded literals make measures fragile and hard to maintain. Changes require editing each measure individually.",
@@ -700,12 +700,12 @@ ALL_CHECKS: list[tuple[str, str, callable]] = [
     ("REPEATED_SUBEXPRESSION",  "Medium", check_repeated_subexpression),
     ("BARE_DIVISION",           "Medium", check_bare_division),
     ("COUNT_VS_COUNTROWS",      "Medium", check_count_vs_countrows),
-    ("MISSING_FORMAT_STRING",   "Medium", check_missing_format_string),
+    ("MISSING_FORMAT_STRING",   "Info",   check_missing_format_string),
     ("USERELATIONSHIP",         "Medium", check_userelationship),
     ("DIVIDE_CALC",             "Medium", check_divide_calculate),
-    ("UNQUALIFIED_COLUMNS",     "Low",    check_unqualified_columns),
+    ("UNQUALIFIED_COLUMNS",     "Info",   check_unqualified_columns),
     ("NO_VARIABLES",            "Low",    check_no_variables),
-    ("HARDCODED_VALUES",        "Low",    check_hardcoded_values),
+    ("HARDCODED_VALUES",        "Info",   check_hardcoded_values),
 ]
 
 

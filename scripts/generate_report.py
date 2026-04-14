@@ -825,7 +825,14 @@ def generate_html(
     eng_bpa_summary = engineering_bpa.get("summary", {}) if engineering_bpa else {}
 
     # ── Build global action register ──
-    # Collect ALL actions from every source with unique IDs
+    # Collect ALL actions from every source with unique IDs.
+    # Suppressed rules: non-performance findings excluded from Action Register
+    # based on human architect feedback (see references/finding-suppression-rules.md).
+    # These still appear in their respective detail section tables.
+    SUPPRESSED_VISUAL_RULES = {"V05", "V08"}
+    SUPPRESSED_DAX_AUDIT_RULES = {"MISSING_FORMAT_STRING", "UNQUALIFIED_COLUMNS", "HARDCODED_VALUES"}
+    SUPPRESSED_ENGINEERING_RULES = {"E13"}
+
     action_register: list[dict] = []
     _act_counter = 0
 
@@ -871,11 +878,11 @@ def generate_html(
                     "phase": "",
                 })
 
-    # Source 3: Engineering BPA rule violations
+    # Source 3: Engineering BPA rule violations (skip suppressed rules)
     if engineering_bpa:
         for r in engineering_bpa.get("ruleResults", []):
             count = r.get("count", 0)
-            if count > 0:
+            if count > 0 and r.get("ruleId", "") not in SUPPRESSED_ENGINEERING_RULES:
                 action_register.append({
                     "id": _next_act_id(),
                     "name": f"Fix {count} {r.get('ruleId', '')} ({r.get('title', '')}) violations",
@@ -889,12 +896,12 @@ def generate_html(
                     "phase": "",
                 })
 
-    # Source 4: Visual analysis rule violations
+    # Source 4: Visual analysis rule violations (skip suppressed rules)
     if visual_analysis:
         for report in visual_analysis.get("reports", []):
             for r in report.get("ruleResults", []):
                 count = r.get("count", 0)
-                if count > 0:
+                if count > 0 and r.get("ruleId", "") not in SUPPRESSED_VISUAL_RULES:
                     action_register.append({
                         "id": _next_act_id(),
                         "name": f"Fix {count} {r.get('ruleId', '')} ({r.get('title', '')}) findings in {report.get('reportName', '')}",
@@ -925,7 +932,7 @@ def generate_html(
         for ap in ap_summary:
             count = ap.get("count", 0)
             rule = ap.get("rule", "")
-            if count > 0:
+            if count > 0 and rule not in SUPPRESSED_DAX_AUDIT_RULES:
                 info = dax_rule_info.get(rule, {})
                 action_register.append({
                     "id": _next_act_id(),

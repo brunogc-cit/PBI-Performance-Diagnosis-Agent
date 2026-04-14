@@ -1014,6 +1014,7 @@ RULES: list[dict] = [
         "title": "Hardcoded magic numbers in SQL",
         "severity": "low",
         "performanceImpact": "quality",
+        "performanceRelevant": False,  # Style/maintainability only (suppressed from Action Register)
         "description": (
             "Magic numbers in WHERE clauses reduce readability and increase the "
             "risk of errors when business rules change.  They do not directly "
